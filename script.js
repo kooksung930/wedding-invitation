@@ -4,7 +4,7 @@ const WEDDING_DATE = new Date(Date.UTC(2026, 8, 19, 17, 0, 0));
 const WEDDING_DAY_START = new Date(Date.UTC(2026, 8, 19, 0, 0, 0));
 const WEDDING_CONFIG = window.WEDDING_CONFIG ?? {};
 const KAKAO_JAVASCRIPT_KEY = String(WEDDING_CONFIG.kakaoJavascriptKey ?? "").trim();
-const KAKAO_SHARE_READY = false;
+const KAKAO_SDK_URL = "https://t1.kakaocdn.net/kakao_js_sdk/2.8.1/kakao.min.js";
 const PREVIEW_IMAGE_COUNT = 9;
 const GALLERY_IMAGES = [
   "gallery/web/DSCF1934.jpg",
@@ -54,6 +54,7 @@ const copyLinkButton = document.getElementById("copy-link-button");
 const kakaoShareButton = document.getElementById("kakao-share-button");
 
 let currentGalleryIndex = 0;
+let kakaoSdkPromise = null;
 
 const showToast = (message) => {
   if (!toast) {
@@ -94,6 +95,81 @@ const copyText = async (value, successMessage = "복사되었습니다.") => {
   } catch (error) {
     showToast("복사에 실패했습니다.");
   }
+};
+
+const getShareUrl = () => `${window.location.origin}${window.location.pathname}`;
+
+const getShareImageUrl = () => new URL("resource/intro.png", window.location.href).href;
+
+const loadKakaoSdk = () => {
+  if (window.Kakao) {
+    return Promise.resolve(window.Kakao);
+  }
+
+  if (kakaoSdkPromise) {
+    return kakaoSdkPromise;
+  }
+
+  kakaoSdkPromise = new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = KAKAO_SDK_URL;
+    script.async = true;
+    script.onload = () => {
+      if (window.Kakao) {
+        resolve(window.Kakao);
+        return;
+      }
+
+      reject(new Error("Kakao SDK를 불러오지 못했습니다."));
+    };
+    script.onerror = () => {
+      reject(new Error("Kakao SDK 로딩에 실패했습니다."));
+    };
+    document.head.appendChild(script);
+  });
+
+  return kakaoSdkPromise;
+};
+
+const initializeKakaoSdk = async () => {
+  if (!KAKAO_JAVASCRIPT_KEY) {
+    throw new Error("카카오 JavaScript Key가 비어 있습니다.");
+  }
+
+  const Kakao = await loadKakaoSdk();
+
+  if (!Kakao.isInitialized()) {
+    Kakao.init(KAKAO_JAVASCRIPT_KEY);
+  }
+
+  return Kakao;
+};
+
+const sendKakaoShare = async () => {
+  const Kakao = await initializeKakaoSdk();
+  const shareUrl = getShareUrl();
+
+  Kakao.Share.sendDefault({
+    objectType: "feed",
+    content: {
+      title: "국성 & 가영 Wedding Invitation",
+      description: "2026년 9월 19일 토요일 오후 5시, 브라이드 밸리",
+      imageUrl: getShareImageUrl(),
+      link: {
+        mobileWebUrl: shareUrl,
+        webUrl: shareUrl,
+      },
+    },
+    buttons: [
+      {
+        title: "청첩장 보기",
+        link: {
+          mobileWebUrl: shareUrl,
+          webUrl: shareUrl,
+        },
+      },
+    ],
+  });
 };
 
 const setModalState = (element, isOpen) => {
@@ -410,8 +486,7 @@ const setupCopyButtons = () => {
   });
 
   copyLinkButton?.addEventListener("click", () => {
-    const cleanUrl = `${window.location.origin}${window.location.pathname}`;
-    copyText(cleanUrl, "링크가 복사되었습니다.");
+    copyText(getShareUrl(), "링크가 복사되었습니다.");
   });
 };
 
@@ -453,14 +528,26 @@ const setupKakaoShare = () => {
     return;
   }
 
-  kakaoShareButton.addEventListener("click", () => {
+  if (KAKAO_JAVASCRIPT_KEY) {
+    initializeKakaoSdk().catch(() => {
+      // The click handler shows the user-facing message if initialization still fails.
+    });
+  }
+
+  kakaoShareButton.addEventListener("click", async () => {
     if (!KAKAO_JAVASCRIPT_KEY) {
       showToast("카카오 JavaScript Key를 연결하면 공유 버튼이 활성화됩니다.");
       return;
     }
 
-    if (!KAKAO_SHARE_READY) {
-      showToast("카카오 공유 로직은 키 연결 후 다음 단계에서 붙여드릴게요.");
+    try {
+      await sendKakaoShare();
+    } catch (error) {
+      const message =
+        error instanceof Error && error.message
+          ? error.message
+          : "카카오 공유를 실행하지 못했습니다.";
+      showToast(message);
     }
   });
 };
