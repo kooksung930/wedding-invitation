@@ -462,6 +462,7 @@ body.intro-complete .intro-screen {
   z-index: 3;
   pointer-events: none;
   overflow: hidden;
+  contain: layout paint style;
 }
 
 .tap-note-bursts {
@@ -470,6 +471,7 @@ body.intro-complete .intro-screen {
   z-index: 8;
   pointer-events: none;
   overflow: hidden;
+  contain: layout paint style;
 }
 
 .page-note {
@@ -549,6 +551,13 @@ html.js body.intro-complete .site-main {
   position: relative;
   z-index: 1;
   padding: 1.55rem 1.15rem;
+}
+
+@supports (content-visibility: auto) {
+  .paper-section:not(.cover-card) {
+    content-visibility: auto;
+    contain-intrinsic-size: 42rem;
+  }
 }
 
 .paper-section + .paper-section {
@@ -653,6 +662,7 @@ html.js body.intro-complete .site-main {
   overflow: hidden;
   pointer-events: none;
   background: linear-gradient(180deg, rgba(20, 14, 12, 0.04), rgba(20, 14, 12, 0.14));
+  contain: layout paint style;
 }
 
 .cover-card__music-note {
@@ -671,6 +681,11 @@ html.js body.intro-complete .site-main {
   will-change: transform, opacity;
   animation: cover-note-flow var(--note-duration, 9s) linear infinite;
   animation-delay: var(--note-delay, 0s);
+}
+
+body.is-scrolling .page-note,
+body.is-scrolling .cover-card__music-note {
+  animation-play-state: paused;
 }
 
 .cover-card__welcome {

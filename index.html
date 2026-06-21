@@ -64,7 +64,7 @@
               src="resource/record_front.jpg"
               alt="국성과 가영의 웨딩 레코드판"
               loading="eager"
-              decoding="sync"
+              decoding="async"
               fetchpriority="high"
               draggable="false"
             />
@@ -92,7 +92,7 @@
                 src="resource/intro-hero.jpg"
                 alt="국성과 가영의 메인 사진"
                 loading="eager"
-                decoding="sync"
+                decoding="async"
                 fetchpriority="high"
                 width="1600"
                 height="2400"
@@ -190,7 +190,7 @@
             <p class="location-card__walk">양재역 3번 출구에서 도보 2분</p>
 
             <figure class="location-card__map-frame">
-              <img src="resource/bride_valley_map.png" alt="브라이드 밸리 약도" />
+              <img src="resource/bride_valley_map.png" alt="브라이드 밸리 약도" loading="lazy" decoding="async" />
             </figure>
 
             <div class="location-card__navigation">
@@ -522,9 +522,6 @@
 
     <div class="toast" id="toast" hidden></div>
 
-    <script defer src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js"></script>
     <script defer src="script.js"></script>
   </body>
 </html>

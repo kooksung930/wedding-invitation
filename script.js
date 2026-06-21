@@ -8,6 +8,11 @@ const WEDDING_CONFIG = window.WEDDING_CONFIG ?? {};
 const FIREBASE_CONFIG = WEDDING_CONFIG.firebaseConfig ?? null;
 const KAKAO_JAVASCRIPT_KEY = String(WEDDING_CONFIG.kakaoJavascriptKey ?? "").trim();
 const KAKAO_SDK_URL = "https://t1.kakaocdn.net/kakao_js_sdk/2.8.1/kakao.min.js";
+const FIREBASE_SDK_URLS = [
+  "https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js",
+  "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js",
+  "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js",
+];
 const SHARE_TITLE = "국성 & 가영 Wedding Invitation";
 const SHARE_DESCRIPTION = "두 사람의 첫 번째 레코드 재생하기";
 const SHARE_IMAGE_PATH = "resource/thumbnail.png?v=20260622";
@@ -21,6 +26,8 @@ const GUESTBOOK_ERROR_MESSAGE = "방명록을 잠시 불러오지 못했습니�
 const INTRO_PULSE_MS = 1000;
 const INTRO_NOTE_SYMBOLS = ["♩", "♪", "♫", "♬"];
 const PAGE_NOTE_COUNT = 36;
+const MAX_ACTIVE_TAP_NOTES = 42;
+const SCROLL_IDLE_MS = 160;
 const INTRO_NOTE_QUADRANTS = [
   { minDeg: -110, maxDeg: -25 },
   { minDeg: -10, maxDeg: 75 },
@@ -86,9 +93,11 @@ const kakaoShareButton = document.getElementById("kakao-share-button");
 
 let currentGalleryIndex = 0;
 let kakaoSdkPromise = null;
+let firebaseSdkPromise = null;
 let guestbookServicePromise = null;
 let guestbookPreviewUnsubscribe = null;
 let guestbookSheetUnsubscribe = null;
+let gallerySheetRendered = false;
 
 const showToast = (message) => {
   if (!toast) {
@@ -120,6 +129,15 @@ const pseudoRandom = (seed) => {
 const randomBetween = (min, max) => min + Math.random() * (max - min);
 const easeOutCubic = (value) => 1 - (1 - value) ** 3;
 const easeInOutSine = (value) => -(Math.cos(Math.PI * value) - 1) / 2;
+const runWhenIdle = (callback, timeout = 1200) => {
+  if (window.requestIdleCallback) {
+    return window.requestIdleCallback(() => {
+      callback();
+    }, { timeout });
+  }
+
+  return window.setTimeout(callback, timeout);
+};
 
 const copyText = async (value, successMessage = "복사되었습니다.") => {
   try {
@@ -293,9 +311,28 @@ const ensureGuestbookService = async () => {
   }
 
   if (!window.firebase) {
-    const error = new Error("Firebase SDK missing");
-    error.code = "guestbook/sdk-missing";
-    throw error;
+    if (!firebaseSdkPromise) {
+      firebaseSdkPromise = FIREBASE_SDK_URLS.reduce(
+        (promise, src) =>
+          promise.then(
+            () =>
+              new Promise((resolve, reject) => {
+                const script = document.createElement("script");
+                script.src = src;
+                script.async = true;
+                script.onload = () => resolve();
+                script.onerror = () => reject(new Error("Firebase SDK 로딩에 실패했습니다."));
+                document.head.appendChild(script);
+              }),
+          ),
+        Promise.resolve(),
+      ).catch((error) => {
+        firebaseSdkPromise = null;
+        throw error;
+      });
+    }
+
+    await firebaseSdkPromise;
   }
 
   if (!guestbookServicePromise) {
@@ -959,6 +996,11 @@ const setupTapNoteBursts = () => {
     note.style.left = `${x}px`;
     note.style.top = `${y}px`;
     configure(note);
+
+    while (tapNoteBursts.childElementCount >= MAX_ACTIVE_TAP_NOTES) {
+      tapNoteBursts.firstElementChild?.remove();
+    }
+
     tapNoteBursts.append(note);
     note.addEventListener(
       "animationend",
@@ -1148,6 +1190,30 @@ const setupTapNoteBursts = () => {
   window.addEventListener("touchcancel", stopTouchTrail, { passive: true });
 };
 
+const setupScrollPerformanceTuning = () => {
+  let isScrolling = false;
+  let clearScrollStateTimeoutId = 0;
+
+  const clearScrollState = () => {
+    isScrolling = false;
+    document.body.classList.remove("is-scrolling");
+  };
+
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (!isScrolling) {
+        isScrolling = true;
+        document.body.classList.add("is-scrolling");
+      }
+
+      window.clearTimeout(clearScrollStateTimeoutId);
+      clearScrollStateTimeoutId = window.setTimeout(clearScrollState, SCROLL_IDLE_MS);
+    },
+    { passive: true },
+  );
+};
+
 const getSeoulParts = (date) => {
   const formatter = new Intl.DateTimeFormat("en-CA", {
     timeZone: SEOUL_TIMEZONE,
@@ -1259,7 +1325,7 @@ const renderCountdown = () => {
 };
 
 const renderGallery = () => {
-  if (!galleryPreviewGrid || !gallerySheetGrid) {
+  if (!galleryPreviewGrid) {
     return;
   }
 
@@ -1284,6 +1350,12 @@ const renderGallery = () => {
       `,
     )
     .join("");
+};
+
+const renderGallerySheet = () => {
+  if (!gallerySheetGrid || gallerySheetRendered) {
+    return;
+  }
 
   gallerySheetGrid.innerHTML = GALLERY_IMAGES.map(
     (src, index) => `
@@ -1302,6 +1374,7 @@ const renderGallery = () => {
       </button>
     `,
   ).join("");
+  gallerySheetRendered = true;
 };
 
 const setupGallery = () => {
@@ -1324,6 +1397,7 @@ const setupGallery = () => {
   });
 
   galleryOpenButton.addEventListener("click", () => {
+    renderGallerySheet();
     openGallerySheet();
   });
 
@@ -1473,6 +1547,16 @@ const setupGuestbook = () => {
     return;
   }
 
+  let guestbookFeedStarted = false;
+  const startGuestbookFeed = () => {
+    if (guestbookFeedStarted) {
+      return;
+    }
+
+    guestbookFeedStarted = true;
+    initializeGuestbookFeed();
+  };
+
   setGuestbookInteractivity(false);
   setGuestbookNotice(GUESTBOOK_NOTICE_DEFAULT);
   renderGuestbookEntries(guestbookPosts, [], "따뜻한 축하 한마디를 기다리고 있어요.");
@@ -1486,6 +1570,7 @@ const setupGuestbook = () => {
   guestbookForm.addEventListener("submit", submitGuestbookEntry);
 
   guestbookListButton?.addEventListener("click", () => {
+    startGuestbookFeed();
     openGuestbookFeed();
   });
 
@@ -1505,7 +1590,23 @@ const setupGuestbook = () => {
     });
   });
 
-  initializeGuestbookFeed();
+  const guestbookCard = guestbookPosts.closest(".guestbook-card");
+
+  if (guestbookCard && "IntersectionObserver" in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          startGuestbookFeed();
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "480px 0px" },
+    );
+
+    observer.observe(guestbookCard);
+  } else {
+    runWhenIdle(startGuestbookFeed, 2400);
+  }
 };
 
 const setupKakaoShare = () => {
@@ -1538,6 +1639,7 @@ const setupKakaoShare = () => {
 };
 
 setupIntro();
+setupScrollPerformanceTuning();
 setupModalCloseButtons();
 setupCopyButtons();
 setupHeartToggles();
