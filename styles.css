@@ -312,8 +312,9 @@ img {
 
 .intro-screen__title {
   margin: 0;
-  font-size: clamp(1.55rem, 6.8vw, 2.35rem);
-  line-height: 1.08;
+  font-size: clamp(1.18rem, 5.2vw, 1.76rem);
+  line-height: 1.16;
+  white-space: nowrap;
   word-break: keep-all;
 }
 
@@ -513,8 +514,8 @@ html.js body.intro-complete .site-main {
   position: absolute;
   left: var(--note-left, 10%);
   top: var(--note-top, 82%);
-  color: rgba(255, 245, 233, 0.78);
-  font-size: var(--note-size, 1.2rem);
+  color: rgba(255, 245, 233, 0.84);
+  font-size: var(--note-size, 1.02rem);
   line-height: 1;
   text-shadow:
     0 0 14px rgba(32, 23, 21, 0.22),
@@ -522,85 +523,141 @@ html.js body.intro-complete .site-main {
   opacity: 0;
   mix-blend-mode: screen;
   transform: translate3d(0, 0, 0) rotate(0deg) scale(0.68);
+  will-change: transform, opacity;
   animation: cover-note-flow var(--note-duration, 9s) linear infinite;
   animation-delay: var(--note-delay, 0s);
 }
 
 .cover-card__music-note.note-a {
-  --note-left: 12%;
-  --note-top: 78%;
-  --note-size: 1.05rem;
-  --note-duration: 9.4s;
-  --note-delay: -1.6s;
-  --note-drift-x: 4.8rem;
-  --note-drift-y: -9.4rem;
+  --note-left: 8%;
+  --note-top: 74%;
+  --note-size: 0.98rem;
+  --note-duration: 9.2s;
+  --note-delay: -1.1s;
+  --note-drift-x: 2.5rem;
+  --note-drift-y: -5.7rem;
   --note-rotate: -12deg;
 }
 
 .cover-card__music-note.note-b {
-  --note-left: 28%;
-  --note-top: 88%;
-  --note-size: 1.18rem;
-  --note-duration: 10.2s;
-  --note-delay: -5.1s;
-  --note-drift-x: 5.2rem;
-  --note-drift-y: -10.4rem;
+  --note-left: 19%;
+  --note-top: 56%;
+  --note-size: 1.02rem;
+  --note-duration: 10.1s;
+  --note-delay: -4.8s;
+  --note-drift-x: -1.8rem;
+  --note-drift-y: -4.3rem;
   --note-rotate: 10deg;
 }
 
 .cover-card__music-note.note-c {
-  --note-left: 46%;
-  --note-top: 82%;
-  --note-size: 1.3rem;
-  --note-duration: 8.8s;
-  --note-delay: -3.4s;
-  --note-drift-x: 3.8rem;
-  --note-drift-y: -8.8rem;
+  --note-left: 34%;
+  --note-top: 16%;
+  --note-size: 0.92rem;
+  --note-duration: 11.3s;
+  --note-delay: -6.4s;
+  --note-drift-x: 2.2rem;
+  --note-drift-y: 3.9rem;
   --note-rotate: -8deg;
 }
 
 .cover-card__music-note.note-d {
-  --note-left: 62%;
-  --note-top: 91%;
-  --note-size: 1.14rem;
-  --note-duration: 10.6s;
-  --note-delay: -7.3s;
-  --note-drift-x: 4.4rem;
-  --note-drift-y: -11rem;
+  --note-left: 49%;
+  --note-top: 72%;
+  --note-size: 1.08rem;
+  --note-duration: 8.7s;
+  --note-delay: -2.7s;
+  --note-drift-x: 2rem;
+  --note-drift-y: -5.4rem;
   --note-rotate: 14deg;
 }
 
 .cover-card__music-note.note-e {
-  --note-left: 76%;
-  --note-top: 76%;
-  --note-size: 1.06rem;
-  --note-duration: 9.1s;
-  --note-delay: -2.2s;
-  --note-drift-x: 3.1rem;
-  --note-drift-y: -8.2rem;
+  --note-left: 66%;
+  --note-top: 24%;
+  --note-size: 0.94rem;
+  --note-duration: 10.8s;
+  --note-delay: -1.9s;
+  --note-drift-x: -2.3rem;
+  --note-drift-y: 4.1rem;
   --note-rotate: -10deg;
 }
 
 .cover-card__music-note.note-f {
-  --note-left: 18%;
-  --note-top: 68%;
-  --note-size: 0.98rem;
-  --note-duration: 11s;
-  --note-delay: -8.8s;
-  --note-drift-x: 5.6rem;
-  --note-drift-y: -10rem;
+  --note-left: 82%;
+  --note-top: 72%;
+  --note-size: 1rem;
+  --note-duration: 9.6s;
+  --note-delay: -7.1s;
+  --note-drift-x: -2.8rem;
+  --note-drift-y: -5.6rem;
   --note-rotate: 8deg;
 }
 
 .cover-card__music-note.note-g {
-  --note-left: 58%;
-  --note-top: 64%;
-  --note-size: 1.08rem;
-  --note-duration: 9.8s;
-  --note-delay: -6.2s;
-  --note-drift-x: 4.8rem;
-  --note-drift-y: -9rem;
+  --note-left: 11%;
+  --note-top: 18%;
+  --note-size: 0.9rem;
+  --note-duration: 12s;
+  --note-delay: -8.4s;
+  --note-drift-x: 2.6rem;
+  --note-drift-y: 3.6rem;
   --note-rotate: -14deg;
+}
+
+.cover-card__music-note.note-h {
+  --note-left: 26%;
+  --note-top: 82%;
+  --note-size: 1.06rem;
+  --note-duration: 9.4s;
+  --note-delay: -3.8s;
+  --note-drift-x: -1.6rem;
+  --note-drift-y: -4.8rem;
+  --note-rotate: 7deg;
+}
+
+.cover-card__music-note.note-i {
+  --note-left: 43%;
+  --note-top: 42%;
+  --note-size: 0.96rem;
+  --note-duration: 10.4s;
+  --note-delay: -5.6s;
+  --note-drift-x: 2.8rem;
+  --note-drift-y: -3.7rem;
+  --note-rotate: -9deg;
+}
+
+.cover-card__music-note.note-j {
+  --note-left: 58%;
+  --note-top: 10%;
+  --note-size: 0.92rem;
+  --note-duration: 11.1s;
+  --note-delay: -9.2s;
+  --note-drift-x: -2.4rem;
+  --note-drift-y: 4.2rem;
+  --note-rotate: 11deg;
+}
+
+.cover-card__music-note.note-k {
+  --note-left: 72%;
+  --note-top: 52%;
+  --note-size: 1.02rem;
+  --note-duration: 8.9s;
+  --note-delay: -4.1s;
+  --note-drift-x: 1.7rem;
+  --note-drift-y: -4.1rem;
+  --note-rotate: -7deg;
+}
+
+.cover-card__music-note.note-l {
+  --note-left: 88%;
+  --note-top: 30%;
+  --note-size: 0.88rem;
+  --note-duration: 10.7s;
+  --note-delay: -6.8s;
+  --note-drift-x: -1.9rem;
+  --note-drift-y: 3.4rem;
+  --note-rotate: 8deg;
 }
 
 .cover-card__body {
@@ -899,14 +956,14 @@ html.js body.intro-complete .site-main {
   position: absolute;
   inset: 0;
   background: url("gallery/web/DSCF2222.jpg") center / cover no-repeat;
-  opacity: 0.32;
+  opacity: 0.46;
 }
 
 .calendar-wrapper::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(13, 10, 9, 0.62), rgba(20, 15, 13, 0.72));
+  background: linear-gradient(180deg, rgba(13, 10, 9, 0.34), rgba(20, 15, 13, 0.5));
 }
 
 .calendar-grid {
@@ -1122,7 +1179,6 @@ html.js body.intro-complete .site-main {
   text-align: center;
 }
 
-.share-card__copy,
 .share-card__hint {
   margin: 0;
   line-height: 1.8;
