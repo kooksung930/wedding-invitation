@@ -1407,12 +1407,37 @@ html.js body.intro-complete .cover-card__welcome {
 .guestbook-post__meta {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.18rem;
   color: rgba(63, 48, 40, 0.5);
   font-size: 0.56rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.guestbook-post__meta-main {
+  display: flex;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.guestbook-post__delete {
+  flex: 0 0 auto;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: rgba(127, 75, 55, 0.72);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.guestbook-post__delete:hover,
+.guestbook-post__delete:focus-visible {
+  color: var(--accent-strong-color);
 }
 
 .guestbook-post__content {

@@ -247,13 +247,25 @@ const createGuestbookPostElement = (entry) => {
   const meta = document.createElement("div");
   meta.className = "guestbook-post__meta";
 
+  const metaMain = document.createElement("div");
+  metaMain.className = "guestbook-post__meta-main";
+
   const name = document.createElement("span");
   name.textContent = entry.name || "익명";
 
   const date = document.createElement("span");
   date.textContent = formatGuestbookDate(entry.createdAt);
 
-  meta.append(name, date);
+  metaMain.append(name, date);
+
+  const deleteButton = document.createElement("button");
+  deleteButton.className = "guestbook-post__delete";
+  deleteButton.type = "button";
+  deleteButton.textContent = "삭제";
+  deleteButton.setAttribute("data-guestbook-delete-id", entry.id);
+  deleteButton.setAttribute("aria-label", `${entry.name || "익명"} 메시지 삭제`);
+
+  meta.append(metaMain, deleteButton);
 
   const content = document.createElement("div");
   content.className = "guestbook-post__content";
@@ -268,14 +280,16 @@ const renderGuestbookEntries = (container, entries, emptyMessage) => {
     return;
   }
 
+  const visibleEntries = entries.filter((entry) => entry.isDeleted !== true);
+
   container.replaceChildren();
 
-  if (!entries.length) {
+  if (!visibleEntries.length) {
     container.append(createGuestbookEmptyState(emptyMessage));
     return;
   }
 
-  entries.forEach((entry) => {
+  visibleEntries.forEach((entry) => {
     container.append(createGuestbookPostElement(entry));
   });
 };
@@ -337,6 +351,37 @@ const subscribeGuestbookFeed = async (container, limitCount) => {
         setGuestbookNotice(getGuestbookErrorMessage(error), "error");
       },
     );
+};
+
+const markGuestbookEntryDeleted = async (entryId) => {
+  if (!entryId) {
+    return;
+  }
+
+  const willDelete = window.confirm(
+    "이 메시지를 삭제할까요?\n삭제 후에도 기록은 Firebase에 남습니다.",
+  );
+
+  if (!willDelete) {
+    return;
+  }
+
+  try {
+    const { auth, firestore } = await ensureGuestbookService();
+    const user = auth.currentUser || (await auth.signInAnonymously()).user;
+
+    await firestore.collection(GUESTBOOK_COLLECTION).doc(entryId).update({
+      isDeleted: true,
+      deletedAt: window.firebase.firestore.FieldValue.serverTimestamp(),
+      deletedByUid: user.uid,
+    });
+
+    showToast("메시지를 삭제했습니다.");
+  } catch (error) {
+    const notice = getGuestbookErrorMessage(error);
+    setGuestbookNotice(notice, "error");
+    showToast(notice);
+  }
 };
 
 const loadKakaoSdk = () => {
@@ -1148,6 +1193,22 @@ const setupGuestbook = () => {
 
   guestbookListButton?.addEventListener("click", () => {
     openGuestbookFeed();
+  });
+
+  [guestbookPosts, guestbookSheetPosts].forEach((container) => {
+    container?.addEventListener("click", (event) => {
+      const deleteButton = event.target.closest("[data-guestbook-delete-id]");
+
+      if (!deleteButton) {
+        return;
+      }
+
+      const entryId = deleteButton.getAttribute("data-guestbook-delete-id");
+
+      if (entryId) {
+        markGuestbookEntryDeleted(entryId);
+      }
+    });
   });
 
   initializeGuestbookFeed();
