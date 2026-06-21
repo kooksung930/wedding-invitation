@@ -98,27 +98,6 @@ const copyText = async (value, successMessage = "복사되었습니다.") => {
   }
 };
 
-const setupImageFallbacks = () => {
-  document.querySelectorAll("img[data-fallback-src]").forEach((image) => {
-    const applyFallback = () => {
-      const fallbackSrc = image.getAttribute("data-fallback-src");
-
-      if (!fallbackSrc || image.dataset.fallbackApplied === "true") {
-        return;
-      }
-
-      image.dataset.fallbackApplied = "true";
-      image.src = fallbackSrc;
-    };
-
-    image.addEventListener("error", applyFallback);
-
-    if (image.complete && image.naturalWidth === 0) {
-      applyFallback();
-    }
-  });
-};
-
 const setModalState = (element, isOpen) => {
   if (!element) {
     return;
@@ -543,7 +522,6 @@ const setupKakaoShare = () => {
 };
 
 setupIntro();
-setupImageFallbacks();
 setupModalCloseButtons();
 setupCopyButtons();
 setupHeartToggles();
