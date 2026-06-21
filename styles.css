@@ -1925,10 +1925,13 @@ html.js body.intro-complete .cover-card__welcome {
   transform: translateX(-50%) translateY(1rem);
   min-width: 180px;
   max-width: calc(100% - 2rem);
-  padding: 0.8rem 1rem;
+  padding: 0.62rem 0.88rem;
   border-radius: 999px;
   background: rgba(58, 40, 31, 0.94);
   color: #fff8f2;
+  font-size: 0.62rem;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
   text-align: center;
   opacity: 0;
   transition: opacity 0.2s ease, transform 0.2s ease;
@@ -2000,6 +2003,11 @@ html.no-js .site-main {
   .account-panel__copy-icon {
     width: 0.48rem;
     height: 0.48rem;
+  }
+
+  .toast {
+    padding: 0.58rem 0.8rem;
+    font-size: 0.58rem;
   }
 }
 
