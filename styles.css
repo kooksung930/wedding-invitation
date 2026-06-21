@@ -426,11 +426,21 @@ html.js body.intro-complete .site-main {
 }
 
 .section-script {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin: 0;
-  color: var(--ink-color);
-  font-size: 0.98rem;
+  padding: 0.34rem 0.82rem;
+  border: 1px solid rgba(127, 75, 55, 0.16);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(245, 236, 228, 0.86));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.52),
+    0 8px 18px rgba(60, 41, 32, 0.05);
+  color: var(--accent-strong-color);
+  font-size: 0.92rem;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
@@ -1172,38 +1182,58 @@ html.js body.intro-complete .cover-card__welcome {
 
 .guestbook-card {
   text-align: left;
+  padding-top: 1.28rem;
+  padding-bottom: 1.24rem;
+}
+
+.guestbook-card .section-header {
+  margin-bottom: 0.72rem;
 }
 
 .guestbook-card__notice {
   margin: 0;
-  line-height: 1.8;
+  font-size: 0.84rem;
+  line-height: 1.55;
   word-break: keep-all;
 }
 
 .guestbook-form {
   display: grid;
-  gap: 0.55rem;
-  margin-top: 1rem;
+  gap: 0.38rem;
+  margin-top: 0.65rem;
 }
 
 .guestbook-form__input,
 .guestbook-form__textarea {
   width: 100%;
-  padding: 0.75rem 0.8rem;
+  padding: 0.54rem 0.68rem;
   border: 1px solid rgba(127, 75, 55, 0.14);
   background: rgba(255, 255, 255, 0.66);
   color: rgba(63, 48, 40, 0.52);
+  font-size: 0.8rem;
 }
 
 .guestbook-form__textarea {
-  min-height: 5rem;
+  min-height: 2.9rem;
   resize: none;
 }
 
+.guestbook-card .button {
+  padding: 0.62rem 0.88rem;
+  font-size: 0.84rem;
+}
+
+.guestbook-posts {
+  display: grid;
+  gap: 0.32rem;
+  margin-top: 0.62rem;
+}
+
 .guestbook-post {
-  margin-top: 0.8rem;
-  padding: 0.95rem;
+  margin-top: 0;
+  padding: 0.56rem 0.64rem;
   border: 1px solid rgba(127, 75, 55, 0.1);
+  border-radius: 0.48rem;
   background: rgba(255, 255, 255, 0.58);
 }
 
@@ -1211,19 +1241,21 @@ html.js body.intro-complete .cover-card__welcome {
   display: flex;
   justify-content: space-between;
   gap: 0.5rem;
-  margin-bottom: 0.62rem;
+  margin-bottom: 0.18rem;
   color: rgba(63, 48, 40, 0.5);
-  font-size: 0.68rem;
-  letter-spacing: 0.05em;
+  font-size: 0.56rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .guestbook-post__content {
-  line-height: 1.7;
+  font-size: 0.75rem;
+  line-height: 1.4;
   word-break: keep-all;
 }
 
 .guestbook-card__list {
-  margin-top: 0.9rem;
+  margin-top: 0.56rem;
 }
 
 .share-card {
