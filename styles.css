@@ -827,6 +827,8 @@ html.js body.intro-complete .site-main {
 
 .location-card__address {
   color: var(--ink-soft-color);
+  font-size: 0.92rem;
+  letter-spacing: -0.01em;
 }
 
 .location-card__walk {
