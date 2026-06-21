@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#f6efe5" />
+    <meta name="theme-color" content="#f5efe8" />
     <meta
       name="description"
       content="2026년 9월 19일 토요일 오후 5시, 브라이드 밸리에서 전국성과 최가영의 결혼식에 소중한 여러분을 초대합니다."
@@ -11,26 +11,41 @@
     <meta property="og:title" content="국성 & 가영 Wedding Invitation" />
     <meta
       property="og:description"
-      content="두 사람이 만나 하나의 음악이 되었습니다. 2026.09.19 토요일 오후 5시, 브라이드 밸리에서 만나요."
+      content="두 사람이 만나 하나의 음악이 되었습니다. 2026년 9월 19일 토요일 오후 5시, 브라이드 밸리에서 만나요."
     />
     <meta property="og:image" content="resource/record_front.jpg" />
     <title>국성 & 가영 Wedding Invitation</title>
     <link rel="stylesheet" href="styles.css" />
     <script>
+      window.WEDDING_CONFIG = window.WEDDING_CONFIG || {
+        kakaoJavascriptKey: "",
+      };
+
       document.documentElement.classList.remove("no-js");
       document.documentElement.classList.add("js");
     </script>
   </head>
   <body>
+    <div class="music-notes" aria-hidden="true">
+      <span class="music-note note-1">&#9833;</span>
+      <span class="music-note note-2">&#9835;</span>
+      <span class="music-note note-3">&#9834;</span>
+      <span class="music-note note-4">&#9836;</span>
+      <span class="music-note note-5">&#9833;</span>
+      <span class="music-note note-6">&#9835;</span>
+      <span class="music-note note-7">&#9834;</span>
+      <span class="music-note note-8">&#9836;</span>
+    </div>
+
     <section class="intro-screen" aria-label="인트로">
-      <div class="intro-screen__glow" aria-hidden="true"></div>
+      <div class="intro-screen__glow"></div>
       <div class="intro-screen__content">
         <p class="intro-screen__kicker">2026.09.19 SATURDAY 5PM</p>
         <button class="record-launch" type="button" aria-controls="main-content">
           <img
             class="record-launch__disc"
             src="resource/record_front.jpg"
-            alt="전국성과 최가영의 웨딩 레코드판"
+            alt="국성과 가영의 웨딩 레코드판"
           />
         </button>
         <p class="intro-screen__side">SIDE A / OUR FIRST PLAY</p>
@@ -44,290 +59,382 @@
     </section>
 
     <main class="site-main" id="main-content" tabindex="-1">
-      <div class="site-shell">
-        <section class="album-card album-card--cover">
-          <div class="album-cover__hero">
-            <img
-              src="resource/record_front.jpg"
-              alt="전국성과 최가영의 웨딩 레코드 커버"
-            />
-          </div>
-          <div class="album-cover__caption">
-            <p class="album-cover__eyebrow">LOVE RECORDS PRESENTS</p>
-            <h1 class="album-cover__title">국성 &amp; 가영</h1>
-            <p class="album-cover__meta">2026.09.19 SATURDAY 5PM</p>
-          </div>
-        </section>
+      <div class="background">
+        <div class="background__halo background__halo--left" aria-hidden="true"></div>
+        <div class="background__halo background__halo--right" aria-hidden="true"></div>
 
-        <section class="album-card record-letter" id="invitation">
-          <div class="record-letter__top">
-            <span class="album-badge">LOVE RECORDS <strong>FIRST TRACK</strong></span>
-            <p class="record-letter__script">
-              Our love is the best song<span class="record-letter__script-mark">.</span>
-            </p>
-          </div>
+        <div class="card-view">
+          <section class="card-group">
+            <article class="card cover-card">
+              <p class="cover-card__eyebrow">WE ARE GETTING MARRIED</p>
+              <h1 class="cover-card__title">The Sound of Us</h1>
 
-          <div class="section-heading">
-            <p class="section-heading__eyebrow">INVITATION</p>
-            <h2 class="section-heading__title">두 사람이 만나 하나의 음악이 되었습니다</h2>
-          </div>
-
-          <div class="record-details">
-            <article class="record-detail">
-              <span>DATE</span>
-              <strong>2026년 9월 19일 토요일</strong>
-              <p>오후 5시</p>
-            </article>
-            <article class="record-detail">
-              <span>VENUE</span>
-              <strong>브라이드 밸리</strong>
-              <p>서울 강남구 강남대로 262 B1층 브라이드밸리 웨딩홀</p>
-            </article>
-            <article class="record-detail">
-              <span>SUBWAY</span>
-              <strong>양재역 3번 출구</strong>
-              <p>도보 3분</p>
-            </article>
-          </div>
-
-          <div class="invitation-letter">
-            <p>함께 웃고 함께 걷는 시간 위에 평생이라는 새로운 곡을 새기려 합니다.</p>
-            <p>저희의 첫 재생 버튼이 눌리는 순간, 소중한 여러분을 초대합니다.</p>
-            <p>오래도록 간직하고 싶은 하루가 될 수 있도록 따뜻한 축복으로 함께해 주세요.</p>
-          </div>
-
-          <div class="family-lines">
-            <p>故 전일광 · 이순오의 아들 전국성</p>
-            <p>최창규 · 김금숙의 딸 최가영</p>
-          </div>
-
-          <p class="section-epilogue">
-            빈티지 레코드 한 장처럼 오래도록 기억될 하루에 함께해 주세요.
-          </p>
-        </section>
-
-        <section class="album-card album-card--location" id="location">
-          <div class="section-heading">
-            <p class="section-heading__eyebrow">LOCATION</p>
-            <h2 class="section-heading__title">브라이드 밸리</h2>
-          </div>
-
-          <p class="location-title">서울 강남구 강남대로 262 B1층 브라이드밸리 웨딩홀</p>
-          <p class="location-subtitle">양재역 3번 출구에서 도보 3분 거리에 위치합니다.</p>
-
-          <figure class="paper-frame paper-frame--map">
-            <img src="resource/bride_valley_map.png" alt="브라이드 밸리 약도" />
-            <figcaption>Venue Map</figcaption>
-          </figure>
-
-          <div class="map-links">
-            <a
-              class="map-link"
-              href="https://naver.me/FDnCdx7B"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="네이버지도로 브라이드 밸리 길찾기"
-            >
-              <img class="map-link__icon" src="resource/naver.jpg" alt="" />
-              <span class="map-link__label">Naver Map</span>
-            </a>
-            <a
-              class="map-link"
-              href="https://place.map.kakao.com/522062793"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="카카오맵으로 브라이드 밸리 길찾기"
-            >
-              <img class="map-link__icon" src="resource/kakao.png" alt="" />
-              <span class="map-link__label">Kakao Map</span>
-            </a>
-            <a
-              class="map-link"
-              href="https://tmap.life/7c0206c7"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="TMAP으로 브라이드 밸리 길찾기"
-            >
-              <img class="map-link__icon" src="resource/tmap.png" alt="" />
-              <span class="map-link__label">TMAP</span>
-            </a>
-          </div>
-
-          <button
-            class="action-button action-button--ghost action-button--full"
-            type="button"
-            data-copy="서울 강남구 강남대로 262 B1층 브라이드밸리 웨딩홀"
-          >
-            주소 복사
-          </button>
-
-          <div class="transit-note">
-            <article class="transit-note__item">
-              <span>SUBWAY</span>
-              <p>양재역 3번 출구에서 도보 3분, 가장 편안한 동선으로 도착하실 수 있습니다.</p>
-            </article>
-            <article class="transit-note__item">
-              <span>MAP APPS</span>
-              <p>네이버지도, 카카오맵, TMAP 가운데 편한 앱을 눌러 바로 길찾기를 시작해 주세요.</p>
-            </article>
-          </div>
-        </section>
-
-        <section class="album-card" id="calendar">
-          <div class="section-heading">
-            <p class="section-heading__eyebrow">THE WEDDING DAY</p>
-            <h2 class="section-heading__title">2026년 9월 19일 토요일 오후 5시</h2>
-          </div>
-
-          <div class="wedding-clock">
-            <div class="countdown-panel">
-              <p class="section-label">COUNTDOWN</p>
-              <div class="countdown" id="countdown">
-                <div class="countdown__item">
-                  <span class="countdown__value" id="countdown-days">00</span>
-                  <span class="countdown__unit">DAY</span>
-                </div>
-                <div class="countdown__item">
-                  <span class="countdown__value" id="countdown-hours">00</span>
-                  <span class="countdown__unit">HOUR</span>
-                </div>
-                <div class="countdown__item">
-                  <span class="countdown__value" id="countdown-minutes">00</span>
-                  <span class="countdown__unit">MIN</span>
-                </div>
-                <div class="countdown__item">
-                  <span class="countdown__value" id="countdown-seconds">00</span>
-                  <span class="countdown__unit">SEC</span>
-                </div>
+              <div class="cover-card__date">
+                <span>2026</span>
+                <div class="divider"></div>
+                <span>09</span>
+                <div class="divider"></div>
+                <span>19</span>
               </div>
-              <p class="countdown-panel__message" id="countdown-message"></p>
-            </div>
+              <div class="cover-card__day">Saturday 5PM</div>
 
-            <div class="calendar-panel">
-              <div class="calendar-panel__head">
-                <span>SEPTEMBER 2026</span>
-                <strong id="d-day-badge">D-DAY</strong>
+              <div class="cover-card__image-wrapper">
+                <img
+                  src="resource/record_front.jpg"
+                  alt="국성과 가영의 웨딩 커버 이미지"
+                  loading="eager"
+                  decoding="async"
+                />
               </div>
-              <div class="calendar-grid" id="calendar-grid" aria-label="2026년 9월 달력"></div>
-            </div>
-          </div>
-        </section>
 
-        <section class="album-card album-card--gallery" id="gallery">
-          <div class="section-heading">
-            <p class="section-heading__eyebrow">GALLERY</p>
-            <h2 class="section-heading__title">Our Favorite Frames</h2>
-          </div>
+              <div class="album-divider" aria-hidden="true">
+                <span>♪</span>
+              </div>
 
-          <div class="gallery-showcase">
-            <button
-              class="gallery-nav"
-              type="button"
-              data-gallery-direction="prev"
-              aria-label="이전 사진"
-            >
-              &#8249;
-            </button>
+              <div class="cover-card__subtitle">Save the date for the wedding of</div>
 
-            <button
-              class="gallery-feature"
-              id="gallery-feature"
-              type="button"
-              aria-label="현재 선택된 사진 크게 보기"
-            >
-              <img id="gallery-feature-image" alt="" />
-            </button>
+              <div class="cover-card__names">
+                <span>전국성</span>
+                <span class="cover-card__heart">&#9829;</span>
+                <span>최가영</span>
+              </div>
 
-            <button
-              class="gallery-nav"
-              type="button"
-              data-gallery-direction="next"
-              aria-label="다음 사진"
-            >
-              &#8250;
-            </button>
-          </div>
+              <div class="cover-card__info">2026년 9월 19일 토요일 오후 5시</div>
+              <div class="cover-card__info">브라이드 밸리</div>
+              <div class="cover-card__info cover-card__info--muted">양재역 3번 출구 도보 3분</div>
+            </article>
 
-          <div class="gallery-indicators" id="gallery-indicators"></div>
-          <div class="gallery-grid" id="gallery-grid" aria-live="polite"></div>
+            <article class="card invitation-card">
+              <div class="section-header">
+                <div class="section-header__line"></div>
+                <h2 class="section-script">Invitation</h2>
+                <div class="section-header__line"></div>
+              </div>
 
-          <button
-            class="action-button action-button--ghost action-button--full"
-            id="gallery-toggle"
-            type="button"
-          >
-            모든 사진 보기
-          </button>
-        </section>
+              <div class="invitation-card__content">
+                <div>두 사람이 만나 하나의 음악이 되었습니다.</div>
+                <div>함께 웃고 함께 걷는 시간 위에</div>
+                <div>평생이라는 새로운 곡을 새기려 합니다.</div>
+              </div>
 
-        <section class="album-card" id="heart">
-          <div class="section-heading">
-            <p class="section-heading__eyebrow">SEND YOUR HEART</p>
-            <h2 class="section-heading__title">가장 큰 축하는 함께해주시는 마음입니다</h2>
-          </div>
+              <div class="break"></div>
 
-          <div class="heart-grid">
-            <article class="info-card">
-              <p class="info-card__label">GROOM SIDE</p>
-              <p class="info-card__title">신랑에게 전하기</p>
-              <p class="info-card__text">
-                상세 안내는 추후 공개 예정입니다.
-                <br />
-                지금은 따뜻한 마음만 먼저 받아둘게요.
-              </p>
+              <div class="invitation-card__content">
+                <div>저희의 첫 재생 버튼이 눌리는 순간,</div>
+                <div>소중한 여러분을 초대합니다.</div>
+              </div>
+
+              <div class="break"></div>
+
+              <div class="invitation-card__content">
+                <div>오래도록 간직하고 싶은 하루가 될 수 있도록</div>
+                <div>따뜻한 축복으로 함께해 주세요.</div>
+              </div>
+
+              <p class="invitation-card__quote">Our love is the best song.</p>
+
+              <div class="break"></div>
+
+              <div class="invitation-card__family">故 전일광 · 이순오의 아들 전국성</div>
+              <div class="invitation-card__family">최창규 · 김금숙의 딸 최가영</div>
+            </article>
+          </section>
+
+          <section class="card-group">
+            <article class="card location-card">
+              <div class="section-header">
+                <div class="section-header__line"></div>
+                <h2 class="section-script">Location</h2>
+                <div class="section-header__line"></div>
+              </div>
+
+              <div class="location-card__place">브라이드 밸리</div>
+              <div class="location-card__address">
+                서울 강남구 강남대로 262, B1층 브라이드밸리 웨딩홀
+              </div>
+              <div class="location-card__walk">양재역 3번 출구에서 도보 3분</div>
+
+              <figure class="location-card__map-frame">
+                <img src="resource/bride_valley_map.png" alt="브라이드 밸리 약도" />
+              </figure>
+
+              <div class="location-card__navigation">
+                <a
+                  class="navigation-link"
+                  href="https://naver.me/FDnCdx7B"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <img src="resource/naver.jpg" alt="" />
+                  <span>네이버지도</span>
+                </a>
+                <a
+                  class="navigation-link"
+                  href="https://place.map.kakao.com/522062793"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <img src="resource/kakao.png" alt="" />
+                  <span>카카오맵</span>
+                </a>
+                <a
+                  class="navigation-link"
+                  href="https://tmap.life/7c0206c7"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <img src="resource/tmap.png" alt="" />
+                  <span>TMAP</span>
+                </a>
+              </div>
+
+              <div class="break"></div>
+
               <button
-                class="heart-button"
+                class="button button-style-1"
                 type="button"
-                data-heart-target="groom-heart"
-                data-closed-label="안내 보기"
-                data-open-label="안내 닫기"
-                aria-expanded="false"
+                data-copy="서울 강남구 강남대로 262 B1층 브라이드밸리 웨딩홀"
               >
-                안내 보기
+                주소 복사
               </button>
-              <div class="heart-reveal" id="groom-heart" hidden>
-                <p>신랑측 상세 정보는 준비가 끝나는 시점에 안전하게 추가할 예정입니다.</p>
+
+              <div class="location-card__info-grid">
+                <div class="location-card__info">
+                  <div class="location-card__info-heading">대중교통</div>
+                  <div class="location-card__info-content">
+                    대중교통 안내는 추후 내용 추가 예정입니다.
+                  </div>
+                </div>
+
+                <div class="location-card__info">
+                  <div class="location-card__info-heading">자가용</div>
+                  <div class="location-card__info-content">
+                    자가용 안내는 추후 내용 추가 예정입니다.
+                  </div>
+                </div>
               </div>
             </article>
 
-            <article class="info-card">
-              <p class="info-card__label">BRIDE SIDE</p>
-              <p class="info-card__title">신부에게 전하기</p>
-              <p class="info-card__text">
-                상세 안내는 아직 비공개 상태입니다.
-                <br />
-                준비가 끝나면 같은 방식으로 안내드릴게요.
-              </p>
-              <button
-                class="heart-button"
-                type="button"
-                data-heart-target="bride-heart"
-                data-closed-label="안내 보기"
-                data-open-label="안내 닫기"
-                aria-expanded="false"
-              >
-                안내 보기
-              </button>
-              <div class="heart-reveal" id="bride-heart" hidden>
-                <p>신부측 상세 정보 역시 추후 공개 예정이며, 부모님 관련 안내도 이어서 추가할 수 있습니다.</p>
+            <article class="card calendar-card">
+              <div class="section-header">
+                <div class="section-header__line"></div>
+                <h2 class="section-script">The Wedding Day</h2>
+                <div class="section-header__line"></div>
+              </div>
+
+              <div class="calendar-card__date">2026년 9월 19일 토요일 오후 5시</div>
+
+              <div class="calendar-wrapper">
+                <div class="calendar-grid" id="calendar-grid" aria-label="2026년 9월 달력"></div>
+              </div>
+
+              <div class="countdown-wrapper">
+                <div class="countdown">
+                  <div class="countdown__unit-label">DAY</div>
+                  <div></div>
+                  <div class="countdown__unit-label">HOUR</div>
+                  <div></div>
+                  <div class="countdown__unit-label">MIN</div>
+                  <div></div>
+                  <div class="countdown__unit-label">SEC</div>
+                  <div class="countdown__count" id="countdown-days">00</div>
+                  <span>:</span>
+                  <div class="countdown__count" id="countdown-hours">00</div>
+                  <span>:</span>
+                  <div class="countdown__count" id="countdown-minutes">00</div>
+                  <span>:</span>
+                  <div class="countdown__count" id="countdown-seconds">00</div>
+                </div>
+                <div class="countdown-wrapper__message" id="countdown-message"></div>
               </div>
             </article>
-          </div>
+          </section>
 
-          <p class="heart-footnote">함께해주시는 발걸음과 마음이 저희에게는 가장 큰 축복입니다.</p>
-        </section>
+          <section class="card-group">
+            <article class="card gallery-card">
+              <div class="section-header">
+                <div class="section-header__line"></div>
+                <h2 class="section-script">Gallery</h2>
+                <div class="section-header__line"></div>
+              </div>
 
-        <footer class="album-footer">
-          <p class="album-footer__kicker">LOVE RECORDS</p>
-          <p class="album-footer__copy">Thank you for being part of our first play.</p>
-        </footer>
+              <p class="gallery-card__copy">사진을 누르면 크게 볼 수 있어요.</p>
+
+              <div class="gallery-card__viewer">
+                <button
+                  class="gallery-card__control gallery-card__control--left"
+                  type="button"
+                  data-gallery-direction="prev"
+                  aria-label="이전 사진"
+                >
+                  &#8249;
+                </button>
+                <button
+                  class="gallery-card__stage"
+                  id="gallery-stage"
+                  type="button"
+                  aria-label="현재 사진 크게 보기"
+                >
+                  <img id="gallery-stage-image" alt="" />
+                </button>
+                <button
+                  class="gallery-card__control gallery-card__control--right"
+                  type="button"
+                  data-gallery-direction="next"
+                  aria-label="다음 사진"
+                >
+                  &#8250;
+                </button>
+              </div>
+
+              <div class="gallery-card__indicator" id="gallery-indicator"></div>
+
+              <div class="break"></div>
+
+              <button class="button button-style-1" id="gallery-open-button" type="button">
+                사진 전체보기
+              </button>
+            </article>
+
+            <article class="card information-card">
+              <div class="section-header">
+                <div class="section-header__line"></div>
+                <h2 class="section-script">Information</h2>
+                <div class="section-header__line"></div>
+              </div>
+
+              <div class="info-panel">
+                <div class="info-panel__label">주차 안내</div>
+                <div class="info-panel__content">무료 주차 2시간</div>
+              </div>
+
+              <div class="info-panel">
+                <div class="info-panel__label">마음 전하기</div>
+                <div class="info-panel__content">
+                  상세 안내는 추후 공개 예정입니다.
+                  <br />
+                  준비가 끝나면 신랑측, 신부측 순서대로 추가해둘게요.
+                </div>
+
+                <div class="break"></div>
+
+                <button class="button button-style-1" type="button" data-heart-target="groom-heart">
+                  신랑측 안내 보기
+                </button>
+                <div class="break"></div>
+                <button class="button button-style-1" type="button" data-heart-target="bride-heart">
+                  신부측 안내 보기
+                </button>
+
+                <div class="reveal-panel" id="groom-heart" hidden>
+                  신랑측 상세 안내는 추후 공개 예정입니다.
+                </div>
+                <div class="reveal-panel" id="bride-heart" hidden>
+                  신부측 상세 안내는 추후 공개 예정입니다.
+                </div>
+              </div>
+            </article>
+          </section>
+
+          <section class="card-group">
+            <article class="card guestbook-card">
+              <div class="section-header">
+                <div class="section-header__line"></div>
+                <h2 class="section-script">Guest Book</h2>
+                <div class="section-header__line"></div>
+              </div>
+
+              <div class="guestbook-card__notice">
+                방명록은 서버가 연결되면 실제로 열립니다. 지금은 화면 포맷만 먼저 준비해두었습니다.
+              </div>
+
+              <div class="guestbook-form" aria-hidden="true">
+                <input class="guestbook-form__input" type="text" value="이름" disabled />
+                <textarea class="guestbook-form__textarea" disabled>축하의 말을 남겨주세요.</textarea>
+                <button class="button button-style-2" id="guestbook-write-button" type="button">
+                  방명록 작성하기
+                </button>
+              </div>
+
+              <div class="guestbook-post">
+                <div class="guestbook-post__meta">
+                  <span>Coming Soon</span>
+                  <span>SERVER READY</span>
+                </div>
+                <div class="guestbook-post__content">
+                  축하 메시지가 쌓이는 자리를 미리 만들어두었습니다.
+                </div>
+              </div>
+
+              <div class="guestbook-post">
+                <div class="guestbook-post__meta">
+                  <span>Preview</span>
+                  <span>PLACEHOLDER</span>
+                </div>
+                <div class="guestbook-post__content">
+                  서버를 열면 작성, 목록 보기, 삭제 요청까지 이어질 수 있는 포맷입니다.
+                </div>
+              </div>
+
+              <div class="break"></div>
+
+              <button class="button button-style-1" id="guestbook-list-button" type="button">
+                방명록 전체보기
+              </button>
+            </article>
+
+            <aside class="card share-card">
+              <div class="section-header">
+                <div class="section-header__line"></div>
+                <h2 class="section-script">Share</h2>
+                <div class="section-header__line"></div>
+              </div>
+
+              <div class="share-card__copy">
+                링크 복사와 카카오톡 공유 버튼을 미리 준비해두었습니다.
+              </div>
+
+              <div class="break"></div>
+
+              <button class="button button-style-2" id="copy-link-button" type="button">
+                링크 복사하기
+              </button>
+
+              <div class="break"></div>
+
+              <button class="button button-style-1 share-card__kakao" id="kakao-share-button" type="button">
+                <img src="resource/kakao.png" alt="" />
+                <span>카카오톡 공유하기</span>
+              </button>
+
+              <div class="share-card__hint">
+                카카오 공유는 JavaScript Key를 연결하면 바로 활성화됩니다.
+              </div>
+
+              <div class="share-card__footer">THANK YOU FOR BEING PART OF OUR STORY</div>
+            </aside>
+          </section>
+        </div>
       </div>
     </main>
 
+    <div class="modal" id="gallery-sheet" hidden aria-hidden="true">
+      <button class="modal__backdrop" type="button" data-modal-close="gallery-sheet" aria-label="닫기"></button>
+      <div class="modal__dialog modal__dialog--gallery">
+        <button class="modal__close" type="button" data-modal-close="gallery-sheet" aria-label="닫기">
+          ×
+        </button>
+        <div class="modal__title">사진 전체보기</div>
+        <div class="gallery-sheet__grid" id="gallery-sheet-grid"></div>
+      </div>
+    </div>
+
     <div class="lightbox" id="lightbox" hidden aria-hidden="true">
-      <button class="lightbox__backdrop" type="button" aria-label="닫기"></button>
+      <button class="lightbox__backdrop" type="button" data-modal-close="lightbox" aria-label="닫기"></button>
       <figure class="lightbox__figure">
-        <button class="lightbox__close" type="button" aria-label="닫기">×</button>
+        <button class="lightbox__close" type="button" data-modal-close="lightbox" aria-label="닫기">
+          ×
+        </button>
         <img class="lightbox__image" alt="" />
       </figure>
     </div>
