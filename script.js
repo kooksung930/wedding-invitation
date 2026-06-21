@@ -1,4 +1,31 @@
 const INTRO_DURATION_MS = 1900;
+const GALLERY_IMAGES = [
+  "gallery/web/DSCF1934.jpg",
+  "gallery/web/DSCF1954.jpg",
+  "gallery/web/DSCF1991.jpg",
+  "gallery/web/DSCF2140.jpg",
+  "gallery/web/DSCF2222.jpg",
+  "gallery/web/DSCF2226.jpg",
+  "gallery/web/DSCF2289.jpg",
+  "gallery/web/DSCF2297.jpg",
+  "gallery/web/DSCF2319.jpg",
+  "gallery/web/DSCF2321.jpg",
+  "gallery/web/DSCF2640.jpg",
+  "gallery/web/DSCF2668.jpg",
+  "gallery/web/DSCF2689.jpg",
+  "gallery/web/DSCF2889.jpg",
+  "gallery/web/FUJI7831.jpg",
+  "gallery/web/FUJI7841.jpg",
+  "gallery/web/FUJI7867.jpg",
+  "gallery/web/SON01329.jpg",
+  "gallery/web/SON01347.jpg",
+  "gallery/web/SON01363.jpg",
+  "gallery/web/SON01481.jpg",
+  "gallery/web/SON01487.jpg",
+  "gallery/web/SON01529.jpg",
+  "gallery/web/SON01547.jpg",
+  "gallery/web/SON01798.jpg",
+];
 
 const mainContent = document.getElementById("main-content");
 const galleryGrid = document.getElementById("gallery-grid");
@@ -133,50 +160,38 @@ const setupLightbox = () => {
   });
 };
 
-const renderGallery = async () => {
+const renderGallery = () => {
   if (!galleryGrid) {
     return;
   }
 
-  try {
-    const response = await fetch("gallery/web/manifest.json", { cache: "no-store" });
-    if (!response.ok) {
-      throw new Error("manifest");
+  galleryGrid.innerHTML = GALLERY_IMAGES.map(
+    (src, index) => `
+      <button
+        class="gallery-item"
+        type="button"
+        data-gallery-src="${src}"
+        data-gallery-alt="국성과 가영의 웨딩 사진 ${index + 1}"
+      >
+        <img
+          src="${src}"
+          alt="국성과 가영의 웨딩 사진 ${index + 1}"
+          loading="${index < 6 ? "eager" : "lazy"}"
+          fetchpriority="${index < 4 ? "high" : "auto"}"
+          decoding="async"
+        />
+      </button>
+    `,
+  ).join("");
+
+  galleryGrid.addEventListener("click", (event) => {
+    const item = event.target.closest(".gallery-item");
+    if (!item) {
+      return;
     }
 
-    const images = await response.json();
-    galleryGrid.innerHTML = images
-      .map(
-        (src, index) => `
-          <button
-            class="gallery-item"
-            type="button"
-            data-gallery-src="${src}"
-            data-gallery-alt="국성과 가영의 웨딩 사진 ${index + 1}"
-          >
-            <img
-              src="${src}"
-              alt="국성과 가영의 웨딩 사진 ${index + 1}"
-              loading="${index < 8 ? "eager" : "lazy"}"
-              fetchpriority="${index < 4 ? "high" : "auto"}"
-              decoding="async"
-            />
-          </button>
-        `,
-      )
-      .join("");
-
-    galleryGrid.addEventListener("click", (event) => {
-      const item = event.target.closest(".gallery-item");
-      if (!item) {
-        return;
-      }
-
-      openLightbox(item.dataset.gallerySrc, item.dataset.galleryAlt);
-    });
-  } catch (error) {
-    galleryGrid.innerHTML = '<p class="gallery-empty">사진을 불러오지 못했습니다.</p>';
-  }
+    openLightbox(item.dataset.gallerySrc, item.dataset.galleryAlt);
+  });
 };
 
 setupIntro();

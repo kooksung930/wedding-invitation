@@ -50,14 +50,17 @@
     <main class="site-main" id="main-content" tabindex="-1">
       <div class="page-shell">
         <header class="hero-stage">
-          <div class="hero-stage__record">
-            <div class="hero-stage__needle"></div>
-            <div class="hero-stage__label">
-              <span class="hero-stage__badge">LOVE RECORDS</span>
-              <strong class="hero-stage__album">The Sound of Us</strong>
-              <span class="hero-stage__artists">KOOKSEONG &amp; GAYOUNG</span>
-              <span class="hero-stage__date">2026.09.19</span>
-              <span class="hero-stage__meta">33⅓ RPM · STEREO · LONG PLAY</span>
+          <div class="hero-stage__media">
+            <img
+              class="hero-stage__image"
+              src="resource/record_front.jpg"
+              alt="국성과 가영의 웨딩 레코드 이미지"
+            />
+            <div class="hero-stage__overlay">
+              <p class="hero-stage__kicker">LOVE RECORDS</p>
+              <h2 class="hero-stage__headline">The Sound of Us</h2>
+              <p class="hero-stage__subline">국성 그리고 가영의 첫 번째 앨범</p>
+              <p class="hero-stage__date">2026.09.19 SATURDAY 5PM</p>
             </div>
           </div>
         </header>
@@ -66,7 +69,7 @@
           <p class="section-kicker">WE ARE GETTING MARRIED</p>
           <h2 class="invitation-card__title">The Sound of Us</h2>
           <p class="invitation-card__names">전 국 성 <span>♥</span> 최 가 영</p>
-          <p class="invitation-card__schedule">2026.09.19 (SAT) 17:00</p>
+          <p class="invitation-card__schedule">2026.09.19 (토) 17:00</p>
           <p class="invitation-card__venue">브라이드 밸리</p>
 
           <div class="section-divider" aria-hidden="true">
@@ -98,30 +101,21 @@
 
             <article class="details-card">
               <div class="detail-row">
-                <span class="detail-row__icon">◷</span>
-                <div>
-                  <p class="detail-row__label">일시</p>
-                  <p class="detail-row__value">2026.09.19 (토) 17:00</p>
-                </div>
+                <p class="detail-row__label">일시</p>
+                <p class="detail-row__value">2026.09.19 (토) 17:00</p>
               </div>
               <div class="detail-row">
-                <span class="detail-row__icon">⌂</span>
-                <div>
-                  <p class="detail-row__label">장소</p>
-                  <p class="detail-row__value">브라이드 밸리</p>
-                  <p class="detail-row__subvalue">
-                    서울 강남구 강남대로 262<br />
-                    B1층 브라이드밸리 웨딩홀
-                  </p>
-                </div>
+                <p class="detail-row__label">장소</p>
+                <p class="detail-row__value">브라이드 밸리</p>
+                <p class="detail-row__subvalue">
+                  서울 강남구 강남대로 262<br />
+                  B1층 브라이드밸리 웨딩홀
+                </p>
               </div>
               <div class="detail-row">
-                <span class="detail-row__icon">⇄</span>
-                <div>
-                  <p class="detail-row__label">교통</p>
-                  <p class="detail-row__value">양재역 3번 출구에서</p>
-                  <p class="detail-row__subvalue">도보 3분 거리</p>
-                </div>
+                <p class="detail-row__label">교통</p>
+                <p class="detail-row__value">양재역 3번 출구에서</p>
+                <p class="detail-row__subvalue">도보 3분 거리</p>
               </div>
             </article>
 
@@ -170,11 +164,13 @@
 
           <div class="note-strip">
             <span class="note-strip__record"></span>
-            <p class="note-strip__lead">EVERY LOVE SONG LEADS TO US</p>
-            <p class="note-strip__text">
-              오늘 이 자리에 오신 여러분은 저희 인생 앨범의 특별한 피처링입니다.
-              함께해 주셔서 감사합니다.
-            </p>
+            <div class="note-strip__copy">
+              <p class="note-strip__lead">EVERY LOVE SONG LEADS TO US</p>
+              <p class="note-strip__text">
+                오늘 이 자리에 오신 여러분은 저희 인생 앨범의 특별한 피처링입니다.
+                함께해 주셔서 감사합니다.
+              </p>
+            </div>
           </div>
         </section>
 
@@ -186,9 +182,8 @@
           <div class="heart-grid">
             <article class="heart-card">
               <div class="heart-card__head">
-                <span class="heart-card__icon">◎</span>
+                <span class="heart-card__icon"></span>
                 <strong>신랑한테 전하기</strong>
-                <span class="heart-card__arrow">›</span>
               </div>
               <p class="heart-card__text">
                 계좌 정보는 추후 안내드릴 예정입니다.<br />
@@ -198,9 +193,8 @@
 
             <article class="heart-card">
               <div class="heart-card__head">
-                <span class="heart-card__icon">◎</span>
+                <span class="heart-card__icon"></span>
                 <strong>신부한테 전하기</strong>
-                <span class="heart-card__arrow">›</span>
               </div>
               <p class="heart-card__text">
                 계좌 정보는 추후 안내드릴 예정입니다.<br />
@@ -229,7 +223,6 @@
             <span>ALBUM RELEASED</span>
             <strong>2026.09.19</strong>
           </div>
-          <div class="album-footer__barcode" aria-hidden="true"></div>
         </footer>
 
         <p class="album-footer__caption">THANK YOU FOR BEING PART OF OUR STORY</p>
