@@ -831,9 +831,35 @@ html.js body.intro-complete .site-main {
 }
 
 .location-card__info {
-  padding-left: 0.78rem;
-  border-left: 2px solid rgba(183, 106, 74, 0.3);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.8rem;
+  align-items: start;
+  padding: 0.8rem 0.85rem;
+  border: 1px solid rgba(127, 75, 55, 0.12);
+  background: rgba(255, 255, 255, 0.66);
   text-align: left;
+}
+
+.location-card__info-icon {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  min-height: 2.5rem;
+  padding: 0.35rem;
+  border-radius: 0.45rem;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: inset 0 0 0 1px rgba(127, 75, 55, 0.08);
+}
+
+.location-card__info-icon img {
+  width: 1.55rem;
+  height: 1.55rem;
+  object-fit: contain;
+}
+
+.location-card__info-body {
+  min-width: 0;
 }
 
 .location-card__info-heading {
