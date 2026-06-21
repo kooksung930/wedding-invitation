@@ -4,3 +4,4 @@ gallery/*.JPG
 !gallery/web/**
 
 preview_*.png
+resource/example.png
