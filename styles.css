@@ -435,21 +435,15 @@ html.js body.intro-complete .site-main {
 }
 
 .section-script {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: inline-block;
   margin: 0;
-  padding: 0.34rem 0.82rem;
-  border: 1px solid rgba(127, 75, 55, 0.16);
-  border-radius: 999px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(245, 236, 228, 0.86));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.52),
-    0 8px 18px rgba(60, 41, 32, 0.05);
+  padding: 0;
   color: var(--accent-strong-color);
-  font-size: 0.92rem;
+  font-family: "MaruBuri", serif;
+  font-size: 0.98rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  line-height: 1.15;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
