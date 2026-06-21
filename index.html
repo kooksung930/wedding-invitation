@@ -15,6 +15,7 @@
     />
     <meta property="og:image" content="resource/record_front.jpg" />
     <title>국성 & 가영 Wedding Invitation</title>
+    <link rel="preload" as="image" href="resource/intro-hero.jpg" />
     <link rel="stylesheet" href="styles.css" />
     <script>
       window.WEDDING_CONFIG = window.WEDDING_CONFIG || {
@@ -72,10 +73,13 @@
           <section class="paper-section cover-card">
             <div class="cover-card__image-wrapper">
               <img
-                src="resource/intro.png"
+                src="resource/intro-hero.jpg"
                 alt="국성과 가영의 메인 사진"
                 loading="eager"
-                decoding="async"
+                decoding="sync"
+                fetchpriority="high"
+                width="1600"
+                height="2400"
               />
             </div>
 

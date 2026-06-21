@@ -100,7 +100,7 @@ const copyText = async (value, successMessage = "복사되었습니다.") => {
 
 const getShareUrl = () => `${window.location.origin}${window.location.pathname}`;
 
-const getShareImageUrl = () => new URL("resource/intro.png", window.location.href).href;
+const getShareImageUrl = () => new URL("resource/intro-hero.jpg", window.location.href).href;
 
 const loadKakaoSdk = () => {
   if (window.Kakao) {

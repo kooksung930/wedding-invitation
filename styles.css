@@ -466,7 +466,8 @@ html.js body.intro-complete .site-main {
 .cover-card__image-wrapper {
   width: 100%;
   aspect-ratio: 1 / 1;
-  background: var(--dark-color);
+  background:
+    #d9cabd url("resource/intro-placeholder.jpg") center / cover no-repeat;
 }
 
 .cover-card__image-wrapper img {
