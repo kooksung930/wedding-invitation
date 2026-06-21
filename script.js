@@ -12,6 +12,8 @@ const GUESTBOOK_PREVIEW_LIMIT = 5;
 const GUESTBOOK_MODAL_LIMIT = 40;
 const GUESTBOOK_NAME_MAX = 20;
 const GUESTBOOK_MESSAGE_MAX = 160;
+const GUESTBOOK_NOTICE_DEFAULT = "남겨주신 축하의 마음은 소중히 간직하겠습니다.";
+const GUESTBOOK_ERROR_MESSAGE = "방명록을 잠시 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.";
 const INTRO_PULSE_MS = 1000;
 const INTRO_NOTE_SYMBOLS = ["♩", "♪", "♫", "♬"];
 const INTRO_NOTE_QUADRANTS = [
@@ -141,29 +143,8 @@ const isFirebaseGuestbookConfigured = () =>
   );
 
 const getGuestbookErrorMessage = (error) => {
-  const code = typeof error?.code === "string" ? error.code : "";
-
-  if (code === "auth/operation-not-allowed" || code === "auth/admin-restricted-operation") {
-    return "Firebase 익명 로그인을 켜면 방명록이 열립니다.";
-  }
-
-  if (
-    code === "permission-denied" ||
-    code === "failed-precondition" ||
-    code === "unavailable"
-  ) {
-    return "Firestore 설정을 마치면 방명록이 바로 열립니다.";
-  }
-
-  if (code === "guestbook/sdk-missing") {
-    return "Firebase SDK를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.";
-  }
-
-  if (code === "guestbook/config-missing") {
-    return "Firebase 설정값이 비어 있어 방명록을 연결할 수 없습니다.";
-  }
-
-  return "방명록 연결이 아직 마무리되지 않았습니다.";
+  void error;
+  return GUESTBOOK_ERROR_MESSAGE;
 };
 
 const setGuestbookNotice = (message, tone = "normal") => {
@@ -1092,7 +1073,7 @@ const initializeGuestbookFeed = async () => {
       guestbookPosts,
       GUESTBOOK_PREVIEW_LIMIT,
     );
-    setGuestbookNotice("남겨주신 축하 메시지는 실시간으로 반영됩니다.", "success");
+    setGuestbookNotice(GUESTBOOK_NOTICE_DEFAULT);
     setGuestbookInteractivity(true);
   } catch (error) {
     const message = getGuestbookErrorMessage(error);
@@ -1109,7 +1090,7 @@ const openGuestbookFeed = async () => {
     return;
   }
 
-  renderGuestbookEntries(guestbookSheetPosts, [], "방명록을 불러오는 중입니다.");
+  renderGuestbookEntries(guestbookSheetPosts, [], "남겨주신 메시지를 불러오고 있어요.");
 
   try {
     guestbookSheetUnsubscribe?.();
@@ -1180,9 +1161,9 @@ const setupGuestbook = () => {
   }
 
   setGuestbookInteractivity(false);
-  setGuestbookNotice("방명록을 불러오는 중입니다.");
-  renderGuestbookEntries(guestbookPosts, [], "방명록을 불러오는 중입니다.");
-  renderGuestbookEntries(guestbookSheetPosts, [], "축하 메시지를 불러오는 중입니다.");
+  setGuestbookNotice(GUESTBOOK_NOTICE_DEFAULT);
+  renderGuestbookEntries(guestbookPosts, [], "따뜻한 축하 한마디를 기다리고 있어요.");
+  renderGuestbookEntries(guestbookSheetPosts, [], "남겨주신 메시지를 불러오고 있어요.");
   updateGuestbookCount();
 
   guestbookMessageInput?.addEventListener("input", () => {
