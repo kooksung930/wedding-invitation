@@ -957,7 +957,7 @@ html.js body.intro-complete .site-main {
   content: "";
   position: absolute;
   inset: 0;
-  background: url("gallery/web/DSCF2222.jpg") center / cover no-repeat;
+  background: url("gallery/web/DSCF2222.jpg") center 58% / cover no-repeat;
   opacity: 0.46;
 }
 
