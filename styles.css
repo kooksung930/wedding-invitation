@@ -2,6 +2,7 @@
   --accent-color: #b76a4a;
   --accent-soft-color: rgba(183, 106, 74, 0.14);
   --accent-strong-color: #7f4b37;
+  --kakao-yellow: #fee500;
   --paper-color: #f4efe8;
   --paper-soft-color: #fbf8f4;
   --paper-border-color: rgba(127, 75, 55, 0.18);
@@ -920,18 +921,19 @@ html.js body.intro-complete .cover-card__welcome {
 .navigation-link__badge {
   display: grid;
   place-items: center;
-  width: 3.75rem;
-  height: 3.75rem;
+  width: 3.66rem;
+  height: 3.66rem;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.88);
   border: 1px solid rgba(127, 75, 55, 0.1);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.7),
     0 8px 18px rgba(53, 38, 30, 0.06);
+  overflow: hidden;
 }
 
 .navigation-link--kakao .navigation-link__badge {
-  background: #f7cd17;
+  background: var(--kakao-yellow);
   border-color: rgba(0, 0, 0, 0.04);
 }
 
@@ -941,9 +943,24 @@ html.js body.intro-complete .cover-card__welcome {
 }
 
 .navigation-link__badge img {
-  width: 1.7rem;
-  height: 1.7rem;
+  width: 2.08rem;
+  height: 2.08rem;
   object-fit: contain;
+}
+
+.navigation-link--naver .navigation-link__badge img {
+  width: 2.2rem;
+  height: 2.2rem;
+}
+
+.navigation-link--kakao .navigation-link__badge img {
+  width: 2.34rem;
+  height: 2.34rem;
+}
+
+.navigation-link--tmap .navigation-link__badge img {
+  width: 2.22rem;
+  height: 2.22rem;
 }
 
 .navigation-link__label {
@@ -1340,19 +1357,20 @@ html.js body.intro-complete .cover-card__welcome {
 
 .share-card__actions {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.7rem;
+  grid-template-columns: repeat(3, minmax(0, 5.05rem));
+  justify-content: center;
+  gap: 0.6rem;
   margin-top: 0.9rem;
 }
 
 .share-action {
   display: grid;
   place-items: center;
-  gap: 0.62rem;
-  aspect-ratio: 1 / 1.03;
-  padding: 0.86rem 0.42rem 0.78rem;
+  gap: 0.48rem;
+  aspect-ratio: 1 / 0.92;
+  padding: 0.74rem 0.28rem 0.6rem;
   border: 1px solid transparent;
-  border-radius: 0.95rem;
+  border-radius: 0.88rem;
   box-shadow: 0 12px 24px rgba(58, 41, 31, 0.06);
   font-weight: 600;
 }
@@ -1363,7 +1381,7 @@ html.js body.intro-complete .cover-card__welcome {
 }
 
 .share-action--kakao {
-  background: #f7cd17;
+  background: var(--kakao-yellow);
   color: #221a15;
 }
 
@@ -1380,22 +1398,27 @@ html.js body.intro-complete .cover-card__welcome {
 .share-action__icon {
   display: grid;
   place-items: center;
-  width: 2.7rem;
-  height: 2.7rem;
+  width: 3rem;
+  height: 3rem;
 }
 
 .share-action__icon img,
 .share-action__icon svg {
-  width: 2.08rem;
-  height: 2.08rem;
+  width: 2.42rem;
+  height: 2.42rem;
 }
 
 .share-action__icon img {
   object-fit: contain;
 }
 
+.share-action--kakao .share-action__icon img {
+  width: 2.56rem;
+  height: 2.56rem;
+}
+
 .share-action__label {
-  font-size: 0.78rem;
+  font-size: 0.73rem;
   font-weight: 700;
   line-height: 1.18;
   text-align: center;
@@ -1404,27 +1427,58 @@ html.js body.intro-complete .cover-card__welcome {
 
 @media (max-width: 360px) {
   .share-card__actions {
-    gap: 0.5rem;
+    grid-template-columns: repeat(3, minmax(0, 4.58rem));
+    gap: 0.44rem;
   }
 
   .share-action {
-    border-radius: 0.82rem;
-    padding: 0.76rem 0.32rem 0.68rem;
+    border-radius: 0.78rem;
+    padding: 0.68rem 0.24rem 0.54rem;
   }
 
   .share-action__icon {
-    width: 2.28rem;
-    height: 2.28rem;
+    width: 2.72rem;
+    height: 2.72rem;
   }
 
   .share-action__icon img,
   .share-action__icon svg {
-    width: 1.76rem;
-    height: 1.76rem;
+    width: 2.16rem;
+    height: 2.16rem;
+  }
+
+  .share-action--kakao .share-action__icon img {
+    width: 2.28rem;
+    height: 2.28rem;
   }
 
   .share-action__label {
-    font-size: 0.7rem;
+    font-size: 0.66rem;
+  }
+
+  .navigation-link__badge {
+    width: 3.28rem;
+    height: 3.28rem;
+  }
+
+  .navigation-link__badge img {
+    width: 1.98rem;
+    height: 1.98rem;
+  }
+
+  .navigation-link--naver .navigation-link__badge img {
+    width: 2.08rem;
+    height: 2.08rem;
+  }
+
+  .navigation-link--kakao .navigation-link__badge img {
+    width: 2.18rem;
+    height: 2.18rem;
+  }
+
+  .navigation-link--tmap .navigation-link__badge img {
+    width: 2.08rem;
+    height: 2.08rem;
   }
 }
 
@@ -1580,16 +1634,6 @@ html.no-js .site-main {
 
   .location-card__navigation {
     gap: 0.42rem;
-  }
-
-  .navigation-link__badge {
-    width: 3.35rem;
-    height: 3.35rem;
-  }
-
-  .navigation-link__badge img {
-    width: 1.54rem;
-    height: 1.54rem;
   }
 
   .navigation-link__label {
