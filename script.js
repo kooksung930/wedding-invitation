@@ -421,6 +421,9 @@ const setupIntro = () => {
   let isPlaying = false;
   let isPressed = false;
   const stopIntroMotion = setupIntroMotion(recordButton);
+  const preventNativeHoldBehavior = (event) => {
+    event.preventDefault();
+  };
 
   const clearPressState = () => {
     isPressed = false;
@@ -458,6 +461,9 @@ const setupIntro = () => {
   };
 
   if (window.PointerEvent) {
+    recordButton.addEventListener("contextmenu", preventNativeHoldBehavior);
+    recordButton.addEventListener("dragstart", preventNativeHoldBehavior);
+
     recordButton.addEventListener("pointerdown", (event) => {
       if (isPlaying) {
         return;
@@ -507,6 +513,8 @@ const setupIntro = () => {
       }
     });
   } else {
+    recordButton.addEventListener("contextmenu", preventNativeHoldBehavior);
+    recordButton.addEventListener("dragstart", preventNativeHoldBehavior);
     recordButton.addEventListener("click", playIntro);
   }
 
