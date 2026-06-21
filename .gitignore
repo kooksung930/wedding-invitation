@@ -1,0 +1,6 @@
+gallery/*.jpg
+gallery/*.JPG
+!gallery/web/
+!gallery/web/**
+
+preview_*.png
