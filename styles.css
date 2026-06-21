@@ -1338,7 +1338,9 @@ html.js body.intro-complete .cover-card__welcome {
 .guestbook-form {
   display: grid;
   gap: 0.38rem;
-  margin-top: 0.65rem;
+  margin-top: 0.76rem;
+  padding-top: 0.72rem;
+  border-top: 1px solid var(--line-color);
 }
 
 .guestbook-form__input,
