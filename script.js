@@ -898,6 +898,98 @@ const setupTapNoteBursts = () => {
     return;
   }
 
+  let activeTouchId = null;
+  let lastTrailX = 0;
+  let lastTrailY = 0;
+
+  const appendTapNote = (className, x, y, configure) => {
+    const note = document.createElement("span");
+
+    note.className = className;
+    note.textContent =
+      INTRO_NOTE_SYMBOLS[Math.floor(randomBetween(0, INTRO_NOTE_SYMBOLS.length))];
+    note.style.left = `${x}px`;
+    note.style.top = `${y}px`;
+    configure(note);
+    tapNoteBursts.append(note);
+    note.addEventListener(
+      "animationend",
+      () => {
+        note.remove();
+      },
+      { once: true },
+    );
+  };
+
+  const spawnTapBurst = (x, y) => {
+    const burstCount = 8;
+
+    for (let index = 0; index < burstCount; index += 1) {
+      const angle = (Math.PI * 2 * index) / burstCount + randomBetween(-0.22, 0.22);
+      const distance = randomBetween(24, 62);
+      const offsetX = Math.cos(angle) * distance;
+      const offsetY = Math.sin(angle) * distance - randomBetween(8, 24);
+      const delay = index * 18 + randomBetween(0, 18);
+
+      appendTapNote("tap-note-burst", x, y, (note) => {
+        note.style.setProperty("--burst-x", `${offsetX.toFixed(2)}px`);
+        note.style.setProperty("--burst-y", `${offsetY.toFixed(2)}px`);
+        note.style.setProperty("--burst-size", `${randomBetween(0.92, 1.32).toFixed(2)}rem`);
+        note.style.setProperty("--burst-opacity", `${randomBetween(0.74, 0.98).toFixed(2)}`);
+        note.style.setProperty("--burst-rotate", `${randomBetween(-30, 30).toFixed(2)}deg`);
+        note.style.setProperty("--burst-duration", `${randomBetween(620, 860).toFixed(0)}ms`);
+        note.style.setProperty("--burst-delay", `${delay.toFixed(0)}ms`);
+      });
+    }
+  };
+
+  const spawnTrailNote = (x, y) => {
+    appendTapNote("tap-note-burst tap-note-trail", x, y, (note) => {
+      note.style.setProperty("--trail-x", `${randomBetween(-8, 8).toFixed(2)}px`);
+      note.style.setProperty("--trail-y", `${randomBetween(-34, -18).toFixed(2)}px`);
+      note.style.setProperty("--trail-size", `${randomBetween(0.72, 0.98).toFixed(2)}rem`);
+      note.style.setProperty("--trail-opacity", `${randomBetween(0.28, 0.48).toFixed(2)}`);
+      note.style.setProperty("--trail-rotate", `${randomBetween(-18, 18).toFixed(2)}deg`);
+      note.style.setProperty("--trail-duration", `${randomBetween(480, 700).toFixed(0)}ms`);
+    });
+  };
+
+  const emitTrailBetween = (startX, startY, endX, endY) => {
+    const distance = Math.hypot(endX - startX, endY - startY);
+
+    if (distance < 14) {
+      return;
+    }
+
+    const stepDistance = 16;
+    const stepCount = Math.max(1, Math.floor(distance / stepDistance));
+
+    for (let stepIndex = 1; stepIndex <= stepCount; stepIndex += 1) {
+      const progress = stepIndex / stepCount;
+      const x = lerp(startX, endX, progress) + randomBetween(-2.4, 2.4);
+      const y = lerp(startY, endY, progress) + randomBetween(-2.8, 2.8);
+      spawnTrailNote(x, y);
+    }
+  };
+
+  const findTouchById = (touchList, identifier) => {
+    for (let index = 0; index < touchList.length; index += 1) {
+      const touch = touchList[index];
+
+      if (touch.identifier === identifier) {
+        return touch;
+      }
+    }
+
+    return null;
+  };
+
+  const clearActiveTouch = () => {
+    activeTouchId = null;
+    lastTrailX = 0;
+    lastTrailY = 0;
+  };
+
   mainContent.addEventListener("click", (event) => {
     if (!(event.target instanceof HTMLElement)) {
       return;
@@ -911,34 +1003,71 @@ const setupTapNoteBursts = () => {
       return;
     }
 
-    const burstCount = 8;
-
-    for (let index = 0; index < burstCount; index += 1) {
-      const note = document.createElement("span");
-      const angle = (Math.PI * 2 * index) / burstCount + randomBetween(-0.22, 0.22);
-      const distance = randomBetween(24, 62);
-      const offsetX = Math.cos(angle) * distance;
-      const offsetY = Math.sin(angle) * distance - randomBetween(8, 24);
-      const delay = index * 18 + randomBetween(0, 18);
-
-      note.className = "tap-note-burst";
-      note.textContent =
-        INTRO_NOTE_SYMBOLS[Math.floor(randomBetween(0, INTRO_NOTE_SYMBOLS.length))];
-      note.style.left = `${event.clientX}px`;
-      note.style.top = `${event.clientY}px`;
-      note.style.setProperty("--burst-x", `${offsetX.toFixed(2)}px`);
-      note.style.setProperty("--burst-y", `${offsetY.toFixed(2)}px`);
-      note.style.setProperty("--burst-size", `${randomBetween(0.92, 1.32).toFixed(2)}rem`);
-      note.style.setProperty("--burst-opacity", `${randomBetween(0.74, 0.98).toFixed(2)}`);
-      note.style.setProperty("--burst-rotate", `${randomBetween(-30, 30).toFixed(2)}deg`);
-      note.style.setProperty("--burst-duration", `${randomBetween(620, 860).toFixed(0)}ms`);
-      note.style.setProperty("--burst-delay", `${delay.toFixed(0)}ms`);
-      tapNoteBursts.append(note);
-      note.addEventListener("animationend", () => {
-        note.remove();
-      }, { once: true });
-    }
+    spawnTapBurst(event.clientX, event.clientY);
   });
+
+  mainContent.addEventListener(
+    "touchstart",
+    (event) => {
+      if (!(event.target instanceof HTMLElement)) {
+        return;
+      }
+
+      if (event.target.closest("input, textarea, select")) {
+        clearActiveTouch();
+        return;
+      }
+
+      const touch = event.changedTouches[0];
+
+      if (!touch) {
+        return;
+      }
+
+      activeTouchId = touch.identifier;
+      lastTrailX = touch.clientX;
+      lastTrailY = touch.clientY;
+      spawnTrailNote(lastTrailX, lastTrailY);
+    },
+    { passive: true },
+  );
+
+  window.addEventListener(
+    "touchmove",
+    (event) => {
+      if (activeTouchId === null) {
+        return;
+      }
+
+      const touch = findTouchById(event.touches, activeTouchId);
+
+      if (!touch) {
+        return;
+      }
+
+      emitTrailBetween(lastTrailX, lastTrailY, touch.clientX, touch.clientY);
+      lastTrailX = touch.clientX;
+      lastTrailY = touch.clientY;
+    },
+    { passive: true },
+  );
+
+  const stopTouchTrail = (event) => {
+    if (activeTouchId === null) {
+      return;
+    }
+
+    const touch = findTouchById(event.changedTouches, activeTouchId);
+
+    if (!touch) {
+      return;
+    }
+
+    clearActiveTouch();
+  };
+
+  window.addEventListener("touchend", stopTouchTrail, { passive: true });
+  window.addEventListener("touchcancel", stopTouchTrail, { passive: true });
 };
 
 const getSeoulParts = (date) => {

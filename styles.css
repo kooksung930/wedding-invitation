@@ -445,6 +445,15 @@ body.intro-complete .intro-screen {
   animation-delay: var(--burst-delay, 0ms);
 }
 
+.tap-note-trail {
+  color: rgba(183, 106, 74, var(--trail-opacity, 0.4));
+  font-size: var(--trail-size, 0.88rem);
+  text-shadow:
+    0 0 8px rgba(255, 248, 239, 0.28),
+    0 1px 6px rgba(127, 75, 55, 0.08);
+  animation: tap-note-trail var(--trail-duration, 620ms) ease-out forwards;
+}
+
 html.js .site-main {
   opacity: 0;
   transform: translateY(0.9rem);
@@ -2062,6 +2071,26 @@ html.no-js .site-main {
   }
 }
 
+@keyframes tap-note-trail {
+  0% {
+    transform: translate(-50%, -50%) translate3d(0, 0.18rem, 0) scale(0.34) rotate(0deg);
+    opacity: 0;
+  }
+
+  20% {
+    opacity: var(--trail-opacity, 0.4);
+  }
+
+  100% {
+    transform:
+      translate(-50%, -50%)
+      translate3d(var(--trail-x, 0px), var(--trail-y, -24px), 0)
+      scale(0.92)
+      rotate(var(--trail-rotate, 10deg));
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .page-note {
     animation: none;
@@ -2069,7 +2098,8 @@ html.no-js .site-main {
     transform: none;
   }
 
-  .tap-note-burst {
+  .tap-note-burst,
+  .tap-note-trail {
     animation: none;
     opacity: 0;
   }
