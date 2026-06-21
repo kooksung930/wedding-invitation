@@ -330,15 +330,31 @@ const setupIntroMotion = (recordButton) => {
     lastFrameTime = now;
 
     const pulseStrength = updatePulse(now);
-    const spawnInterval = lerp(215, 96, pulseStrength);
-    const speedMultiplier = lerp(0.48, 1.82, pulseStrength);
-    const flowOpacity = 0.42 + pulseStrength * 0.46;
+    const isPressedNow = recordButton.classList.contains("is-pressed");
+    const spawnInterval = isPressedNow
+      ? lerp(62, 24, pulseStrength)
+      : lerp(215, 96, pulseStrength);
+    const speedMultiplier = isPressedNow
+      ? lerp(1.35, 3.6, pulseStrength)
+      : lerp(0.48, 1.82, pulseStrength);
+    const flowOpacity = isPressedNow
+      ? 0.76 + pulseStrength * 0.2
+      : 0.42 + pulseStrength * 0.46;
+    const particleLimit = isPressedNow ? 54 : 24;
+    const spawnBatchSize = isPressedNow ? (pulseStrength > 0.55 ? 3 : 2) : 1;
 
     spawnAccumulator += delta;
 
-    while (spawnAccumulator >= spawnInterval && particles.length < 24) {
+    while (spawnAccumulator >= spawnInterval && particles.length < particleLimit) {
       spawnAccumulator -= spawnInterval;
-      spawnParticle();
+
+      for (
+        let batchIndex = 0;
+        batchIndex < spawnBatchSize && particles.length < particleLimit;
+        batchIndex += 1
+      ) {
+        spawnParticle();
+      }
     }
 
     for (let index = particles.length - 1; index >= 0; index -= 1) {

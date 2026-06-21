@@ -394,6 +394,11 @@ img {
   color: rgba(183, 106, 74, 0.92);
 }
 
+.record-launch.is-pressed .record-launch__note {
+  color: rgba(183, 106, 74, 0.96);
+  filter: drop-shadow(0 0 12px rgba(183, 106, 74, 0.3));
+}
+
 .record-launch.is-pressed .record-launch__disc,
 .record-launch.is-pressed:hover .record-launch__disc,
 .record-launch.is-pressed:focus-visible .record-launch__disc {
