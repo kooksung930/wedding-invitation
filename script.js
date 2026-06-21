@@ -340,7 +340,7 @@ const markGuestbookEntryDeleted = async (entryId) => {
   }
 
   const willDelete = window.confirm(
-    "이 메시지를 삭제할까요?\n삭제 후에도 기록은 Firebase에 남습니다.",
+    "정말 삭제하시겠습니까?",
   );
 
   if (!willDelete) {
