@@ -292,6 +292,9 @@ img {
   overflow: visible;
   cursor: pointer;
   isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
 }
 
 .record-launch__flow {
@@ -370,6 +373,10 @@ img {
   transition: transform 0.35s ease, box-shadow 0.35s ease;
 }
 
+.record-launch:focus {
+  outline: none;
+}
+
 .record-launch:hover .record-launch__disc,
 .record-launch:focus-visible .record-launch__disc {
   transform: scale(1.02);
@@ -383,9 +390,20 @@ img {
   color: rgba(183, 106, 74, 0.92);
 }
 
+.record-launch.is-pressed .record-launch__disc,
+.record-launch.is-pressed:hover .record-launch__disc,
+.record-launch.is-pressed:focus-visible .record-launch__disc {
+  animation: intro-disc-press-spin 0.95s linear infinite;
+  transform: none;
+  transition: none;
+  box-shadow:
+    0 30px 60px rgba(35, 23, 18, 0.24),
+    0 0 0 14px rgba(255, 255, 255, 0.28);
+}
+
 .intro-screen__title {
   margin: 0;
-  font-size: clamp(1.8rem, 7.8vw, 2.7rem);
+  font-size: clamp(1.55rem, 6.8vw, 2.35rem);
   line-height: 1.08;
   word-break: keep-all;
 }
@@ -1287,6 +1305,16 @@ html.no-js .site-main {
     transform: rotate(1280deg) scale(3.4);
     opacity: 0;
     filter: blur(2px);
+  }
+}
+
+@keyframes intro-disc-press-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
   }
 }
 

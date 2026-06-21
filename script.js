@@ -419,14 +419,30 @@ const setupIntro = () => {
   }
 
   let isPlaying = false;
+  let isPressed = false;
   const stopIntroMotion = setupIntroMotion(recordButton);
 
-  recordButton.addEventListener("click", () => {
+  const clearPressState = () => {
+    isPressed = false;
+    recordButton.classList.remove("is-pressed");
+  };
+
+  const beginPressState = () => {
+    if (isPlaying || isPressed) {
+      return;
+    }
+
+    isPressed = true;
+    recordButton.classList.add("is-pressed");
+  };
+
+  const playIntro = () => {
     if (isPlaying) {
       return;
     }
 
     isPlaying = true;
+    clearPressState();
     stopIntroMotion();
     document.body.classList.add("intro-playing");
 
@@ -439,11 +455,96 @@ const setupIntro = () => {
         document.body.classList.remove("intro-playing");
       }, INTRO_FADE_DURATION_MS);
     }, INTRO_DURATION_MS);
+  };
+
+  if (window.PointerEvent) {
+    recordButton.addEventListener("pointerdown", (event) => {
+      if (isPlaying) {
+        return;
+      }
+
+      if (event.pointerType === "mouse" && event.button !== 0) {
+        return;
+      }
+
+      beginPressState();
+      recordButton.setPointerCapture?.(event.pointerId);
+      event.preventDefault();
+    });
+
+    recordButton.addEventListener("pointerup", (event) => {
+      if (!isPressed || isPlaying) {
+        return;
+      }
+
+      if (recordButton.hasPointerCapture?.(event.pointerId)) {
+        recordButton.releasePointerCapture(event.pointerId);
+      }
+
+      event.preventDefault();
+      playIntro();
+    });
+
+    const cancelPress = (event) => {
+      if (!isPressed || isPlaying) {
+        return;
+      }
+
+      if (
+        typeof event.pointerId === "number" &&
+        recordButton.hasPointerCapture?.(event.pointerId)
+      ) {
+        recordButton.releasePointerCapture(event.pointerId);
+      }
+
+      clearPressState();
+    };
+
+    recordButton.addEventListener("pointercancel", cancelPress);
+    recordButton.addEventListener("lostpointercapture", () => {
+      if (!isPlaying) {
+        clearPressState();
+      }
+    });
+  } else {
+    recordButton.addEventListener("click", playIntro);
+  }
+
+  recordButton.addEventListener("keydown", (event) => {
+    if (isPlaying || event.repeat) {
+      return;
+    }
+
+    if (event.key !== "Enter" && event.key !== " ") {
+      return;
+    }
+
+    beginPressState();
+    event.preventDefault();
+  });
+
+  recordButton.addEventListener("keyup", (event) => {
+    if (isPlaying) {
+      return;
+    }
+
+    if (event.key !== "Enter" && event.key !== " ") {
+      return;
+    }
+
+    event.preventDefault();
+    playIntro();
+  });
+
+  recordButton.addEventListener("blur", () => {
+    if (!isPlaying) {
+      clearPressState();
+    }
   });
 
   if (shouldAutoPlayIntro) {
     window.setTimeout(() => {
-      recordButton.click();
+      playIntro();
     }, 140);
   }
 };
