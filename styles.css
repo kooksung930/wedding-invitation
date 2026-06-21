@@ -456,6 +456,12 @@ html.js body.intro-complete .site-main {
   transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
+.button:disabled {
+  cursor: default;
+  opacity: 0.52;
+  transform: none;
+}
+
 .button:focus-visible,
 .navigation-link:focus-visible,
 .gallery-preview:focus-visible,
@@ -1318,6 +1324,14 @@ html.js body.intro-complete .cover-card__welcome {
   word-break: keep-all;
 }
 
+.guestbook-card__notice.is-error {
+  color: #a15347;
+}
+
+.guestbook-card__notice.is-success {
+  color: var(--accent-color);
+}
+
 .guestbook-form {
   display: grid;
   gap: 0.38rem;
@@ -1330,13 +1344,45 @@ html.js body.intro-complete .cover-card__welcome {
   padding: 0.54rem 0.68rem;
   border: 1px solid rgba(127, 75, 55, 0.14);
   background: rgba(255, 255, 255, 0.66);
-  color: rgba(63, 48, 40, 0.52);
+  color: var(--ink-color);
   font-size: 0.8rem;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.guestbook-form__input::placeholder,
+.guestbook-form__textarea::placeholder {
+  color: rgba(63, 48, 40, 0.42);
+}
+
+.guestbook-form__input:focus,
+.guestbook-form__textarea:focus {
+  border-color: rgba(183, 106, 74, 0.3);
+  background: rgba(255, 255, 255, 0.88);
+  outline: none;
 }
 
 .guestbook-form__textarea {
   min-height: 2.9rem;
   resize: none;
+}
+
+.guestbook-form__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.guestbook-form__count {
+  flex: 0 0 auto;
+  color: rgba(63, 48, 40, 0.48);
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+}
+
+.guestbook-form .button {
+  flex: 1 1 auto;
+  width: auto;
 }
 
 .guestbook-card .button {
@@ -1374,6 +1420,12 @@ html.js body.intro-complete .cover-card__welcome {
   font-weight: 400;
   line-height: 1.4;
   word-break: keep-all;
+}
+
+.guestbook-post--empty {
+  text-align: center;
+  color: rgba(63, 48, 40, 0.56);
+  background: rgba(255, 255, 255, 0.46);
 }
 
 .guestbook-card__list {
@@ -1579,6 +1631,10 @@ html.js body.intro-complete .cover-card__welcome {
   overflow: auto;
 }
 
+.modal__dialog--guestbook {
+  overflow: auto;
+}
+
 .modal__close,
 .lightbox__close {
   position: absolute;
@@ -1602,6 +1658,20 @@ html.js body.intro-complete .cover-card__welcome {
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.guestbook-sheet__notice {
+  margin: 0 0 0.9rem;
+  color: var(--ink-soft-color);
+  font-size: 0.8rem;
+  line-height: 1.55;
+  text-align: center;
+  word-break: keep-all;
+}
+
+.guestbook-sheet__posts {
+  display: grid;
+  gap: 0.38rem;
 }
 
 .gallery-sheet__grid {

@@ -4,8 +4,14 @@ const SEOUL_TIMEZONE = "Asia/Seoul";
 const WEDDING_DATE = new Date(Date.UTC(2026, 8, 19, 17, 0, 0));
 const WEDDING_DAY_START = new Date(Date.UTC(2026, 8, 19, 0, 0, 0));
 const WEDDING_CONFIG = window.WEDDING_CONFIG ?? {};
+const FIREBASE_CONFIG = WEDDING_CONFIG.firebaseConfig ?? null;
 const KAKAO_JAVASCRIPT_KEY = String(WEDDING_CONFIG.kakaoJavascriptKey ?? "").trim();
 const KAKAO_SDK_URL = "https://t1.kakaocdn.net/kakao_js_sdk/2.8.1/kakao.min.js";
+const GUESTBOOK_COLLECTION = "guestbook";
+const GUESTBOOK_PREVIEW_LIMIT = 5;
+const GUESTBOOK_MODAL_LIMIT = 40;
+const GUESTBOOK_NAME_MAX = 20;
+const GUESTBOOK_MESSAGE_MAX = 160;
 const INTRO_PULSE_MS = 1000;
 const INTRO_NOTE_SYMBOLS = ["♩", "♪", "♫", "♬"];
 const INTRO_NOTE_QUADRANTS = [
@@ -48,6 +54,7 @@ const toast = document.getElementById("toast");
 const lightbox = document.getElementById("lightbox");
 const lightboxImage = lightbox?.querySelector(".lightbox__image");
 const gallerySheet = document.getElementById("gallery-sheet");
+const guestbookSheet = document.getElementById("guestbook-sheet");
 const calendarGrid = document.getElementById("calendar-grid");
 const countdownDays = document.getElementById("countdown-days");
 const countdownHours = document.getElementById("countdown-hours");
@@ -57,6 +64,13 @@ const countdownMessage = document.getElementById("countdown-message");
 const galleryPreviewGrid = document.getElementById("gallery-preview-grid");
 const gallerySheetGrid = document.getElementById("gallery-sheet-grid");
 const galleryOpenButton = document.getElementById("gallery-open-button");
+const guestbookForm = document.getElementById("guestbook-form");
+const guestbookNameInput = document.getElementById("guestbook-name");
+const guestbookMessageInput = document.getElementById("guestbook-message");
+const guestbookCount = document.getElementById("guestbook-count");
+const guestbookNotice = document.getElementById("guestbook-notice");
+const guestbookPosts = document.getElementById("guestbook-posts");
+const guestbookSheetPosts = document.getElementById("guestbook-sheet-posts");
 const guestbookWriteButton = document.getElementById("guestbook-write-button");
 const guestbookListButton = document.getElementById("guestbook-list-button");
 const copyLinkButton = document.getElementById("copy-link-button");
@@ -64,6 +78,9 @@ const kakaoShareButton = document.getElementById("kakao-share-button");
 
 let currentGalleryIndex = 0;
 let kakaoSdkPromise = null;
+let guestbookServicePromise = null;
+let guestbookPreviewUnsubscribe = null;
+let guestbookSheetUnsubscribe = null;
 
 const showToast = (message) => {
   if (!toast) {
@@ -114,6 +131,213 @@ const copyText = async (value, successMessage = "복사되었습니다.") => {
 const getShareUrl = () => `${window.location.origin}${window.location.pathname}`;
 
 const getShareImageUrl = () => new URL("resource/thumbnail.png", window.location.href).href;
+
+const isFirebaseGuestbookConfigured = () =>
+  Boolean(
+    FIREBASE_CONFIG &&
+      FIREBASE_CONFIG.apiKey &&
+      FIREBASE_CONFIG.projectId &&
+      FIREBASE_CONFIG.appId,
+  );
+
+const getGuestbookErrorMessage = (error) => {
+  const code = typeof error?.code === "string" ? error.code : "";
+
+  if (code === "auth/operation-not-allowed" || code === "auth/admin-restricted-operation") {
+    return "Firebase 익명 로그인을 켜면 방명록이 열립니다.";
+  }
+
+  if (
+    code === "permission-denied" ||
+    code === "failed-precondition" ||
+    code === "unavailable"
+  ) {
+    return "Firestore 설정을 마치면 방명록이 바로 열립니다.";
+  }
+
+  if (code === "guestbook/sdk-missing") {
+    return "Firebase SDK를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.";
+  }
+
+  if (code === "guestbook/config-missing") {
+    return "Firebase 설정값이 비어 있어 방명록을 연결할 수 없습니다.";
+  }
+
+  return "방명록 연결이 아직 마무리되지 않았습니다.";
+};
+
+const setGuestbookNotice = (message, tone = "normal") => {
+  if (!guestbookNotice) {
+    return;
+  }
+
+  guestbookNotice.textContent = message;
+  guestbookNotice.classList.toggle("is-error", tone === "error");
+  guestbookNotice.classList.toggle("is-success", tone === "success");
+};
+
+const setGuestbookInteractivity = (isEnabled) => {
+  [guestbookNameInput, guestbookMessageInput, guestbookWriteButton, guestbookListButton].forEach(
+    (element) => {
+      if (!element) {
+        return;
+      }
+
+      element.disabled = !isEnabled;
+    },
+  );
+};
+
+const setGuestbookSubmitting = (isSubmitting) => {
+  if (!guestbookWriteButton) {
+    return;
+  }
+
+  guestbookWriteButton.disabled = isSubmitting;
+  guestbookWriteButton.textContent = isSubmitting ? "남기는 중..." : "방명록 남기기";
+};
+
+const updateGuestbookCount = () => {
+  if (!guestbookMessageInput || !guestbookCount) {
+    return;
+  }
+
+  guestbookCount.textContent = `${guestbookMessageInput.value.trim().length} / ${GUESTBOOK_MESSAGE_MAX}`;
+};
+
+const formatGuestbookDate = (value) => {
+  const date = value?.toDate instanceof Function ? value.toDate() : null;
+
+  if (!date) {
+    return "JUST NOW";
+  }
+
+  const formatter = new Intl.DateTimeFormat("ko-KR", {
+    timeZone: SEOUL_TIMEZONE,
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+
+  const parts = Object.fromEntries(
+    formatter.formatToParts(date).map((part) => [part.type, part.value]),
+  );
+
+  return `${parts.month}.${parts.day} ${parts.hour}:${parts.minute}`;
+};
+
+const createGuestbookEmptyState = (message) => {
+  const article = document.createElement("article");
+  article.className = "guestbook-post guestbook-post--empty";
+
+  const content = document.createElement("div");
+  content.className = "guestbook-post__content";
+  content.textContent = message;
+
+  article.append(content);
+  return article;
+};
+
+const createGuestbookPostElement = (entry) => {
+  const article = document.createElement("article");
+  article.className = "guestbook-post";
+
+  const meta = document.createElement("div");
+  meta.className = "guestbook-post__meta";
+
+  const name = document.createElement("span");
+  name.textContent = entry.name || "익명";
+
+  const date = document.createElement("span");
+  date.textContent = formatGuestbookDate(entry.createdAt);
+
+  meta.append(name, date);
+
+  const content = document.createElement("div");
+  content.className = "guestbook-post__content";
+  content.textContent = entry.message || "";
+
+  article.append(meta, content);
+  return article;
+};
+
+const renderGuestbookEntries = (container, entries, emptyMessage) => {
+  if (!container) {
+    return;
+  }
+
+  container.replaceChildren();
+
+  if (!entries.length) {
+    container.append(createGuestbookEmptyState(emptyMessage));
+    return;
+  }
+
+  entries.forEach((entry) => {
+    container.append(createGuestbookPostElement(entry));
+  });
+};
+
+const ensureGuestbookService = async () => {
+  if (!isFirebaseGuestbookConfigured()) {
+    const error = new Error("Firebase guestbook config missing");
+    error.code = "guestbook/config-missing";
+    throw error;
+  }
+
+  if (!window.firebase) {
+    const error = new Error("Firebase SDK missing");
+    error.code = "guestbook/sdk-missing";
+    throw error;
+  }
+
+  if (!guestbookServicePromise) {
+    guestbookServicePromise = (async () => {
+      if (!window.firebase.apps.length) {
+        window.firebase.initializeApp(FIREBASE_CONFIG);
+      }
+
+      const auth = window.firebase.auth();
+      const firestore = window.firebase.firestore();
+
+      if (!auth.currentUser) {
+        await auth.signInAnonymously();
+      }
+
+      return { auth, firestore };
+    })().catch((error) => {
+      guestbookServicePromise = null;
+      throw error;
+    });
+  }
+
+  return guestbookServicePromise;
+};
+
+const subscribeGuestbookFeed = async (container, limitCount) => {
+  const { firestore } = await ensureGuestbookService();
+
+  return firestore
+    .collection(GUESTBOOK_COLLECTION)
+    .orderBy("createdAt", "desc")
+    .limit(limitCount)
+    .onSnapshot(
+      (snapshot) => {
+        const entries = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        renderGuestbookEntries(container, entries, "첫 번째 축하 메시지를 남겨주세요.");
+      },
+      (error) => {
+        renderGuestbookEntries(container, [], getGuestbookErrorMessage(error));
+        setGuestbookNotice(getGuestbookErrorMessage(error), "error");
+      },
+    );
+};
 
 const loadKakaoSdk = () => {
   if (window.Kakao) {
@@ -194,7 +418,7 @@ const setModalState = (element, isOpen) => {
   element.hidden = !isOpen;
   element.setAttribute("aria-hidden", String(!isOpen));
 
-  const isAnyModalOpen = [lightbox, gallerySheet].some(
+  const isAnyModalOpen = [lightbox, gallerySheet, guestbookSheet].some(
     (modal) => modal && !modal.hidden,
   );
 
@@ -229,6 +453,14 @@ const closeGallerySheet = () => {
   setModalState(gallerySheet, false);
 };
 
+const openGuestbookSheet = () => {
+  setModalState(guestbookSheet, true);
+};
+
+const closeGuestbookSheet = () => {
+  setModalState(guestbookSheet, false);
+};
+
 const setupModalCloseButtons = () => {
   document.querySelectorAll("[data-modal-close]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -241,6 +473,10 @@ const setupModalCloseButtons = () => {
       if (targetId === "gallery-sheet") {
         closeGallerySheet();
       }
+
+      if (targetId === "guestbook-sheet") {
+        closeGuestbookSheet();
+      }
     });
   });
 
@@ -251,6 +487,7 @@ const setupModalCloseButtons = () => {
 
     closeLightbox();
     closeGallerySheet();
+    closeGuestbookSheet();
   });
 };
 
@@ -803,16 +1040,117 @@ const setupHeartToggles = () => {
   });
 };
 
-const setupGuestbookPlaceholders = () => {
-  const message = "방명록은 서버 연결 후 활성화됩니다.";
+const initializeGuestbookFeed = async () => {
+  try {
+    guestbookPreviewUnsubscribe?.();
+    guestbookPreviewUnsubscribe = await subscribeGuestbookFeed(
+      guestbookPosts,
+      GUESTBOOK_PREVIEW_LIMIT,
+    );
+    setGuestbookNotice("하객 여러분의 따뜻한 메시지가 실시간으로 반영됩니다.", "success");
+    setGuestbookInteractivity(true);
+  } catch (error) {
+    const message = getGuestbookErrorMessage(error);
+    renderGuestbookEntries(guestbookPosts, [], message);
+    setGuestbookNotice(message, "error");
+    setGuestbookInteractivity(false);
+  }
+};
 
-  guestbookWriteButton?.addEventListener("click", () => {
-    showToast(message);
+const openGuestbookFeed = async () => {
+  openGuestbookSheet();
+
+  if (!guestbookSheetPosts) {
+    return;
+  }
+
+  renderGuestbookEntries(guestbookSheetPosts, [], "방명록을 불러오는 중입니다.");
+
+  try {
+    guestbookSheetUnsubscribe?.();
+    guestbookSheetUnsubscribe = await subscribeGuestbookFeed(
+      guestbookSheetPosts,
+      GUESTBOOK_MODAL_LIMIT,
+    );
+  } catch (error) {
+    renderGuestbookEntries(guestbookSheetPosts, [], getGuestbookErrorMessage(error));
+  }
+};
+
+const submitGuestbookEntry = async (event) => {
+  event.preventDefault();
+
+  if (!guestbookNameInput || !guestbookMessageInput) {
+    return;
+  }
+
+  const name = guestbookNameInput.value.trim();
+  const message = guestbookMessageInput.value.trim();
+
+  if (!name) {
+    showToast("이름을 적어주세요.");
+    guestbookNameInput.focus();
+    return;
+  }
+
+  if (!message) {
+    showToast("축하 메시지를 적어주세요.");
+    guestbookMessageInput.focus();
+    return;
+  }
+
+  if (name.length > GUESTBOOK_NAME_MAX || message.length > GUESTBOOK_MESSAGE_MAX) {
+    showToast("입력 가능한 글자 수를 확인해 주세요.");
+    return;
+  }
+
+  setGuestbookSubmitting(true);
+
+  try {
+    const { auth, firestore } = await ensureGuestbookService();
+    const user = auth.currentUser || (await auth.signInAnonymously()).user;
+
+    await firestore.collection(GUESTBOOK_COLLECTION).add({
+      name,
+      message,
+      uid: user.uid,
+      createdAt: window.firebase.firestore.FieldValue.serverTimestamp(),
+    });
+
+    guestbookMessageInput.value = "";
+    updateGuestbookCount();
+    showToast("방명록을 남겼습니다.");
+  } catch (error) {
+    const notice = getGuestbookErrorMessage(error);
+    setGuestbookNotice(notice, "error");
+    showToast(notice);
+  } finally {
+    setGuestbookSubmitting(false);
+  }
+};
+
+const setupGuestbook = () => {
+  if (!guestbookForm || !guestbookPosts) {
+    return;
+  }
+
+  setGuestbookInteractivity(false);
+  setGuestbookNotice("방명록을 연결하는 중입니다.");
+  renderGuestbookEntries(guestbookPosts, [], "방명록을 연결하는 중입니다.");
+  renderGuestbookEntries(guestbookSheetPosts, [], "방명록을 불러오는 중입니다.");
+  updateGuestbookCount();
+
+  guestbookMessageInput?.addEventListener("input", () => {
+    updateGuestbookCount();
   });
+
+  guestbookForm.addEventListener("submit", submitGuestbookEntry);
 
   guestbookListButton?.addEventListener("click", () => {
-    showToast(message);
+    openGuestbookFeed();
   });
+
+  initializeGuestbookFeed();
 };
 
 const setupKakaoShare = () => {
@@ -848,7 +1186,7 @@ setupIntro();
 setupModalCloseButtons();
 setupCopyButtons();
 setupHeartToggles();
-setupGuestbookPlaceholders();
+setupGuestbook();
 setupKakaoShare();
 renderCalendar();
 renderCountdown();

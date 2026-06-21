@@ -26,8 +26,18 @@
     />
     <link rel="stylesheet" href="styles.css" />
     <script>
-      window.WEDDING_CONFIG = window.WEDDING_CONFIG || {
+      window.WEDDING_CONFIG = {
+        ...(window.WEDDING_CONFIG || {}),
         kakaoJavascriptKey: "65c305f96f53eda84c65dca97260191c",
+        firebaseConfig: {
+          apiKey: "AIzaSyDaGOxomY9IWP6kqAvth7bm9cGrw3QwkpM",
+          authDomain: "wedding-e262a.firebaseapp.com",
+          projectId: "wedding-e262a",
+          storageBucket: "wedding-e262a.firebasestorage.app",
+          messagingSenderId: "16876005547",
+          appId: "1:16876005547:web:02684611d089df33daefee",
+          measurementId: "G-BDNCRTTPLQ",
+        },
       };
 
       document.documentElement.classList.remove("no-js");
@@ -367,59 +377,34 @@
               <h2 class="section-script">Guest Book</h2>
             </div>
 
-            <p class="guestbook-card__notice">
-              방명록은 서버 연결 후 열립니다. 지금은 미리보기 포맷만 준비해두었습니다.
+            <p class="guestbook-card__notice" id="guestbook-notice">
+              하객 여러분의 축하 메시지를 남겨주세요.
             </p>
 
-            <div class="guestbook-form" aria-hidden="true">
-              <input class="guestbook-form__input" type="text" value="이름" disabled />
-              <textarea class="guestbook-form__textarea" disabled>축하의 말을 남겨주세요.</textarea>
-              <button class="button button-style-2" id="guestbook-write-button" type="button">
-                방명록 작성하기
-              </button>
-            </div>
-
-            <div class="guestbook-posts">
-              <div class="guestbook-post">
-                <div class="guestbook-post__meta">
-                  <span>Preview 01</span>
-                  <span>SAMPLE</span>
-                </div>
-                <div class="guestbook-post__content">기쁜 마음으로 함께할게요.</div>
+            <form class="guestbook-form" id="guestbook-form">
+              <input
+                class="guestbook-form__input"
+                id="guestbook-name"
+                type="text"
+                maxlength="20"
+                placeholder="이름"
+                autocomplete="name"
+              />
+              <textarea
+                class="guestbook-form__textarea"
+                id="guestbook-message"
+                maxlength="160"
+                placeholder="축하의 말을 남겨주세요."
+              ></textarea>
+              <div class="guestbook-form__footer">
+                <span class="guestbook-form__count" id="guestbook-count">0 / 160</span>
+                <button class="button button-style-2" id="guestbook-write-button" type="submit">
+                  방명록 남기기
+                </button>
               </div>
+            </form>
 
-              <div class="guestbook-post">
-                <div class="guestbook-post__meta">
-                  <span>Preview 02</span>
-                  <span>SAMPLE</span>
-                </div>
-                <div class="guestbook-post__content">두 분, 오래오래 행복하세요.</div>
-              </div>
-
-              <div class="guestbook-post">
-                <div class="guestbook-post__meta">
-                  <span>Preview 03</span>
-                  <span>SAMPLE</span>
-                </div>
-                <div class="guestbook-post__content">예쁜 순간이 계속 쌓이길 바라요.</div>
-              </div>
-
-              <div class="guestbook-post">
-                <div class="guestbook-post__meta">
-                  <span>Preview 04</span>
-                  <span>SAMPLE</span>
-                </div>
-                <div class="guestbook-post__content">웃음 가득한 하루 되길 축하합니다.</div>
-              </div>
-
-              <div class="guestbook-post">
-                <div class="guestbook-post__meta">
-                  <span>Preview 05</span>
-                  <span>SAMPLE</span>
-                </div>
-                <div class="guestbook-post__content">멋지게 돌아가는 사랑 응원할게요.</div>
-              </div>
-            </div>
+            <div class="guestbook-posts" id="guestbook-posts"></div>
 
             <button class="button button-style-1 guestbook-card__list" id="guestbook-list-button" type="button">
               방명록 전체보기
@@ -467,6 +452,18 @@
       </div>
     </div>
 
+    <div class="modal" id="guestbook-sheet" hidden aria-hidden="true">
+      <button class="modal__backdrop" type="button" data-modal-close="guestbook-sheet" aria-label="닫기"></button>
+      <div class="modal__dialog modal__dialog--guestbook">
+        <button class="modal__close" type="button" data-modal-close="guestbook-sheet" aria-label="닫기">
+          ×
+        </button>
+        <div class="modal__title">Guest Book</div>
+        <p class="guestbook-sheet__notice">최근 남겨진 축하 메시지를 모아 보실 수 있어요.</p>
+        <div class="guestbook-sheet__posts" id="guestbook-sheet-posts"></div>
+      </div>
+    </div>
+
     <div class="lightbox" id="lightbox" hidden aria-hidden="true">
       <button class="lightbox__backdrop" type="button" data-modal-close="lightbox" aria-label="닫기"></button>
       <figure class="lightbox__figure">
@@ -479,6 +476,9 @@
 
     <div class="toast" id="toast" hidden></div>
 
-    <script src="script.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/11.10.0/firebase-auth-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore-compat.js"></script>
+    <script defer src="script.js"></script>
   </body>
 </html>
