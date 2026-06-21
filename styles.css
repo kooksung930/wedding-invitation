@@ -892,35 +892,60 @@ html.js body.intro-complete .cover-card__welcome {
 }
 
 .location-card__navigation {
-  display: flex;
-  gap: 0.45rem;
-  margin-top: 0.8rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin-top: 0.88rem;
 }
 
 .navigation-link {
   display: grid;
-  flex: 1;
   justify-items: center;
-  gap: 0.3rem;
-  padding: 0.72rem 0.3rem;
-  border: 1px solid rgba(127, 75, 55, 0.14);
-  background: rgba(255, 255, 255, 0.74);
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  gap: 0.45rem;
+  padding: 0.1rem 0.1rem 0.12rem;
+  color: var(--ink-color);
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 .navigation-link:hover,
 .navigation-link:focus-visible {
-  background: rgba(183, 106, 74, 0.06);
+  opacity: 0.96;
 }
 
-.navigation-link img {
-  width: 1.4rem;
-  height: 1.4rem;
-  border-radius: 0.28rem;
+.navigation-link__badge {
+  display: grid;
+  place-items: center;
+  width: 3.75rem;
+  height: 3.75rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(127, 75, 55, 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 8px 18px rgba(53, 38, 30, 0.06);
 }
 
-.navigation-link span {
-  font-size: 0.72rem;
+.navigation-link--kakao .navigation-link__badge {
+  background: #f7cd17;
+  border-color: rgba(0, 0, 0, 0.04);
+}
+
+.navigation-link--naver .navigation-link__badge,
+.navigation-link--tmap .navigation-link__badge {
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.navigation-link__badge img {
+  width: 1.7rem;
+  height: 1.7rem;
+  object-fit: contain;
+}
+
+.navigation-link__label {
+  font-size: 0.73rem;
+  font-weight: 600;
+  line-height: 1.15;
+  word-break: keep-all;
 }
 
 .location-card__copy {
@@ -1507,11 +1532,21 @@ html.no-js .site-main {
   }
 
   .location-card__navigation {
-    gap: 0.35rem;
+    gap: 0.42rem;
   }
 
-  .navigation-link {
-    padding-inline: 0.2rem;
+  .navigation-link__badge {
+    width: 3.35rem;
+    height: 3.35rem;
+  }
+
+  .navigation-link__badge img {
+    width: 1.54rem;
+    height: 1.54rem;
+  }
+
+  .navigation-link__label {
+    font-size: 0.68rem;
   }
 }
 
