@@ -507,12 +507,13 @@ body.intro-complete .intro-screen {
 }
 
 .tap-note-trail {
-  color: rgba(183, 106, 74, var(--trail-opacity, 0.4));
-  font-size: var(--trail-size, 0.88rem);
+  color: rgba(183, 106, 74, var(--trail-opacity, 0.58));
+  font-size: var(--trail-size, 1.1rem);
   text-shadow:
-    0 0 8px rgba(255, 248, 239, 0.28),
-    0 1px 6px rgba(127, 75, 55, 0.08);
-  animation: tap-note-trail var(--trail-duration, 620ms) ease-out forwards;
+    0 0 10px rgba(255, 248, 239, 0.34),
+    0 2px 8px rgba(127, 75, 55, 0.14);
+  animation: tap-note-trail var(--trail-duration, 760ms) cubic-bezier(0.18, 0.72, 0.2, 1) forwards;
+  animation-delay: var(--trail-delay, 0ms);
 }
 
 html.js .site-main {
@@ -2166,19 +2167,23 @@ html.no-js .site-main {
 
 @keyframes tap-note-trail {
   0% {
-    transform: translate(-50%, -50%) translate3d(0, 0.18rem, 0) scale(0.34) rotate(0deg);
+    transform: translate(-50%, -50%) translate3d(0, 0.14rem, 0) scale(0.42) rotate(0deg);
     opacity: 0;
   }
 
-  20% {
-    opacity: var(--trail-opacity, 0.4);
+  14% {
+    opacity: calc(var(--trail-opacity, 0.58) * 0.82);
+  }
+
+  36% {
+    opacity: var(--trail-opacity, 0.58);
   }
 
   100% {
     transform:
       translate(-50%, -50%)
-      translate3d(var(--trail-x, 0px), var(--trail-y, -24px), 0)
-      scale(0.92)
+      translate3d(var(--trail-x, 0px), var(--trail-y, -28px), 0)
+      scale(1.06)
       rotate(var(--trail-rotate, 10deg));
     opacity: 0;
   }

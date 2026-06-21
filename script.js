@@ -991,32 +991,66 @@ const setupTapNoteBursts = () => {
     }
   };
 
-  const spawnTrailNote = (x, y) => {
+  const spawnTrailNote = (x, y, options = {}) => {
+    const {
+      delay = 0,
+      driftX = randomBetween(-12, 12),
+      driftY = randomBetween(-44, -22),
+      opacity = randomBetween(0.42, 0.78),
+      rotate = randomBetween(-24, 24),
+      size = randomBetween(0.98, 1.28),
+      duration = randomBetween(620, 920),
+    } = options;
+
     appendTapNote("tap-note-burst tap-note-trail", x, y, (note) => {
-      note.style.setProperty("--trail-x", `${randomBetween(-8, 8).toFixed(2)}px`);
-      note.style.setProperty("--trail-y", `${randomBetween(-34, -18).toFixed(2)}px`);
-      note.style.setProperty("--trail-size", `${randomBetween(0.72, 0.98).toFixed(2)}rem`);
-      note.style.setProperty("--trail-opacity", `${randomBetween(0.28, 0.48).toFixed(2)}`);
-      note.style.setProperty("--trail-rotate", `${randomBetween(-18, 18).toFixed(2)}deg`);
-      note.style.setProperty("--trail-duration", `${randomBetween(480, 700).toFixed(0)}ms`);
+      note.style.setProperty("--trail-delay", `${delay.toFixed(0)}ms`);
+      note.style.setProperty("--trail-x", `${driftX.toFixed(2)}px`);
+      note.style.setProperty("--trail-y", `${driftY.toFixed(2)}px`);
+      note.style.setProperty("--trail-size", `${size.toFixed(2)}rem`);
+      note.style.setProperty("--trail-opacity", `${opacity.toFixed(2)}`);
+      note.style.setProperty("--trail-rotate", `${rotate.toFixed(2)}deg`);
+      note.style.setProperty("--trail-duration", `${duration.toFixed(0)}ms`);
     });
   };
 
   const emitTrailBetween = (startX, startY, endX, endY) => {
     const distance = Math.hypot(endX - startX, endY - startY);
 
-    if (distance < 14) {
+    if (distance < 8) {
       return;
     }
 
-    const stepDistance = 16;
+    const directionX = (endX - startX) / distance;
+    const directionY = (endY - startY) / distance;
+    const normalX = -directionY;
+    const normalY = directionX;
+    const stepDistance = distance > 96 ? 10 : 12;
     const stepCount = Math.max(1, Math.floor(distance / stepDistance));
+    const laneCount = distance > 72 ? 3 : 2;
 
     for (let stepIndex = 1; stepIndex <= stepCount; stepIndex += 1) {
       const progress = stepIndex / stepCount;
-      const x = lerp(startX, endX, progress) + randomBetween(-2.4, 2.4);
-      const y = lerp(startY, endY, progress) + randomBetween(-2.8, 2.8);
-      spawnTrailNote(x, y);
+      const anchorX = lerp(startX, endX, progress);
+      const anchorY = lerp(startY, endY, progress);
+
+      for (let laneIndex = 0; laneIndex < laneCount; laneIndex += 1) {
+        const laneOffset = laneIndex - (laneCount - 1) / 2;
+        const spread = laneOffset * randomBetween(4.5, 7.5);
+        const x = anchorX + normalX * spread + randomBetween(-1.8, 1.8);
+        const y = anchorY + normalY * spread + randomBetween(-2.2, 2.2);
+        const forwardDrift = randomBetween(-6, 14);
+        const sideDrift = randomBetween(-12, 12);
+
+        spawnTrailNote(x, y, {
+          delay: laneIndex * 14 + randomBetween(0, 14),
+          driftX: directionX * forwardDrift + normalX * sideDrift,
+          driftY: randomBetween(-48, -22) + directionY * forwardDrift * 0.25,
+          opacity: randomBetween(0.48, 0.86),
+          rotate: randomBetween(-26, 26),
+          size: randomBetween(1.02, 1.34),
+          duration: randomBetween(640, 980),
+        });
+      }
     }
   };
 
