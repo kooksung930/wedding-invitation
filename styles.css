@@ -11,6 +11,54 @@
   --content: min(100% - 1rem, 46rem);
 }
 
+@font-face {
+  font-family: "MaruBuri";
+  src: url("font/MaruBuri-ExtraLight.ttf") format("truetype");
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "MaruBuri";
+  src: url("font/MaruBuri-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "MaruBuri";
+  src: url("font/MaruBuri-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "MaruBuri";
+  src: url("font/MaruBuri-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "MaruBuri";
+  src: url("font/MaruBuri-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Deluxe Edition";
+  src: url("font/Deluxe Edition - Demo.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 *,
 *::before,
 *::after {
@@ -29,7 +77,7 @@ html {
 body {
   margin: 0;
   color: var(--ink);
-  font-family: "Noto Serif KR", serif;
+  font-family: "MaruBuri", serif;
   line-height: 1.7;
   background:
     radial-gradient(circle at top, rgba(255, 255, 255, 0.72), transparent 30%),
@@ -144,7 +192,7 @@ a {
 .hero-stage__headline,
 .person-card__name {
   margin: 0;
-  font-family: "Cormorant Garamond", serif;
+  font-family: "MaruBuri", serif;
   font-weight: 600;
   line-height: 0.95;
 }
@@ -336,8 +384,14 @@ html.js body.intro-complete .site-main {
 .invitation-card__script {
   margin: 1rem 0 0;
   color: var(--accent);
-  font-family: "Birthstone", cursive;
+  font-family: "Deluxe Edition", cursive;
   font-size: clamp(2rem, 7vw, 3rem);
+  letter-spacing: 0.02em;
+}
+
+.invitation-card__script-mark {
+  font-family: "MaruBuri", serif;
+  font-size: 0.88em;
 }
 
 .content-section {
