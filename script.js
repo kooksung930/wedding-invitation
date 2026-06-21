@@ -722,9 +722,9 @@ const renderCountdown = () => {
   countdownSeconds.textContent = pad(seconds);
 
   if (dayDiff > 0) {
-    countdownMessage.textContent = `국성과 가영의 결혼식이 ${dayDiff}일 남았습니다.`;
+    countdownMessage.innerHTML = `국성과 가영의 결혼식이 <strong>${dayDiff}일</strong> 남았습니다.`;
   } else if (dayDiff === 0) {
-    countdownMessage.textContent = "오늘은 바로 국성과 가영의 결혼식입니다.";
+    countdownMessage.innerHTML = `<strong>오늘</strong>은 바로 국성과 가영의 결혼식입니다.`;
   } else {
     countdownMessage.textContent = "국성과 가영의 결혼식은 아름다운 추억으로 남아 있습니다.";
   }

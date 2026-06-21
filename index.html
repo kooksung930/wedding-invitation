@@ -270,20 +270,25 @@
 
             <div class="countdown-wrapper">
               <div class="countdown">
-                <div class="countdown__unit-label">DAY</div>
-                <div></div>
-                <div class="countdown__unit-label">HOUR</div>
-                <div></div>
-                <div class="countdown__unit-label">MIN</div>
-                <div></div>
-                <div class="countdown__unit-label">SEC</div>
-                <div class="countdown__count" id="countdown-days">00</div>
-                <span>:</span>
-                <div class="countdown__count" id="countdown-hours">00</div>
-                <span>:</span>
-                <div class="countdown__count" id="countdown-minutes">00</div>
-                <span>:</span>
-                <div class="countdown__count" id="countdown-seconds">00</div>
+                <div class="countdown__unit">
+                  <div class="countdown__unit-label">DAYS</div>
+                  <div class="countdown__count" id="countdown-days">00</div>
+                </div>
+                <span class="countdown__separator">:</span>
+                <div class="countdown__unit">
+                  <div class="countdown__unit-label">HOUR</div>
+                  <div class="countdown__count" id="countdown-hours">00</div>
+                </div>
+                <span class="countdown__separator">:</span>
+                <div class="countdown__unit">
+                  <div class="countdown__unit-label">MIN</div>
+                  <div class="countdown__count" id="countdown-minutes">00</div>
+                </div>
+                <span class="countdown__separator">:</span>
+                <div class="countdown__unit">
+                  <div class="countdown__unit-label">SEC</div>
+                  <div class="countdown__count" id="countdown-seconds">00</div>
+                </div>
               </div>
               <div class="countdown-wrapper__message" id="countdown-message"></div>
             </div>
@@ -416,7 +421,7 @@
                 <span class="share-action__icon" aria-hidden="true">
                   <img src="resource/kakaotalk.png" alt="" />
                 </span>
-                <span class="share-action__label">카카오톡</span>
+                <span class="share-action__label">카카오톡 공유</span>
               </button>
 
               <button class="button share-action share-action--copy" id="copy-link-button" type="button">
