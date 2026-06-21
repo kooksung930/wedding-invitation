@@ -994,18 +994,22 @@ const setupTapNoteBursts = () => {
   const spawnTrailNote = (x, y, options = {}) => {
     const {
       delay = 0,
-      driftX = randomBetween(-12, 12),
-      driftY = randomBetween(-44, -22),
-      opacity = randomBetween(0.42, 0.78),
+      driftX,
+      driftY,
+      opacity = randomBetween(0.4, 0.72),
       rotate = randomBetween(-24, 24),
-      size = randomBetween(0.98, 1.28),
-      duration = randomBetween(620, 920),
+      size = randomBetween(0.92, 1.16),
+      duration = randomBetween(560, 820),
     } = options;
+    const radialAngle = randomBetween(-Math.PI, Math.PI);
+    const radialDistance = randomBetween(16, 32);
+    const resolvedDriftX = driftX ?? Math.cos(radialAngle) * radialDistance;
+    const resolvedDriftY = driftY ?? Math.sin(radialAngle) * radialDistance;
 
     appendTapNote("tap-note-burst tap-note-trail", x, y, (note) => {
       note.style.setProperty("--trail-delay", `${delay.toFixed(0)}ms`);
-      note.style.setProperty("--trail-x", `${driftX.toFixed(2)}px`);
-      note.style.setProperty("--trail-y", `${driftY.toFixed(2)}px`);
+      note.style.setProperty("--trail-x", `${resolvedDriftX.toFixed(2)}px`);
+      note.style.setProperty("--trail-y", `${resolvedDriftY.toFixed(2)}px`);
       note.style.setProperty("--trail-size", `${size.toFixed(2)}rem`);
       note.style.setProperty("--trail-opacity", `${opacity.toFixed(2)}`);
       note.style.setProperty("--trail-rotate", `${rotate.toFixed(2)}deg`);
@@ -1016,39 +1020,31 @@ const setupTapNoteBursts = () => {
   const emitTrailBetween = (startX, startY, endX, endY) => {
     const distance = Math.hypot(endX - startX, endY - startY);
 
-    if (distance < 8) {
+    if (distance < 10) {
       return;
     }
 
-    const directionX = (endX - startX) / distance;
-    const directionY = (endY - startY) / distance;
-    const normalX = -directionY;
-    const normalY = directionX;
-    const stepDistance = distance > 96 ? 10 : 12;
+    const stepDistance = distance > 110 ? 18 : 20;
     const stepCount = Math.max(1, Math.floor(distance / stepDistance));
-    const laneCount = distance > 72 ? 3 : 2;
+    const sprayCount = distance > 96 ? 2 : 1;
 
     for (let stepIndex = 1; stepIndex <= stepCount; stepIndex += 1) {
       const progress = stepIndex / stepCount;
-      const anchorX = lerp(startX, endX, progress);
-      const anchorY = lerp(startY, endY, progress);
+      const anchorX = lerp(startX, endX, progress) + randomBetween(-1.8, 1.8);
+      const anchorY = lerp(startY, endY, progress) + randomBetween(-1.8, 1.8);
 
-      for (let laneIndex = 0; laneIndex < laneCount; laneIndex += 1) {
-        const laneOffset = laneIndex - (laneCount - 1) / 2;
-        const spread = laneOffset * randomBetween(4.5, 7.5);
-        const x = anchorX + normalX * spread + randomBetween(-1.8, 1.8);
-        const y = anchorY + normalY * spread + randomBetween(-2.2, 2.2);
-        const forwardDrift = randomBetween(-6, 14);
-        const sideDrift = randomBetween(-12, 12);
+      for (let sprayIndex = 0; sprayIndex < sprayCount; sprayIndex += 1) {
+        const angle = randomBetween(-Math.PI, Math.PI);
+        const radius = randomBetween(18, 34) + sprayIndex * randomBetween(2, 8);
 
-        spawnTrailNote(x, y, {
-          delay: laneIndex * 14 + randomBetween(0, 14),
-          driftX: directionX * forwardDrift + normalX * sideDrift,
-          driftY: randomBetween(-48, -22) + directionY * forwardDrift * 0.25,
-          opacity: randomBetween(0.48, 0.86),
-          rotate: randomBetween(-26, 26),
-          size: randomBetween(1.02, 1.34),
-          duration: randomBetween(640, 980),
+        spawnTrailNote(anchorX, anchorY, {
+          delay: sprayIndex * 16 + randomBetween(0, 12),
+          driftX: Math.cos(angle) * radius,
+          driftY: Math.sin(angle) * radius,
+          opacity: randomBetween(0.42, 0.76),
+          rotate: randomBetween(-28, 28),
+          size: randomBetween(0.94, 1.18),
+          duration: randomBetween(560, 840),
         });
       }
     }
