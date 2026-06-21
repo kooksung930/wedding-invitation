@@ -1300,6 +1300,32 @@ html.js body.intro-complete .cover-card__welcome {
   line-height: 1.58;
 }
 
+.account-panel {
+  display: grid;
+  gap: 0.12rem;
+}
+
+.account-panel__bank {
+  color: var(--accent-color);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.account-panel__number {
+  color: var(--ink-color);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  word-break: break-all;
+}
+
+.account-panel__holder {
+  color: var(--ink-soft-color);
+  font-size: 0.76rem;
+  font-weight: 400;
+}
+
 .reveal-panel {
   margin-top: 0.8rem;
   padding-top: 0.8rem;
