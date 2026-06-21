@@ -1,4 +1,5 @@
 const INTRO_DURATION_MS = 1900;
+const INTRO_FADE_DURATION_MS = 800;
 const SEOUL_TIMEZONE = "Asia/Seoul";
 const WEDDING_DATE = new Date(Date.UTC(2026, 8, 19, 17, 0, 0));
 const WEDDING_DAY_START = new Date(Date.UTC(2026, 8, 19, 0, 0, 0));
@@ -267,10 +268,13 @@ const setupIntro = () => {
     document.body.classList.add("intro-playing");
 
     window.setTimeout(() => {
-      document.body.classList.remove("intro-playing");
       document.body.classList.add("intro-complete");
       mainContent.focus({ preventScroll: true });
       window.scrollTo({ top: 0, behavior: "smooth" });
+
+      window.setTimeout(() => {
+        document.body.classList.remove("intro-playing");
+      }, INTRO_FADE_DURATION_MS);
     }, INTRO_DURATION_MS);
   });
 

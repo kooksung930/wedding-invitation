@@ -335,6 +335,20 @@ body.intro-playing .intro-screen__side {
   animation: intro-fade 0.95s ease forwards;
 }
 
+body.intro-complete .record-launch__disc {
+  transform: rotate(1280deg) scale(3.4);
+  opacity: 0;
+  filter: blur(2px);
+}
+
+body.intro-complete .intro-screen__title,
+body.intro-complete .intro-screen__copy,
+body.intro-complete .intro-screen__kicker,
+body.intro-complete .intro-screen__side {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
 body.intro-complete .intro-screen {
   opacity: 0;
   visibility: hidden;
