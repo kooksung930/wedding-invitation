@@ -1,8 +1,8 @@
 :root {
   --bg: #f6efe5;
   --bg-deep: #ebdfd0;
-  --paper: rgba(251, 247, 241, 0.94);
-  --paper-soft: rgba(255, 255, 255, 0.72);
+  --paper: rgba(255, 252, 247, 0.94);
+  --paper-soft: rgba(255, 255, 255, 0.78);
   --line: #dec3b2;
   --line-strong: #c9835d;
   --ink: #4a3329;
@@ -161,14 +161,15 @@ button {
 
 .intro-screen__kicker,
 .intro-screen__side,
-.album-meta-line,
 .section-label,
 .section-heading__eyebrow,
 .album-footer__kicker,
 .album-badge,
-.calendar-panel__head span,
+.record-detail span,
 .transit-note__item span,
-.info-card__label {
+.info-card__label,
+.album-cover__eyebrow,
+.calendar-panel__head span {
   margin: 0;
   color: var(--accent-deep);
   font-size: 0.72rem;
@@ -215,19 +216,19 @@ button {
 .gallery-indicator:focus-visible,
 .gallery-thumb:focus-visible,
 .action-button:focus-visible,
-.heart-button:focus-visible {
+.heart-button:focus-visible,
+.map-link:focus-visible {
   outline: 3px solid rgba(196, 109, 71, 0.3);
   outline-offset: 4px;
 }
 
 .intro-screen__title,
-.album-cover__hero-title,
-.album-sleeve__title,
+.album-cover__title,
 .section-heading__title,
 .info-card__title {
   margin: 0;
   font-weight: 600;
-  line-height: 1.05;
+  line-height: 1.08;
 }
 
 .intro-screen__title {
@@ -313,7 +314,6 @@ html.js body.intro-complete .site-main {
 }
 
 .album-cover__hero {
-  position: relative;
   overflow: hidden;
   aspect-ratio: 1 / 1.04;
   border-bottom: 1px solid var(--line);
@@ -327,42 +327,34 @@ html.js body.intro-complete .site-main {
   object-position: center;
 }
 
-.album-cover__hero-overlay {
-  position: absolute;
-  inset: auto 0 0 0;
-  padding: 1.5rem 1rem 1rem;
+.album-cover__caption {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1rem;
   text-align: center;
-  color: #fff9f2;
-  background: linear-gradient(180deg, rgba(14, 10, 8, 0), rgba(14, 10, 8, 0.88));
 }
 
-.album-meta-line {
-  color: rgba(255, 244, 237, 0.92);
+.album-cover__title {
+  font-size: clamp(1.9rem, 8vw, 3rem);
 }
 
-.album-cover__hero-title {
-  margin-top: 0.35rem;
-  font-size: clamp(2.65rem, 11vw, 4.8rem);
-  color: #fff9f2;
-}
-
-.album-cover__hero-names {
-  margin: 0.55rem 0 0;
-  font-size: 0.92rem;
+.album-cover__meta {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
-.album-sleeve {
-  padding: 1rem;
+.section-heading {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
-.album-sleeve__badges {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+.section-heading__title {
+  font-size: clamp(1.55rem, 7vw, 2.35rem);
 }
 
 .album-badge {
@@ -378,101 +370,60 @@ html.js body.intro-complete .site-main {
   font-weight: 600;
 }
 
-.album-sleeve__grid {
+.record-letter {
   display: grid;
   gap: 1rem;
 }
 
-.album-sleeve__title {
-  font-size: clamp(2.2rem, 10vw, 4.1rem);
+.record-letter__top {
+  display: grid;
+  justify-items: start;
+  gap: 0.75rem;
 }
 
-.album-sleeve__script {
-  margin: 0.7rem 0 0;
+.record-letter__script {
+  margin: 0;
   color: var(--accent);
   font-family: "Deluxe Edition", cursive;
-  font-size: clamp(2rem, 8vw, 3rem);
-  line-height: 1.1;
+  font-size: clamp(1.8rem, 7vw, 2.45rem);
+  line-height: 1.06;
 }
 
-.artist-strip,
-.tracklist__column,
-.release-box,
-.album-sleeve__footer {
-  border-top: 1px solid var(--line);
+.record-letter__script-mark {
+  font-family: "MaruBuri", serif;
+  font-size: 0.85em;
 }
 
-.artist-strip {
-  margin-top: 1.05rem;
-  padding-top: 1rem;
-}
-
-.artist-strip__names {
-  margin: 0.35rem 0 0;
-  font-size: clamp(1.35rem, 6.2vw, 2rem);
-  letter-spacing: 0.06em;
-}
-
-.artist-strip__names span {
-  color: var(--accent);
-}
-
-.artist-strip__roles {
-  margin: 0.35rem 0 0;
-  color: var(--muted);
-  font-size: 0.75rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-}
-
-.tracklist {
+.record-details,
+.heart-grid {
   display: grid;
-  gap: 0.95rem;
-  margin-top: 1rem;
+  gap: 0.75rem;
 }
 
-.tracklist__column {
-  padding-top: 0.9rem;
+.record-detail,
+.paper-frame,
+.countdown-panel,
+.calendar-panel,
+.transit-note__item,
+.info-card,
+.map-link {
+  padding: 0.85rem;
+  border: 1px solid rgba(201, 131, 93, 0.4);
+  background: var(--paper-soft);
 }
 
-.tracklist__column ol {
-  display: grid;
-  gap: 0.45rem;
-  margin: 0.55rem 0 0;
-  padding: 0;
-  list-style: none;
+.record-detail strong {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 1.02rem;
+  line-height: 1.5;
 }
 
-.tracklist__column li {
-  display: flex;
-  gap: 0.65rem;
-  align-items: flex-start;
-  line-height: 1.55;
-}
-
-.tracklist__number {
-  min-width: 1.9rem;
-  color: var(--accent);
-  font-weight: 600;
-}
-
-.release-box {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  gap: 0.7rem;
-  align-items: center;
-  padding-top: 0.95rem;
-  padding-bottom: 0.95rem;
-  border-bottom: 1px solid var(--line);
-}
-
-.release-box__date,
-.venue-preview__caption,
+.record-detail p,
 .location-subtitle,
 .transit-note__item p,
 .countdown-panel__message,
 .heart-footnote,
-.album-sleeve__footer p,
 .album-footer__copy,
 .invitation-letter,
 .info-card__text,
@@ -481,103 +432,10 @@ html.js body.intro-complete .site-main {
   color: var(--muted);
 }
 
-.release-box__date {
+.record-detail p {
   margin-top: 0.35rem;
-  font-size: 1rem;
   line-height: 1.65;
-}
-
-.release-box__copy {
-  margin: 0;
-  color: var(--accent-deep);
-  font-size: 0.76rem;
-  letter-spacing: 0.08em;
-  line-height: 1.65;
-  text-transform: uppercase;
-}
-
-.mini-record {
-  width: 3rem;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at center, rgba(252, 244, 240, 0.9) 0 15%, transparent 15% 19%),
-    repeating-radial-gradient(circle at center, #6b4a3d 0 2px, #c68762 2px 3.5px, #6b4a3d 3.5px 5.2px);
-}
-
-.venue-preview {
-  margin-top: 1rem;
-}
-
-.venue-preview__frame,
-.paper-frame,
-.countdown-panel,
-.calendar-panel,
-.qr-card,
-.transit-note__item,
-.info-card {
-  padding: 0.75rem;
-  border: 1px solid rgba(201, 131, 93, 0.4);
-  background: var(--paper-soft);
-}
-
-.venue-preview__frame {
-  margin: 0.55rem 0 0;
-}
-
-.venue-preview__frame img {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-}
-
-.venue-preview__caption {
-  margin-top: 0.7rem;
-  line-height: 1.75;
-}
-
-.album-sleeve__footer {
-  display: grid;
-  gap: 0.8rem;
-  margin-top: 1rem;
-  padding-top: 0.95rem;
-}
-
-.barcode {
-  position: relative;
-  padding-top: 2.15rem;
-  color: var(--accent-deep);
-  font-size: 0.72rem;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-}
-
-.barcode::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: min(10rem, 100%);
-  height: 1.6rem;
-  background: repeating-linear-gradient(
-    90deg,
-    var(--accent-deep) 0 2px,
-    transparent 2px 4px,
-    var(--accent-deep) 4px 5px,
-    transparent 5px 7px
-  );
-  opacity: 0.85;
-}
-
-.section-heading {
-  display: grid;
-  gap: 0.35rem;
-  margin-bottom: 1rem;
-  text-align: center;
-}
-
-.section-heading__title {
-  font-size: clamp(1.55rem, 7vw, 2.4rem);
+  word-break: keep-all;
 }
 
 .invitation-letter {
@@ -585,12 +443,12 @@ html.js body.intro-complete .site-main {
   gap: 0.55rem;
   line-height: 1.95;
   text-align: center;
+  word-break: keep-all;
 }
 
 .family-lines {
   display: grid;
   gap: 0.6rem;
-  margin-top: 1rem;
   padding: 0.95rem;
   border: 1px solid rgba(201, 131, 93, 0.4);
   background: var(--paper-soft);
@@ -600,12 +458,89 @@ html.js body.intro-complete .site-main {
   margin: 0;
   text-align: center;
   line-height: 1.8;
+  word-break: keep-all;
 }
 
 .section-epilogue {
-  margin: 1rem 0 0;
+  margin: 0;
   text-align: center;
   color: var(--accent-deep);
+}
+
+.location-title {
+  margin: 0;
+  font-size: 1.08rem;
+  text-align: center;
+  word-break: keep-all;
+}
+
+.location-subtitle {
+  margin-top: 0.35rem;
+  text-align: center;
+  word-break: keep-all;
+}
+
+.paper-frame {
+  margin: 1rem 0 0;
+}
+
+.paper-frame img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.paper-frame figcaption {
+  margin-top: 0.6rem;
+  text-align: center;
+  color: var(--muted);
+}
+
+.map-links {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.map-link {
+  display: grid;
+  justify-items: center;
+  gap: 0.45rem;
+  text-align: center;
+  transition: transform 0.18s ease, border-color 0.18s ease;
+}
+
+.map-link:hover,
+.map-link:focus-visible {
+  transform: translateY(-1px);
+  border-color: var(--line-strong);
+}
+
+.map-link__icon {
+  width: 3rem;
+  height: 3rem;
+  object-fit: contain;
+  border-radius: 0.85rem;
+}
+
+.map-link__label {
+  color: var(--muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.transit-note {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+
+.transit-note__item p {
+  margin-top: 0.45rem;
+  line-height: 1.8;
+  word-break: keep-all;
 }
 
 .wedding-clock {
@@ -801,6 +736,7 @@ html.js body.intro-complete .site-main {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
   min-height: 3rem;
   padding: 0.9rem 1.1rem;
   border: 1px solid transparent;
@@ -826,82 +762,7 @@ html.js body.intro-complete .site-main {
 }
 
 .action-button--full {
-  width: 100%;
   margin-top: 0.9rem;
-}
-
-.location-title {
-  margin: 0;
-  font-size: 1.08rem;
-  text-align: center;
-}
-
-.location-subtitle {
-  margin-top: 0.4rem;
-  text-align: center;
-}
-
-.location-layout {
-  display: grid;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.paper-frame {
-  margin: 0;
-}
-
-.paper-frame img {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-}
-
-.paper-frame figcaption {
-  margin-top: 0.6rem;
-  text-align: center;
-  color: var(--muted);
-}
-
-.location-side {
-  display: grid;
-  gap: 0.85rem;
-}
-
-.qr-card {
-  display: grid;
-  justify-items: center;
-  gap: 0.6rem;
-  text-align: center;
-}
-
-.qr-card img {
-  width: min(100%, 10rem);
-}
-
-.qr-card p {
-  margin: 0;
-}
-
-.location-actions {
-  display: grid;
-  gap: 0.55rem;
-}
-
-.transit-note {
-  display: grid;
-  gap: 0.7rem;
-  margin-top: 1rem;
-}
-
-.transit-note__item p {
-  margin-top: 0.45rem;
-  line-height: 1.8;
-}
-
-.heart-grid {
-  display: grid;
-  gap: 0.8rem;
 }
 
 .info-card {
@@ -919,7 +780,6 @@ html.js body.intro-complete .site-main {
 }
 
 .heart-button {
-  width: 100%;
   margin-top: 0.9rem;
 }
 
@@ -1050,10 +910,6 @@ html.no-js .site-main {
 }
 
 @media (min-width: 560px) {
-  .tracklist {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .gallery-grid,
   .heart-grid,
   .transit-note {
@@ -1075,30 +931,19 @@ html.no-js .site-main {
   }
 
   .album-cover__hero {
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 16 / 10;
   }
 
-  .album-sleeve {
-    padding: 1.25rem;
+  .record-details {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .album-sleeve__grid,
-  .wedding-clock,
-  .location-layout {
+  .wedding-clock {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  }
-
-  .album-sleeve__grid {
-    align-items: start;
   }
 
   .gallery-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .album-sleeve__footer {
-    grid-template-columns: auto 1fr;
-    align-items: end;
   }
 }
 

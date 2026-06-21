@@ -158,6 +158,7 @@ const setupLightbox = () => {
 
   lightbox.addEventListener("click", (event) => {
     const target = event.target;
+
     if (
       target.classList.contains("lightbox__backdrop") ||
       target.classList.contains("lightbox__close")
@@ -419,6 +420,7 @@ const setupGallery = () => {
 
   galleryIndicators.addEventListener("click", (event) => {
     const button = event.target.closest("[data-gallery-index]");
+
     if (!button) {
       return;
     }
@@ -428,6 +430,7 @@ const setupGallery = () => {
 
   galleryGrid.addEventListener("click", (event) => {
     const item = event.target.closest("[data-gallery-src]");
+
     if (!item) {
       return;
     }
@@ -451,6 +454,7 @@ const setupCopyButtons = () => {
   document.querySelectorAll("[data-copy]").forEach((button) => {
     button.addEventListener("click", () => {
       const value = button.getAttribute("data-copy");
+
       if (value) {
         copyText(value);
       }
