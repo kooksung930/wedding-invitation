@@ -134,106 +134,6 @@ img {
   max-width: 100%;
 }
 
-.music-notes {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.music-note {
-  position: absolute;
-  top: -10vh;
-  color: rgba(183, 106, 74, 0.14);
-  font-size: clamp(1rem, 2.5vw, 1.7rem);
-  animation: note-fall linear infinite;
-}
-
-.note-1 {
-  left: 7%;
-  animation-duration: 17s;
-  animation-delay: -3s;
-}
-
-.note-2 {
-  left: 19%;
-  animation-duration: 22s;
-  animation-delay: -9s;
-}
-
-.note-3 {
-  left: 31%;
-  animation-duration: 18s;
-  animation-delay: -5s;
-}
-
-.note-4 {
-  left: 48%;
-  animation-duration: 24s;
-  animation-delay: -11s;
-}
-
-.note-5 {
-  left: 62%;
-  animation-duration: 20s;
-  animation-delay: -7s;
-}
-
-.note-6 {
-  left: 76%;
-  animation-duration: 23s;
-  animation-delay: -13s;
-}
-
-.note-7 {
-  left: 88%;
-  animation-duration: 19s;
-  animation-delay: -4s;
-}
-
-.note-8 {
-  left: 95%;
-  animation-duration: 25s;
-  animation-delay: -15s;
-}
-
-.note-9 {
-  left: 12%;
-  animation-duration: 21s;
-  animation-delay: -12s;
-}
-
-.note-10 {
-  left: 26%;
-  animation-duration: 16s;
-  animation-delay: -6s;
-}
-
-.note-11 {
-  left: 41%;
-  animation-duration: 26s;
-  animation-delay: -18s;
-}
-
-.note-12 {
-  left: 57%;
-  animation-duration: 18s;
-  animation-delay: -10s;
-}
-
-.note-13 {
-  left: 71%;
-  animation-duration: 22s;
-  animation-delay: -14s;
-}
-
-.note-14 {
-  left: 84%;
-  animation-duration: 17s;
-  animation-delay: -8s;
-}
-
 .intro-screen {
   position: fixed;
   inset: 0;
@@ -584,16 +484,123 @@ html.js body.intro-complete .site-main {
 }
 
 .cover-card__image-wrapper {
+  position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
+  overflow: hidden;
   background:
     #d9cabd url("resource/intro-placeholder.jpg") center / cover no-repeat;
 }
 
 .cover-card__image-wrapper img {
+  position: relative;
+  z-index: 1;
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.cover-card__music {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(20, 14, 12, 0.04), rgba(20, 14, 12, 0.14));
+}
+
+.cover-card__music-note {
+  position: absolute;
+  left: var(--note-left, 10%);
+  top: var(--note-top, 82%);
+  color: rgba(255, 245, 233, 0.78);
+  font-size: var(--note-size, 1.2rem);
+  line-height: 1;
+  text-shadow:
+    0 0 14px rgba(32, 23, 21, 0.22),
+    0 0 24px rgba(255, 241, 228, 0.18);
+  opacity: 0;
+  mix-blend-mode: screen;
+  transform: translate3d(0, 0, 0) rotate(0deg) scale(0.68);
+  animation: cover-note-flow var(--note-duration, 9s) linear infinite;
+  animation-delay: var(--note-delay, 0s);
+}
+
+.cover-card__music-note.note-a {
+  --note-left: 12%;
+  --note-top: 78%;
+  --note-size: 1.05rem;
+  --note-duration: 9.4s;
+  --note-delay: -1.6s;
+  --note-drift-x: 4.8rem;
+  --note-drift-y: -9.4rem;
+  --note-rotate: -12deg;
+}
+
+.cover-card__music-note.note-b {
+  --note-left: 28%;
+  --note-top: 88%;
+  --note-size: 1.18rem;
+  --note-duration: 10.2s;
+  --note-delay: -5.1s;
+  --note-drift-x: 5.2rem;
+  --note-drift-y: -10.4rem;
+  --note-rotate: 10deg;
+}
+
+.cover-card__music-note.note-c {
+  --note-left: 46%;
+  --note-top: 82%;
+  --note-size: 1.3rem;
+  --note-duration: 8.8s;
+  --note-delay: -3.4s;
+  --note-drift-x: 3.8rem;
+  --note-drift-y: -8.8rem;
+  --note-rotate: -8deg;
+}
+
+.cover-card__music-note.note-d {
+  --note-left: 62%;
+  --note-top: 91%;
+  --note-size: 1.14rem;
+  --note-duration: 10.6s;
+  --note-delay: -7.3s;
+  --note-drift-x: 4.4rem;
+  --note-drift-y: -11rem;
+  --note-rotate: 14deg;
+}
+
+.cover-card__music-note.note-e {
+  --note-left: 76%;
+  --note-top: 76%;
+  --note-size: 1.06rem;
+  --note-duration: 9.1s;
+  --note-delay: -2.2s;
+  --note-drift-x: 3.1rem;
+  --note-drift-y: -8.2rem;
+  --note-rotate: -10deg;
+}
+
+.cover-card__music-note.note-f {
+  --note-left: 18%;
+  --note-top: 68%;
+  --note-size: 0.98rem;
+  --note-duration: 11s;
+  --note-delay: -8.8s;
+  --note-drift-x: 5.6rem;
+  --note-drift-y: -10rem;
+  --note-rotate: 8deg;
+}
+
+.cover-card__music-note.note-g {
+  --note-left: 58%;
+  --note-top: 64%;
+  --note-size: 1.08rem;
+  --note-duration: 9.8s;
+  --note-delay: -6.2s;
+  --note-drift-x: 4.8rem;
+  --note-drift-y: -9rem;
+  --note-rotate: -14deg;
 }
 
 .cover-card__body {
@@ -1334,18 +1341,29 @@ html.no-js .site-main {
   }
 }
 
-@keyframes note-fall {
+@keyframes cover-note-flow {
   0% {
-    transform: translate3d(0, -10vh, 0) rotate(0deg);
+    transform: translate3d(0, 1.2rem, 0) rotate(0deg) scale(0.62);
     opacity: 0;
   }
 
   10% {
-    opacity: 1;
+    opacity: 0.42;
+  }
+
+  32% {
+    opacity: 0.86;
+  }
+
+  72% {
+    opacity: 0.72;
   }
 
   100% {
-    transform: translate3d(3vw, 115vh, 0) rotate(220deg);
+    transform:
+      translate3d(var(--note-drift-x, 4rem), var(--note-drift-y, -9rem), 0)
+      rotate(var(--note-rotate, 12deg))
+      scale(1.18);
     opacity: 0;
   }
 }
