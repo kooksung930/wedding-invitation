@@ -6,6 +6,14 @@ const WEDDING_DAY_START = new Date(Date.UTC(2026, 8, 19, 0, 0, 0));
 const WEDDING_CONFIG = window.WEDDING_CONFIG ?? {};
 const KAKAO_JAVASCRIPT_KEY = String(WEDDING_CONFIG.kakaoJavascriptKey ?? "").trim();
 const KAKAO_SDK_URL = "https://t1.kakaocdn.net/kakao_js_sdk/2.8.1/kakao.min.js";
+const INTRO_PULSE_MS = 1000;
+const INTRO_NOTE_SYMBOLS = ["♩", "♪", "♫", "♬"];
+const INTRO_NOTE_QUADRANTS = [
+  { minDeg: -110, maxDeg: -25 },
+  { minDeg: -10, maxDeg: 75 },
+  { minDeg: 100, maxDeg: 170 },
+  { minDeg: -175, maxDeg: -105 },
+];
 const PREVIEW_IMAGE_COUNT = 9;
 const GALLERY_IMAGES = [
   "gallery/web/DSCF1934.jpg",
@@ -78,6 +86,11 @@ const showToast = (message) => {
 showToast.timeoutId = 0;
 
 const pad = (value) => String(value).padStart(2, "0");
+const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+const lerp = (start, end, progress) => start + (end - start) * progress;
+const randomBetween = (min, max) => min + Math.random() * (max - min);
+const easeOutCubic = (value) => 1 - (1 - value) ** 3;
+const easeInOutSine = (value) => -(Math.cos(Math.PI * value) - 1) / 2;
 
 const copyText = async (value, successMessage = "복사되었습니다.") => {
   try {
@@ -241,6 +254,154 @@ const setupModalCloseButtons = () => {
   });
 };
 
+const setupIntroMotion = (recordButton) => {
+  const flow = recordButton.querySelector(".record-launch__flow");
+  const surface = recordButton.querySelector(".record-launch__surface");
+  const glow = document.querySelector(".intro-screen__glow");
+
+  if (!flow || !surface || !glow) {
+    return () => {};
+  }
+
+  const particles = [];
+  let frameId = 0;
+  let lastFrameTime = 0;
+  let spawnAccumulator = 0;
+  let quadrantIndex = 0;
+  let isStopped = false;
+
+  const spawnParticle = () => {
+    const quadrant = INTRO_NOTE_QUADRANTS[quadrantIndex % INTRO_NOTE_QUADRANTS.length];
+    quadrantIndex += 1;
+
+    const element = document.createElement("span");
+    element.className = "record-launch__note";
+    element.textContent =
+      INTRO_NOTE_SYMBOLS[Math.floor(Math.random() * INTRO_NOTE_SYMBOLS.length)];
+    element.style.setProperty("--note-size", `${randomBetween(1, 1.26).toFixed(2)}rem`);
+    flow.appendChild(element);
+
+    const angle = (randomBetween(quadrant.minDeg, quadrant.maxDeg) * Math.PI) / 180;
+
+    particles.push({
+      angle,
+      duration: randomBetween(1500, 2250),
+      element,
+      maxDistance: randomBetween(118, 176),
+      phase: randomBetween(0, Math.PI * 2),
+      progress: 0,
+      rotation: randomBetween(-18, 18),
+      spin: randomBetween(-34, 34),
+      sway: randomBetween(-13, 13),
+    });
+  };
+
+  const updatePulse = (now) => {
+    const pulseProgress = ((now % INTRO_PULSE_MS) + INTRO_PULSE_MS) % INTRO_PULSE_MS / INTRO_PULSE_MS;
+    let pulseStrength = 0;
+
+    if (pulseProgress < 0.18) {
+      pulseStrength = easeOutCubic(pulseProgress / 0.18);
+    } else if (pulseProgress < 0.48) {
+      pulseStrength = 1 - easeInOutSine((pulseProgress - 0.18) / 0.3);
+    }
+
+    surface.style.transform = `scale(${(1 + pulseStrength * 0.058).toFixed(3)})`;
+    surface.style.setProperty("--record-halo-scale", (0.98 + pulseStrength * 0.24).toFixed(3));
+    surface.style.setProperty("--record-halo-opacity", (0.18 + pulseStrength * 0.34).toFixed(3));
+    surface.style.setProperty("--record-ring-scale", (0.94 + pulseStrength * 0.3).toFixed(3));
+    surface.style.setProperty("--record-ring-opacity", (0.08 + pulseStrength * 0.24).toFixed(3));
+    glow.style.transform = `scale(${(0.94 + pulseStrength * 0.2).toFixed(3)})`;
+    glow.style.opacity = (0.22 + pulseStrength * 0.32).toFixed(3);
+
+    return pulseStrength;
+  };
+
+  const tick = (now) => {
+    if (isStopped) {
+      return;
+    }
+
+    if (!lastFrameTime) {
+      lastFrameTime = now;
+    }
+
+    const delta = Math.min(now - lastFrameTime, 32);
+    lastFrameTime = now;
+
+    const pulseStrength = updatePulse(now);
+    const spawnInterval = lerp(215, 96, pulseStrength);
+    const speedMultiplier = lerp(0.48, 1.82, pulseStrength);
+    const flowOpacity = 0.42 + pulseStrength * 0.46;
+
+    spawnAccumulator += delta;
+
+    while (spawnAccumulator >= spawnInterval && particles.length < 24) {
+      spawnAccumulator -= spawnInterval;
+      spawnParticle();
+    }
+
+    for (let index = particles.length - 1; index >= 0; index -= 1) {
+      const particle = particles[index];
+      particle.progress += (delta / particle.duration) * speedMultiplier;
+
+      if (particle.progress >= 1) {
+        particle.element.remove();
+        particles.splice(index, 1);
+        continue;
+      }
+
+      const travel = easeOutCubic(clamp(particle.progress, 0, 1));
+      const distance = particle.maxDistance * travel;
+      const sway =
+        Math.sin(now / 180 + particle.phase) * particle.sway * (0.35 + travel);
+      const x =
+        Math.cos(particle.angle) * distance +
+        Math.cos(particle.angle + Math.PI / 2) * sway;
+      const y =
+        Math.sin(particle.angle) * distance +
+        Math.sin(particle.angle + Math.PI / 2) * sway;
+
+      let opacity = 1;
+
+      if (particle.progress < 0.1) {
+        opacity = particle.progress / 0.1;
+      } else if (particle.progress > 0.72) {
+        opacity = 1 - (particle.progress - 0.72) / 0.28;
+      }
+
+      const scale = 0.5 + travel * 0.7 + pulseStrength * 0.18;
+      const rotation = particle.rotation + particle.spin * travel;
+
+      particle.element.style.transform =
+        `translate(-50%, -50%) translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) ` +
+        `scale(${scale.toFixed(3)}) rotate(${rotation.toFixed(1)}deg)`;
+      particle.element.style.opacity = (clamp(opacity, 0, 1) * flowOpacity).toFixed(3);
+    }
+
+    frameId = window.requestAnimationFrame(tick);
+  };
+
+  frameId = window.requestAnimationFrame(tick);
+
+  return () => {
+    if (isStopped) {
+      return;
+    }
+
+    isStopped = true;
+    window.cancelAnimationFrame(frameId);
+    flow.textContent = "";
+    surface.style.transform = "";
+    surface.style.removeProperty("--record-halo-scale");
+    surface.style.removeProperty("--record-halo-opacity");
+    surface.style.removeProperty("--record-ring-scale");
+    surface.style.removeProperty("--record-ring-opacity");
+    glow.style.transform = "";
+    glow.style.opacity = "";
+  };
+};
+
 const setupIntro = () => {
   const recordButton = document.querySelector(".record-launch");
   const searchParams = new URLSearchParams(window.location.search);
@@ -258,6 +419,7 @@ const setupIntro = () => {
   }
 
   let isPlaying = false;
+  const stopIntroMotion = setupIntroMotion(recordButton);
 
   recordButton.addEventListener("click", () => {
     if (isPlaying) {
@@ -265,6 +427,7 @@ const setupIntro = () => {
     }
 
     isPlaying = true;
+    stopIntroMotion();
     document.body.classList.add("intro-playing");
 
     window.setTimeout(() => {
