@@ -42,11 +42,19 @@
       <div class="intro-screen__content">
         <p class="intro-screen__kicker">2026.09.19 SATURDAY 5PM</p>
         <button class="record-launch" type="button" aria-controls="main-content">
-          <img
-            class="record-launch__disc"
-            src="resource/record_front.jpg"
-            alt="국성과 가영의 웨딩 레코드판"
-          />
+          <span class="record-launch__surface" aria-hidden="true">
+            <img
+              class="record-launch__photo"
+              src="resource/intro.png"
+              data-fallback-src="gallery/web/SON01347.jpg"
+              alt=""
+            />
+            <img
+              class="record-launch__disc"
+              src="resource/record_front.jpg"
+              alt="국성과 가영의 웨딩 레코드판"
+            />
+          </span>
         </button>
         <p class="intro-screen__side">SIDE A / OUR FIRST PLAY</p>
         <h1 class="intro-screen__title">Press Our First Play Button</h1>
@@ -64,8 +72,9 @@
           <section class="paper-section cover-card">
             <div class="cover-card__image-wrapper">
               <img
-                src="resource/record_front.jpg"
-                alt="국성과 가영의 웨딩 커버 이미지"
+                src="resource/intro.png"
+                data-fallback-src="gallery/web/SON01347.jpg"
+                alt="국성과 가영의 메인 사진"
                 loading="eager"
                 decoding="async"
               />
