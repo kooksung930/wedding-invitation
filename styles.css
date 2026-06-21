@@ -1386,9 +1386,9 @@ html.js body.intro-complete .cover-card__welcome {
 
 .share-card__actions {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 5.18rem));
+  grid-template-columns: repeat(2, minmax(0, 5.24rem));
   justify-content: center;
-  gap: 0.52rem;
+  gap: 0.66rem;
   margin-top: 0.9rem;
 }
 
@@ -1418,11 +1418,6 @@ html.js body.intro-complete .cover-card__welcome {
 .share-action--copy {
   background: #f0eff4;
   color: #424651;
-}
-
-.share-action--calendar {
-  background: #dbe7fb;
-  color: #2a5bd7;
 }
 
 .share-action__icon {
@@ -1467,8 +1462,8 @@ html.js body.intro-complete .cover-card__welcome {
 
 @media (max-width: 360px) {
   .share-card__actions {
-    grid-template-columns: repeat(3, minmax(0, 4.72rem));
-    gap: 0.38rem;
+    grid-template-columns: repeat(2, minmax(0, 4.9rem));
+    gap: 0.46rem;
   }
 
   .share-action {
