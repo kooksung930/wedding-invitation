@@ -1085,9 +1085,10 @@ const setupCopyButtons = () => {
   document.querySelectorAll("[data-copy]").forEach((button) => {
     button.addEventListener("click", () => {
       const value = button.getAttribute("data-copy");
+      const successMessage = button.getAttribute("data-copy-success") || "복사되었습니다.";
 
       if (value) {
-        copyText(value, "주소가 복사되었습니다.");
+        copyText(value, successMessage);
       }
     });
   });
