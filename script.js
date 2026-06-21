@@ -52,10 +52,8 @@ const guestbookWriteButton = document.getElementById("guestbook-write-button");
 const guestbookListButton = document.getElementById("guestbook-list-button");
 const copyLinkButton = document.getElementById("copy-link-button");
 const kakaoShareButton = document.getElementById("kakao-share-button");
-const paperSections = Array.from(document.querySelectorAll(".paper-section"));
 
 let currentGalleryIndex = 0;
-let sectionTransitionFrame = 0;
 
 const showToast = (message) => {
   if (!toast) {
@@ -197,7 +195,6 @@ const setupIntro = () => {
       document.body.classList.add("intro-complete");
       mainContent.focus({ preventScroll: true });
       window.scrollTo({ top: 0, behavior: "smooth" });
-      updateSectionTransitions();
     }, INTRO_DURATION_MS);
   });
 
@@ -316,59 +313,6 @@ const renderCountdown = () => {
   } else {
     countdownMessage.textContent = "국성과 가영의 결혼식은 아름다운 추억으로 남아 있습니다.";
   }
-};
-
-const updateSectionTransitions = () => {
-  if (!paperSections.length) {
-    return;
-  }
-
-  const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-  const focusY = viewportHeight * 0.46;
-  const spread = viewportHeight * 0.8;
-
-  paperSections.forEach((section) => {
-    const rect = section.getBoundingClientRect();
-    const sectionCenter = rect.top + rect.height / 2;
-    const distance = Math.abs(sectionCenter - focusY);
-    const intensity = Math.max(0, 1 - distance / spread);
-
-    section.style.setProperty("--section-intensity", intensity.toFixed(3));
-    section.classList.toggle("is-active", intensity > 0.52);
-  });
-};
-
-const queueSectionTransitionUpdate = () => {
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    return;
-  }
-
-  if (sectionTransitionFrame) {
-    return;
-  }
-
-  sectionTransitionFrame = window.requestAnimationFrame(() => {
-    sectionTransitionFrame = 0;
-    updateSectionTransitions();
-  });
-};
-
-const setupSectionTransitions = () => {
-  if (!paperSections.length) {
-    return;
-  }
-
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    paperSections.forEach((section) => {
-      section.style.setProperty("--section-intensity", "1");
-      section.classList.add("is-active");
-    });
-    return;
-  }
-
-  updateSectionTransitions();
-  window.addEventListener("scroll", queueSectionTransitionUpdate, { passive: true });
-  window.addEventListener("resize", queueSectionTransitionUpdate);
 };
 
 const renderGallery = () => {
@@ -527,7 +471,6 @@ setupCopyButtons();
 setupHeartToggles();
 setupGuestbookPlaceholders();
 setupKakaoShare();
-setupSectionTransitions();
 renderCalendar();
 renderCountdown();
 setupGallery();

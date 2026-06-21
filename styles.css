@@ -346,38 +346,20 @@ html.js body.intro-complete .site-main {
   margin: 0 auto;
   overflow: hidden;
   border: 1px solid var(--paper-border-color);
-  background: var(--paper-soft-color);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0)),
+    var(--paper-soft-color);
   box-shadow: 0 18px 42px var(--shadow-color);
 }
 
-.invitation-paper::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  opacity: 0.08;
-  background: url("resource/case_white.png") center / cover no-repeat;
-  pointer-events: none;
-}
-
 .paper-section {
-  --section-intensity: 1;
   position: relative;
   z-index: 1;
   padding: 1.55rem 1.15rem;
-  opacity: calc(0.28 + var(--section-intensity) * 0.72);
-  transform: translateY(calc((1 - var(--section-intensity)) * 2rem))
-    scale(calc(0.975 + var(--section-intensity) * 0.025));
-  filter: saturate(calc(0.82 + var(--section-intensity) * 0.18));
-  transition: opacity 0.45s ease, transform 0.45s ease, filter 0.45s ease;
 }
 
 .paper-section + .paper-section {
   border-top: 1px solid var(--line-color);
-}
-
-.paper-section.is-active {
-  z-index: 2;
 }
 
 .section-header {
@@ -1237,11 +1219,5 @@ html.no-js .site-main {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-  }
-
-  .paper-section {
-    opacity: 1;
-    transform: none;
-    filter: none;
   }
 }
