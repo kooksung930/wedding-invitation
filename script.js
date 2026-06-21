@@ -5,6 +5,7 @@ const WEDDING_DAY_START = new Date(Date.UTC(2026, 8, 19, 0, 0, 0));
 const WEDDING_CONFIG = window.WEDDING_CONFIG ?? {};
 const KAKAO_JAVASCRIPT_KEY = String(WEDDING_CONFIG.kakaoJavascriptKey ?? "").trim();
 const KAKAO_SHARE_READY = false;
+const PREVIEW_IMAGE_COUNT = 9;
 const GALLERY_IMAGES = [
   "gallery/web/DSCF1934.jpg",
   "gallery/web/DSCF1954.jpg",
@@ -44,9 +45,7 @@ const countdownHours = document.getElementById("countdown-hours");
 const countdownMinutes = document.getElementById("countdown-minutes");
 const countdownSeconds = document.getElementById("countdown-seconds");
 const countdownMessage = document.getElementById("countdown-message");
-const galleryStage = document.getElementById("gallery-stage");
-const galleryStageImage = document.getElementById("gallery-stage-image");
-const galleryIndicator = document.getElementById("gallery-indicator");
+const galleryPreviewGrid = document.getElementById("gallery-preview-grid");
 const gallerySheetGrid = document.getElementById("gallery-sheet-grid");
 const galleryOpenButton = document.getElementById("gallery-open-button");
 const guestbookWriteButton = document.getElementById("guestbook-write-button");
@@ -295,47 +294,46 @@ const renderCountdown = () => {
     (WEDDING_DAY_START.getTime() - todaySeoul.getTime()) / 86400000,
   );
 
-  if (countdownDays) {
-    countdownDays.textContent = pad(days);
-  }
+  countdownDays.textContent = pad(days);
+  countdownHours.textContent = pad(hours);
+  countdownMinutes.textContent = pad(minutes);
+  countdownSeconds.textContent = pad(seconds);
 
-  if (countdownHours) {
-    countdownHours.textContent = pad(hours);
-  }
-
-  if (countdownMinutes) {
-    countdownMinutes.textContent = pad(minutes);
-  }
-
-  if (countdownSeconds) {
-    countdownSeconds.textContent = pad(seconds);
-  }
-
-  if (countdownMessage) {
-    if (dayDiff > 0) {
-      countdownMessage.textContent = `국성과 가영의 결혼식이 ${dayDiff}일 남았습니다.`;
-    } else if (dayDiff === 0) {
-      countdownMessage.textContent = "오늘은 바로 국성과 가영의 결혼식입니다.";
-    } else {
-      countdownMessage.textContent = "국성과 가영의 결혼식은 아름다운 추억으로 남아 있습니다.";
-    }
+  if (dayDiff > 0) {
+    countdownMessage.textContent = `국성과 가영의 결혼식이 ${dayDiff}일 남았습니다.`;
+  } else if (dayDiff === 0) {
+    countdownMessage.textContent = "오늘은 바로 국성과 가영의 결혼식입니다.";
+  } else {
+    countdownMessage.textContent = "국성과 가영의 결혼식은 아름다운 추억으로 남아 있습니다.";
   }
 };
 
 const renderGallery = () => {
-  if (!galleryStageImage || !galleryIndicator || !gallerySheetGrid) {
+  if (!galleryPreviewGrid || !gallerySheetGrid) {
     return;
   }
 
-  galleryStageImage.src = GALLERY_IMAGES[currentGalleryIndex];
-  galleryStageImage.alt = `국성과 가영의 웨딩 사진 ${currentGalleryIndex + 1}`;
+  const previewImages = GALLERY_IMAGES.slice(0, PREVIEW_IMAGE_COUNT);
 
-  galleryIndicator.innerHTML = GALLERY_IMAGES.map(
-    (_, index) =>
-      `<button class="gallery-dot${
-        index === currentGalleryIndex ? " is-active" : ""
-      }" type="button" data-gallery-index="${index}" aria-label="사진 ${index + 1} 보기"></button>`,
-  ).join("");
+  galleryPreviewGrid.innerHTML = previewImages
+    .map(
+      (src, index) => `
+        <button
+          class="gallery-preview"
+          type="button"
+          data-gallery-preview-index="${index}"
+          aria-label="사진 ${index + 1} 크게 보기"
+        >
+          <img
+            src="${src}"
+            alt="국성과 가영의 웨딩 사진 ${index + 1}"
+            loading="lazy"
+            decoding="async"
+          />
+        </button>
+      `,
+    )
+    .join("");
 
   gallerySheetGrid.innerHTML = GALLERY_IMAGES.map(
     (src, index) => `
@@ -356,49 +354,27 @@ const renderGallery = () => {
   ).join("");
 };
 
-const updateGalleryIndex = (nextIndex) => {
-  const total = GALLERY_IMAGES.length;
-  currentGalleryIndex = (nextIndex + total) % total;
-  renderGallery();
-};
-
 const setupGallery = () => {
-  const prevButton = document.querySelector('[data-gallery-direction="prev"]');
-  const nextButton = document.querySelector('[data-gallery-direction="next"]');
-
-  if (!galleryStage || !galleryOpenButton || !galleryIndicator || !gallerySheetGrid) {
+  if (!galleryPreviewGrid || !gallerySheetGrid || !galleryOpenButton) {
     return;
   }
 
   renderGallery();
 
-  prevButton?.addEventListener("click", () => {
-    updateGalleryIndex(currentGalleryIndex - 1);
-  });
+  galleryPreviewGrid.addEventListener("click", (event) => {
+    const item = event.target.closest("[data-gallery-preview-index]");
 
-  nextButton?.addEventListener("click", () => {
-    updateGalleryIndex(currentGalleryIndex + 1);
-  });
+    if (!item) {
+      return;
+    }
 
-  galleryStage.addEventListener("click", () => {
-    openLightbox(
-      GALLERY_IMAGES[currentGalleryIndex],
-      `국성과 가영의 웨딩 사진 ${currentGalleryIndex + 1}`,
-    );
+    const index = Number(item.getAttribute("data-gallery-preview-index"));
+    currentGalleryIndex = index;
+    openLightbox(GALLERY_IMAGES[index], `국성과 가영의 웨딩 사진 ${index + 1}`);
   });
 
   galleryOpenButton.addEventListener("click", () => {
     openGallerySheet();
-  });
-
-  galleryIndicator.addEventListener("click", (event) => {
-    const dot = event.target.closest("[data-gallery-index]");
-
-    if (!dot) {
-      return;
-    }
-
-    updateGalleryIndex(Number(dot.getAttribute("data-gallery-index")));
   });
 
   gallerySheetGrid.addEventListener("click", (event) => {
@@ -410,7 +386,6 @@ const setupGallery = () => {
 
     const index = Number(item.getAttribute("data-gallery-sheet-index"));
     currentGalleryIndex = index;
-    renderGallery();
     closeGallerySheet();
     openLightbox(GALLERY_IMAGES[index], `국성과 가영의 웨딩 사진 ${index + 1}`);
   });
@@ -479,7 +454,6 @@ const setupKakaoShare = () => {
 
     if (!KAKAO_SHARE_READY) {
       showToast("카카오 공유 로직은 키 연결 후 다음 단계에서 붙여드릴게요.");
-      return;
     }
   });
 };
