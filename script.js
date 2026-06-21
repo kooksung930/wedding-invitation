@@ -19,6 +19,7 @@ const GUESTBOOK_NOTICE_DEFAULT = "남겨주신 축하의 마음은 소중히 간
 const GUESTBOOK_ERROR_MESSAGE = "방명록을 잠시 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.";
 const INTRO_PULSE_MS = 1000;
 const INTRO_NOTE_SYMBOLS = ["♩", "♪", "♫", "♬"];
+const PAGE_NOTE_COUNT = 36;
 const INTRO_NOTE_QUADRANTS = [
   { minDeg: -110, maxDeg: -25 },
   { minDeg: -10, maxDeg: 75 },
@@ -110,6 +111,10 @@ showToast.timeoutId = 0;
 const pad = (value) => String(value).padStart(2, "0");
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 const lerp = (start, end, progress) => start + (end - start) * progress;
+const pseudoRandom = (seed) => {
+  const value = Math.sin(seed * 12.9898 + 78.233) * 43758.5453;
+  return value - Math.floor(value);
+};
 const randomBetween = (min, max) => min + Math.random() * (max - min);
 const easeOutCubic = (value) => 1 - (1 - value) ** 3;
 const easeInOutSine = (value) => -(Math.cos(Math.PI * value) - 1) / 2;
@@ -839,6 +844,50 @@ const setupIntro = () => {
   }
 };
 
+const setupPageNotes = () => {
+  const pageNotes = document.querySelector(".page-notes");
+
+  if (!pageNotes) {
+    return;
+  }
+
+  pageNotes.replaceChildren();
+
+  const columnCount = 6;
+  const rowCount = Math.ceil(PAGE_NOTE_COUNT / columnCount);
+
+  for (let index = 0; index < PAGE_NOTE_COUNT; index += 1) {
+    const row = Math.floor(index / columnCount);
+    const column = index % columnCount;
+    const leftProgress = columnCount === 1 ? 0.5 : column / (columnCount - 1);
+    const topProgress = rowCount === 1 ? 0.5 : row / (rowCount - 1);
+    const left = clamp(lerp(7, 89, leftProgress) + (pseudoRandom(index + 1) - 0.5) * 8.4, 4, 92);
+    const top = clamp(lerp(5, 95, topProgress) + (pseudoRandom(index + 41) - 0.5) * 9.6, 4, 96);
+    const size = 0.82 + pseudoRandom(index + 81) * 0.54;
+    const opacity = 0.18 + pseudoRandom(index + 121) * 0.16;
+    const duration = 9.4 + pseudoRandom(index + 161) * 4.8;
+    const delay = -(pseudoRandom(index + 201) * 12.5);
+    const driftX = (pseudoRandom(index + 241) - 0.5) * 4.8;
+    const driftY = (pseudoRandom(index + 281) - 0.5) * 5.8;
+    const rotate = -16 + pseudoRandom(index + 321) * 32;
+    const note = document.createElement("span");
+
+    note.className = "page-note";
+    note.textContent =
+      INTRO_NOTE_SYMBOLS[Math.floor(pseudoRandom(index + 361) * INTRO_NOTE_SYMBOLS.length)];
+    note.style.setProperty("--page-note-left", `${left.toFixed(2)}%`);
+    note.style.setProperty("--page-note-top", `${top.toFixed(2)}%`);
+    note.style.setProperty("--page-note-size", `${size.toFixed(2)}rem`);
+    note.style.setProperty("--page-note-opacity", opacity.toFixed(2));
+    note.style.setProperty("--page-note-duration", `${duration.toFixed(2)}s`);
+    note.style.setProperty("--page-note-delay", `${delay.toFixed(2)}s`);
+    note.style.setProperty("--page-note-drift-x", `${driftX.toFixed(2)}rem`);
+    note.style.setProperty("--page-note-drift-y", `${driftY.toFixed(2)}rem`);
+    note.style.setProperty("--page-note-rotate", `${rotate.toFixed(2)}deg`);
+    pageNotes.append(note);
+  }
+};
+
 const getSeoulParts = (date) => {
   const formatter = new Intl.DateTimeFormat("en-CA", {
     timeZone: SEOUL_TIMEZONE,
@@ -1233,6 +1282,7 @@ setupCopyButtons();
 setupHeartToggles();
 setupGuestbook();
 setupKakaoShare();
+setupPageNotes();
 renderCalendar();
 renderCountdown();
 setupGallery();
