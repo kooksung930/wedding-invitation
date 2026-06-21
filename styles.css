@@ -1050,6 +1050,18 @@ html.js body.intro-complete .cover-card__welcome {
   background: linear-gradient(180deg, rgba(13, 10, 9, 0.34), rgba(20, 15, 13, 0.5));
 }
 
+.calendar-wrapper__month {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 0.62rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-shadow: 0 2px 10px rgba(13, 10, 9, 0.28);
+}
+
 .calendar-grid {
   position: relative;
   z-index: 1;
