@@ -61,6 +61,7 @@ const guestbookWriteButton = document.getElementById("guestbook-write-button");
 const guestbookListButton = document.getElementById("guestbook-list-button");
 const copyLinkButton = document.getElementById("copy-link-button");
 const kakaoShareButton = document.getElementById("kakao-share-button");
+const calendarDownloadButton = document.getElementById("calendar-download-button");
 
 let currentGalleryIndex = 0;
 let kakaoSdkPromise = null;
@@ -114,6 +115,52 @@ const copyText = async (value, successMessage = "복사되었습니다.") => {
 const getShareUrl = () => `${window.location.origin}${window.location.pathname}`;
 
 const getShareImageUrl = () => new URL("resource/thumbnail.png", window.location.href).href;
+
+const escapeIcsText = (value) =>
+  String(value)
+    .replace(/\\/g, "\\\\")
+    .replace(/\r?\n/g, "\\n")
+    .replace(/,/g, "\\,")
+    .replace(/;/g, "\\;");
+
+const downloadCalendarInvite = () => {
+  const lines = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//KookSung-GaYoung//Wedding Invitation//KO",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    "BEGIN:VEVENT",
+    "UID:gukseong-gayoung-wedding-20260919@example.com",
+    "DTSTAMP:20260621T000000Z",
+    "DTSTART:20260919T080000Z",
+    "DTEND:20260919T100000Z",
+    `SUMMARY:${escapeIcsText("국성 & 가영 결혼식")}`,
+    `DESCRIPTION:${escapeIcsText(
+      "2026년 9월 19일 토요일 오후 5시, 브라이드 밸리에서 전국성과 최가영의 결혼식이 열립니다.",
+    )}`,
+    `LOCATION:${escapeIcsText("서울 강남구 강남대로 262 B1층 브라이드밸리 웨딩홀")}`,
+    `URL:${escapeIcsText(getShareUrl())}`,
+    "END:VEVENT",
+    "END:VCALENDAR",
+    "",
+  ];
+
+  const blob = new Blob([lines.join("\r\n")], {
+    type: "text/calendar;charset=utf-8",
+  });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "gukseong-gayoung-wedding.ics";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  window.setTimeout(() => {
+    URL.revokeObjectURL(url);
+  }, 1000);
+};
 
 const loadKakaoSdk = () => {
   if (window.Kakao) {
@@ -779,6 +826,11 @@ const setupCopyButtons = () => {
 
   copyLinkButton?.addEventListener("click", () => {
     copyText(getShareUrl(), "링크가 복사되었습니다.");
+  });
+
+  calendarDownloadButton?.addEventListener("click", () => {
+    downloadCalendarInvite();
+    showToast("캘린더 파일을 다운로드했습니다.");
   });
 };
 

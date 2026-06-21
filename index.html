@@ -406,13 +406,33 @@
             </div>
 
             <div class="share-card__actions">
-              <button class="button button-style-2" id="copy-link-button" type="button">
-                링크 복사하기
+              <button class="button share-action share-action--kakao" id="kakao-share-button" type="button">
+                <span class="share-action__icon" aria-hidden="true">
+                  <img src="resource/kakaotalk.png" alt="" />
+                </span>
+                <span class="share-action__label">카카오톡</span>
               </button>
 
-              <button class="button button-style-1 share-card__kakao" id="kakao-share-button" type="button">
-                <img src="resource/kakaotalk.png" alt="" />
-                <span>카카오톡 공유하기</span>
+              <button class="button share-action share-action--copy" id="copy-link-button" type="button">
+                <span class="share-action__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="8" width="11" height="13" rx="2.3"></rect>
+                    <path d="M15 8V6.4A2.4 2.4 0 0 0 12.6 4H5.4A2.4 2.4 0 0 0 3 6.4v9.2A2.4 2.4 0 0 0 5.4 18H7"></path>
+                  </svg>
+                </span>
+                <span class="share-action__label">링크복사</span>
+              </button>
+
+              <button class="button share-action share-action--calendar" id="calendar-download-button" type="button">
+                <span class="share-action__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3.5" y="5.5" width="17" height="15" rx="2.5"></rect>
+                    <path d="M7.5 3.5v4"></path>
+                    <path d="M16.5 3.5v4"></path>
+                    <path d="M3.5 10.5h17"></path>
+                  </svg>
+                </span>
+                <span class="share-action__label">캘린더</span>
               </button>
             </div>
 

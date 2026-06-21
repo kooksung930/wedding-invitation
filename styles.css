@@ -1009,7 +1009,7 @@ html.js body.intro-complete .cover-card__welcome {
   content: "";
   position: absolute;
   inset: 0;
-  background: url("gallery/web/DSCF2222.jpg") center 42% / cover no-repeat;
+  background: url("gallery/web/DSCF2222.jpg") center 16% / cover no-repeat;
   opacity: 0.46;
 }
 
@@ -1268,35 +1268,92 @@ html.js body.intro-complete .cover-card__welcome {
   text-align: center;
 }
 
-.share-card__hint {
-  margin: 0;
-  line-height: 1.8;
+.share-card__actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin-top: 0.9rem;
+}
+
+.share-action {
+  display: grid;
+  place-items: center;
+  gap: 0.56rem;
+  aspect-ratio: 1 / 1.03;
+  padding: 0.82rem 0.45rem 0.74rem;
+  border: 1px solid transparent;
+  border-radius: 0.95rem;
+  box-shadow: 0 12px 24px rgba(58, 41, 31, 0.06);
+  font-weight: 600;
+}
+
+.share-action:hover,
+.share-action:focus-visible {
+  transform: translateY(-2px);
+}
+
+.share-action--kakao {
+  background: #f7cd17;
+  color: #221a15;
+}
+
+.share-action--copy {
+  background: #f0eff4;
+  color: #424651;
+}
+
+.share-action--calendar {
+  background: #dbe7fb;
+  color: #2a5bd7;
+}
+
+.share-action__icon {
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+}
+
+.share-action__icon img,
+.share-action__icon svg {
+  width: 1.65rem;
+  height: 1.65rem;
+}
+
+.share-action__icon img {
+  object-fit: contain;
+}
+
+.share-action__label {
+  font-size: 0.82rem;
+  line-height: 1.15;
   word-break: keep-all;
 }
 
-.share-card__actions {
-  display: grid;
-  gap: 0.55rem;
-  margin-top: 0.95rem;
-}
+@media (max-width: 360px) {
+  .share-card__actions {
+    gap: 0.5rem;
+  }
 
-.share-card__kakao {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.45rem;
-}
+  .share-action {
+    border-radius: 0.82rem;
+    padding: 0.72rem 0.35rem 0.66rem;
+  }
 
-.share-card__kakao img {
-  width: 0.95rem;
-  height: 0.95rem;
-  border-radius: 0.2rem;
-}
+  .share-action__icon {
+    width: 1.88rem;
+    height: 1.88rem;
+  }
 
-.share-card__hint {
-  margin-top: 0.9rem;
-  color: var(--ink-soft-color);
-  font-size: 0.78rem;
+  .share-action__icon img,
+  .share-action__icon svg {
+    width: 1.48rem;
+    height: 1.48rem;
+  }
+
+  .share-action__label {
+    font-size: 0.76rem;
+  }
 }
 
 .share-card__footer {
