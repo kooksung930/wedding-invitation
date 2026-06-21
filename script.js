@@ -56,6 +56,7 @@ const GALLERY_IMAGES = [
 ];
 
 const mainContent = document.getElementById("main-content");
+const tapNoteBursts = document.getElementById("tap-note-bursts");
 const toast = document.getElementById("toast");
 const lightbox = document.getElementById("lightbox");
 const lightboxImage = lightbox?.querySelector(".lightbox__image");
@@ -888,6 +889,58 @@ const setupPageNotes = () => {
   }
 };
 
+const setupTapNoteBursts = () => {
+  if (!mainContent || !tapNoteBursts) {
+    return;
+  }
+
+  if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+    return;
+  }
+
+  mainContent.addEventListener("click", (event) => {
+    if (!(event.target instanceof HTMLElement)) {
+      return;
+    }
+
+    if (event.clientX === 0 && event.clientY === 0) {
+      return;
+    }
+
+    if (event.target.closest("input, textarea, select")) {
+      return;
+    }
+
+    const burstCount = 8;
+
+    for (let index = 0; index < burstCount; index += 1) {
+      const note = document.createElement("span");
+      const angle = (Math.PI * 2 * index) / burstCount + randomBetween(-0.22, 0.22);
+      const distance = randomBetween(24, 62);
+      const offsetX = Math.cos(angle) * distance;
+      const offsetY = Math.sin(angle) * distance - randomBetween(8, 24);
+      const delay = index * 18 + randomBetween(0, 18);
+
+      note.className = "tap-note-burst";
+      note.textContent =
+        INTRO_NOTE_SYMBOLS[Math.floor(randomBetween(0, INTRO_NOTE_SYMBOLS.length))];
+      note.style.left = `${event.clientX}px`;
+      note.style.top = `${event.clientY}px`;
+      note.style.setProperty("--burst-x", `${offsetX.toFixed(2)}px`);
+      note.style.setProperty("--burst-y", `${offsetY.toFixed(2)}px`);
+      note.style.setProperty("--burst-size", `${randomBetween(0.92, 1.32).toFixed(2)}rem`);
+      note.style.setProperty("--burst-opacity", `${randomBetween(0.74, 0.98).toFixed(2)}`);
+      note.style.setProperty("--burst-rotate", `${randomBetween(-30, 30).toFixed(2)}deg`);
+      note.style.setProperty("--burst-duration", `${randomBetween(620, 860).toFixed(0)}ms`);
+      note.style.setProperty("--burst-delay", `${delay.toFixed(0)}ms`);
+      tapNoteBursts.append(note);
+      note.addEventListener("animationend", () => {
+        note.remove();
+      }, { once: true });
+    }
+  });
+};
+
 const getSeoulParts = (date) => {
   const formatter = new Intl.DateTimeFormat("en-CA", {
     timeZone: SEOUL_TIMEZONE,
@@ -1284,6 +1337,7 @@ setupHeartToggles();
 setupGuestbook();
 setupKakaoShare();
 setupPageNotes();
+setupTapNoteBursts();
 renderCalendar();
 renderCountdown();
 setupGallery();
