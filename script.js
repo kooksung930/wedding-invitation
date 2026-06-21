@@ -7,6 +7,9 @@ const WEDDING_CONFIG = window.WEDDING_CONFIG ?? {};
 const FIREBASE_CONFIG = WEDDING_CONFIG.firebaseConfig ?? null;
 const KAKAO_JAVASCRIPT_KEY = String(WEDDING_CONFIG.kakaoJavascriptKey ?? "").trim();
 const KAKAO_SDK_URL = "https://t1.kakaocdn.net/kakao_js_sdk/2.8.1/kakao.min.js";
+const SHARE_TITLE = "국성 & 가영 Wedding Invitation";
+const SHARE_DESCRIPTION = "두 사람의 첫 번째 레코드 재생하기";
+const SHARE_IMAGE_PATH = "resource/thumbnail.png?v=20260622";
 const GUESTBOOK_COLLECTION = "guestbook";
 const GUESTBOOK_PREVIEW_LIMIT = 5;
 const GUESTBOOK_MODAL_LIMIT = 40;
@@ -132,7 +135,7 @@ const copyText = async (value, successMessage = "복사되었습니다.") => {
 
 const getShareUrl = () => `${window.location.origin}${window.location.pathname}`;
 
-const getShareImageUrl = () => new URL("resource/thumbnail.png", window.location.href).href;
+const getShareImageUrl = () => new URL(SHARE_IMAGE_PATH, window.location.href).href;
 
 const isFirebaseGuestbookConfigured = () =>
   Boolean(
@@ -416,8 +419,8 @@ const sendKakaoShare = async () => {
   Kakao.Share.sendDefault({
     objectType: "feed",
     content: {
-      title: "국성 & 가영 Wedding Invitation",
-      description: "2026년 9월 19일 토요일 오후 5시, 브라이드 밸리",
+      title: SHARE_TITLE,
+      description: SHARE_DESCRIPTION,
       imageUrl: getShareImageUrl(),
       link: {
         mobileWebUrl: shareUrl,
