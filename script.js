@@ -1,3 +1,4 @@
+const INTRO_ENTRY_DURATION_MS = 1520;
 const INTRO_DURATION_MS = 1900;
 const INTRO_FADE_DURATION_MS = 800;
 const SEOUL_TIMEZONE = "Asia/Seoul";
@@ -569,6 +570,7 @@ const setupIntroMotion = (recordButton) => {
   };
 
   const updatePulse = (now) => {
+    const isEntering = document.body.classList.contains("intro-entering");
     const pulseProgress = ((now % INTRO_PULSE_MS) + INTRO_PULSE_MS) % INTRO_PULSE_MS / INTRO_PULSE_MS;
     let pulseStrength = 0;
 
@@ -583,8 +585,8 @@ const setupIntroMotion = (recordButton) => {
     surface.style.setProperty("--record-halo-opacity", (0.18 + pulseStrength * 0.34).toFixed(3));
     surface.style.setProperty("--record-ring-scale", (0.94 + pulseStrength * 0.3).toFixed(3));
     surface.style.setProperty("--record-ring-opacity", (0.08 + pulseStrength * 0.24).toFixed(3));
-    glow.style.transform = `scale(${(0.94 + pulseStrength * 0.2).toFixed(3)})`;
-    glow.style.opacity = (0.22 + pulseStrength * 0.32).toFixed(3);
+    glow.style.transform = `scale(${(isEntering ? 0.84 + pulseStrength * 0.12 : 0.94 + pulseStrength * 0.2).toFixed(3)})`;
+    glow.style.opacity = (isEntering ? 0.06 + pulseStrength * 0.12 : 0.22 + pulseStrength * 0.32).toFixed(3);
 
     return pulseStrength;
   };
@@ -602,18 +604,29 @@ const setupIntroMotion = (recordButton) => {
     lastFrameTime = now;
 
     const pulseStrength = updatePulse(now);
+    const isEntering = document.body.classList.contains("intro-entering");
     const isPressedNow = recordButton.classList.contains("is-pressed");
     const spawnInterval = isPressedNow
       ? lerp(62, 24, pulseStrength)
-      : lerp(215, 96, pulseStrength);
+      : isEntering
+        ? lerp(124, 52, pulseStrength)
+        : lerp(215, 96, pulseStrength);
     const speedMultiplier = isPressedNow
       ? lerp(1.35, 3.6, pulseStrength)
-      : lerp(0.48, 1.82, pulseStrength);
+      : isEntering
+        ? lerp(0.96, 2.48, pulseStrength)
+        : lerp(0.48, 1.82, pulseStrength);
     const flowOpacity = isPressedNow
       ? 0.76 + pulseStrength * 0.2
-      : 0.42 + pulseStrength * 0.46;
-    const particleLimit = isPressedNow ? 54 : 24;
-    const spawnBatchSize = isPressedNow ? (pulseStrength > 0.55 ? 3 : 2) : 1;
+      : isEntering
+        ? 0.52 + pulseStrength * 0.34
+        : 0.42 + pulseStrength * 0.46;
+    const particleLimit = isPressedNow ? 54 : isEntering ? 34 : 24;
+    const spawnBatchSize = isPressedNow
+      ? (pulseStrength > 0.55 ? 3 : 2)
+      : isEntering
+        ? (pulseStrength > 0.62 ? 2 : 1)
+        : 1;
 
     spawnAccumulator += delta;
 
@@ -696,6 +709,7 @@ const setupIntro = () => {
   const shouldSkipIntro =
     window.location.hash === "#main" || searchParams.get("skipIntro") === "1";
   const shouldAutoPlayIntro = searchParams.get("playIntro") === "1";
+  const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
   if (!recordButton || !mainContent) {
     return;
@@ -708,9 +722,21 @@ const setupIntro = () => {
 
   let isPlaying = false;
   let isPressed = false;
+  let isReady = Boolean(prefersReducedMotion);
   const stopIntroMotion = setupIntroMotion(recordButton);
   const preventNativeHoldBehavior = (event) => {
     event.preventDefault();
+  };
+  const markIntroReady = () => {
+    if (isReady) {
+      return;
+    }
+
+    isReady = true;
+    document.body.classList.remove("intro-entering");
+    document.body.classList.add("intro-ready");
+    recordButton.disabled = false;
+    recordButton.removeAttribute("aria-disabled");
   };
 
   const clearPressState = () => {
@@ -719,7 +745,7 @@ const setupIntro = () => {
   };
 
   const beginPressState = () => {
-    if (isPlaying || isPressed) {
+    if (!isReady || isPlaying || isPressed) {
       return;
     }
 
@@ -754,6 +780,11 @@ const setupIntro = () => {
 
     recordButton.addEventListener("pointerdown", (event) => {
       if (isPlaying) {
+        return;
+      }
+
+      if (!isReady) {
+        event.preventDefault();
         return;
       }
 
@@ -803,11 +834,17 @@ const setupIntro = () => {
   } else {
     recordButton.addEventListener("contextmenu", preventNativeHoldBehavior);
     recordButton.addEventListener("dragstart", preventNativeHoldBehavior);
-    recordButton.addEventListener("click", playIntro);
+    recordButton.addEventListener("click", () => {
+      if (!isReady) {
+        return;
+      }
+
+      playIntro();
+    });
   }
 
   recordButton.addEventListener("keydown", (event) => {
-    if (isPlaying || event.repeat) {
+    if (!isReady || isPlaying || event.repeat) {
       return;
     }
 
@@ -820,7 +857,7 @@ const setupIntro = () => {
   });
 
   recordButton.addEventListener("keyup", (event) => {
-    if (isPlaying) {
+    if (!isReady || isPlaying) {
       return;
     }
 
@@ -838,10 +875,21 @@ const setupIntro = () => {
     }
   });
 
+  if (prefersReducedMotion) {
+    document.body.classList.add("intro-ready");
+  } else {
+    document.body.classList.add("intro-entering");
+    recordButton.disabled = true;
+    recordButton.setAttribute("aria-disabled", "true");
+    window.setTimeout(() => {
+      markIntroReady();
+    }, INTRO_ENTRY_DURATION_MS);
+  }
+
   if (shouldAutoPlayIntro) {
     window.setTimeout(() => {
       playIntro();
-    }, 140);
+    }, prefersReducedMotion ? 140 : INTRO_ENTRY_DURATION_MS + 220);
   }
 };
 

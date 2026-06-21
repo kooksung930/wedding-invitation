@@ -186,6 +186,11 @@ img {
   font-size: 0.7rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(0.8rem);
+  transition:
+    opacity 0.72s ease,
+    transform 0.72s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 .intro-screen__side {
@@ -202,11 +207,15 @@ img {
   overflow: visible;
   cursor: pointer;
   isolation: isolate;
+  opacity: 0;
+  transform: translate3d(-68vw, 0, 0) rotate(-900deg) scale(0.9);
+  transform-origin: 50% 50%;
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   touch-action: manipulation;
   user-select: none;
+  will-change: transform, opacity;
 }
 
 .record-launch__flow {
@@ -326,12 +335,64 @@ img {
   line-height: 1.16;
   white-space: nowrap;
   word-break: keep-all;
+  opacity: 0;
+  transform: translateY(0.8rem);
+  transition:
+    opacity 0.78s ease,
+    transform 0.78s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 .intro-screen__copy {
   margin: 0;
   color: rgba(63, 48, 40, 0.7);
   line-height: 1.75;
+  opacity: 0;
+  transform: translateY(0.8rem);
+  transition:
+    opacity 0.82s ease,
+    transform 0.82s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+body.intro-entering .record-launch {
+  animation: intro-record-roll-in 1.52s cubic-bezier(0.16, 0.84, 0.24, 1) forwards;
+}
+
+body.intro-ready .record-launch,
+body.intro-playing .record-launch {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+}
+
+body.intro-ready .intro-screen__kicker,
+body.intro-ready .intro-screen__side,
+body.intro-ready .intro-screen__title,
+body.intro-ready .intro-screen__copy,
+body.intro-playing .intro-screen__kicker,
+body.intro-playing .intro-screen__side,
+body.intro-playing .intro-screen__title,
+body.intro-playing .intro-screen__copy {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+body.intro-ready .intro-screen__kicker,
+body.intro-playing .intro-screen__kicker {
+  transition-delay: 0.08s;
+}
+
+body.intro-ready .intro-screen__side,
+body.intro-playing .intro-screen__side {
+  transition-delay: 0.18s;
+}
+
+body.intro-ready .intro-screen__title,
+body.intro-playing .intro-screen__title {
+  transition-delay: 0.26s;
+}
+
+body.intro-ready .intro-screen__copy,
+body.intro-playing .intro-screen__copy {
+  transition-delay: 0.36s;
 }
 
 body.intro-playing .intro-screen__glow {
@@ -1956,6 +2017,27 @@ html.no-js .site-main {
   100% {
     transform: rotate(1680deg) scale(0.2);
     opacity: 0;
+  }
+}
+
+@keyframes intro-record-roll-in {
+  0% {
+    opacity: 0;
+    transform: translate3d(-68vw, 0, 0) rotate(-900deg) scale(0.9);
+  }
+
+  16% {
+    opacity: 1;
+  }
+
+  76% {
+    opacity: 1;
+    transform: translate3d(1.2rem, 0, 0) rotate(38deg) scale(1.02);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
   }
 }
 
