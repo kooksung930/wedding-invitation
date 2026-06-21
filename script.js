@@ -330,7 +330,7 @@ const subscribeGuestbookFeed = async (container, limitCount) => {
           ...doc.data(),
         }));
 
-        renderGuestbookEntries(container, entries, "첫 번째 축하 메시지를 남겨주세요.");
+        renderGuestbookEntries(container, entries, "아직 등록된 메시지가 없습니다. 첫 번째 축하를 남겨주세요.");
       },
       (error) => {
         renderGuestbookEntries(container, [], getGuestbookErrorMessage(error));
@@ -1047,7 +1047,7 @@ const initializeGuestbookFeed = async () => {
       guestbookPosts,
       GUESTBOOK_PREVIEW_LIMIT,
     );
-    setGuestbookNotice("하객 여러분의 따뜻한 메시지가 실시간으로 반영됩니다.", "success");
+    setGuestbookNotice("남겨주신 축하 메시지는 실시간으로 반영됩니다.", "success");
     setGuestbookInteractivity(true);
   } catch (error) {
     const message = getGuestbookErrorMessage(error);
@@ -1119,7 +1119,7 @@ const submitGuestbookEntry = async (event) => {
 
     guestbookMessageInput.value = "";
     updateGuestbookCount();
-    showToast("방명록을 남겼습니다.");
+    showToast("축하 메시지를 남겼습니다.");
   } catch (error) {
     const notice = getGuestbookErrorMessage(error);
     setGuestbookNotice(notice, "error");
@@ -1135,9 +1135,9 @@ const setupGuestbook = () => {
   }
 
   setGuestbookInteractivity(false);
-  setGuestbookNotice("방명록을 연결하는 중입니다.");
-  renderGuestbookEntries(guestbookPosts, [], "방명록을 연결하는 중입니다.");
-  renderGuestbookEntries(guestbookSheetPosts, [], "방명록을 불러오는 중입니다.");
+  setGuestbookNotice("방명록을 불러오는 중입니다.");
+  renderGuestbookEntries(guestbookPosts, [], "방명록을 불러오는 중입니다.");
+  renderGuestbookEntries(guestbookSheetPosts, [], "축하 메시지를 불러오는 중입니다.");
   updateGuestbookCount();
 
   guestbookMessageInput?.addEventListener("input", () => {
