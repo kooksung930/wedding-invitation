@@ -83,7 +83,6 @@ let gallerySheetRendered = false;
 let lightboxThumbsRendered = false;
 let hasActivatedBgm = false;
 let bgmFadeFrameId = 0;
-let hasPrimedBgm = false;
 
 const showToast = (message) => {
   if (!toast) {
@@ -617,12 +616,11 @@ const fadeInBgm = () => {
   bgmFadeFrameId = window.requestAnimationFrame(step);
 };
 
-const playBgmWithSound = () => {
+const tryPlayBgm = () => {
   if (!bgmPlayer || hasActivatedBgm) {
     return;
   }
 
-  bgmPlayer.muted = false;
   bgmPlayer.volume = 0.01;
   bgmPlayer
     .play()
@@ -630,24 +628,7 @@ const playBgmWithSound = () => {
       hasActivatedBgm = true;
       fadeInBgm();
     })
-    .catch(() => {
-      if (hasPrimedBgm) {
-        return;
-      }
-
-      bgmPlayer.muted = true;
-      bgmPlayer.volume = 0;
-      bgmPlayer
-        .play()
-        .then(() => {
-          hasPrimedBgm = true;
-        })
-        .catch(() => {});
-    });
-};
-
-const tryPlayBgm = () => {
-  playBgmWithSound();
+    .catch(() => {});
 };
 
 const setupBgm = () => {
@@ -657,45 +638,7 @@ const setupBgm = () => {
 
   bgmPlayer.loop = true;
   bgmPlayer.preload = "auto";
-  bgmPlayer.autoplay = true;
   bgmPlayer.playsInline = true;
-  tryPlayBgm();
-
-  const activate = () => {
-    if (!bgmPlayer) {
-      return;
-    }
-
-    if (hasPrimedBgm) {
-      bgmPlayer.pause();
-      bgmPlayer.currentTime = bgmPlayer.currentTime || 0;
-      hasPrimedBgm = false;
-    }
-
-    playBgmWithSound();
-
-    if (hasActivatedBgm) {
-      document.removeEventListener("pointerdown", activate);
-      document.removeEventListener("touchstart", activate);
-      document.removeEventListener("click", activate, true);
-      document.removeEventListener("keydown", activate);
-      window.removeEventListener("pageshow", tryPlayBgm);
-      document.removeEventListener("visibilitychange", handleVisibilityPlay);
-    }
-  };
-
-  const handleVisibilityPlay = () => {
-    if (document.visibilityState === "visible") {
-      tryPlayBgm();
-    }
-  };
-
-  document.addEventListener("pointerdown", activate, { passive: true });
-  document.addEventListener("touchstart", activate, { passive: true });
-  document.addEventListener("click", activate, true);
-  document.addEventListener("keydown", activate);
-  window.addEventListener("pageshow", tryPlayBgm);
-  document.addEventListener("visibilitychange", handleVisibilityPlay);
 };
 
 const setupModalCloseButtons = () => {
@@ -930,7 +873,6 @@ const setupIntro = () => {
 
   if (shouldSkipIntro) {
     document.body.classList.add("intro-complete");
-    tryPlayBgm();
     return;
   }
 
