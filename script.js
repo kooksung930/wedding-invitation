@@ -38,18 +38,18 @@ const PREVIEW_IMAGE_COUNT = 9;
 const BGM_TARGET_VOLUME = 0.24;
 const BGM_FADE_IN_DURATION_MS = 2200;
 const GALLERY_IMAGES = [
-  "gallery/web/KakaoTalk_20260714_225120649.jpg",
-  "gallery/web/KakaoTalk_20260714_225120649_01.jpg",
-  "gallery/web/KakaoTalk_20260714_225120649_02.jpg",
-  "gallery/web/KakaoTalk_20260714_225120649_03.jpg",
-  "gallery/web/KakaoTalk_20260714_225120649_04.jpg",
-  "gallery/web/KakaoTalk_20260714_225120649_05.jpg",
-  "gallery/web/KakaoTalk_20260714_225120649_06.jpg",
-  "gallery/web/KakaoTalk_20260714_225120649_07.jpg",
-  "gallery/web/KakaoTalk_20260714_225120649_08.jpg",
-  "gallery/web/KakaoTalk_20260714_225120649_09.jpg",
-  "gallery/web/KakaoTalk_20260714_225120649_10.jpg",
-  "gallery/web/KakaoTalk_20260714_225120649_11.jpg",
+  "gallery/web/1.jpg",
+  "gallery/web/10.jpg",
+  "gallery/web/11.jpg",
+  "gallery/web/12.jpg",
+  "gallery/web/2.jpg",
+  "gallery/web/3.jpg",
+  "gallery/web/4.jpg",
+  "gallery/web/5.jpg",
+  "gallery/web/6.jpg",
+  "gallery/web/7.jpg",
+  "gallery/web/8.jpg",
+  "gallery/web/9.jpg",
 ];
 
 const mainContent = document.getElementById("main-content");
