@@ -37,7 +37,7 @@ const INTRO_NOTE_QUADRANTS = [
 const PREVIEW_IMAGE_COUNT = 9;
 const BGM_TARGET_VOLUME = 0.24;
 const BGM_FADE_IN_DURATION_MS = 2200;
-const ASSET_VERSION = "20260802-2";
+const ASSET_VERSION = "20260802-3";
 const GALLERY_IMAGES = Array.from(
   { length: 12 },
   (_, index) => `gallery/web/${index + 1}.jpg?v=${ASSET_VERSION}`,
@@ -83,6 +83,7 @@ let gallerySheetRendered = false;
 let lightboxThumbsRendered = false;
 let hasActivatedBgm = false;
 let bgmFadeFrameId = 0;
+let hasPrimedBgm = false;
 
 const showToast = (message) => {
   if (!toast) {
@@ -616,11 +617,12 @@ const fadeInBgm = () => {
   bgmFadeFrameId = window.requestAnimationFrame(step);
 };
 
-const tryPlayBgm = () => {
+const playBgmWithSound = () => {
   if (!bgmPlayer || hasActivatedBgm) {
     return;
   }
 
+  bgmPlayer.muted = false;
   bgmPlayer.volume = 0.01;
   bgmPlayer
     .play()
@@ -628,7 +630,24 @@ const tryPlayBgm = () => {
       hasActivatedBgm = true;
       fadeInBgm();
     })
-    .catch(() => {});
+    .catch(() => {
+      if (hasPrimedBgm) {
+        return;
+      }
+
+      bgmPlayer.muted = true;
+      bgmPlayer.volume = 0;
+      bgmPlayer
+        .play()
+        .then(() => {
+          hasPrimedBgm = true;
+        })
+        .catch(() => {});
+    });
+};
+
+const tryPlayBgm = () => {
+  playBgmWithSound();
 };
 
 const setupBgm = () => {
@@ -638,21 +657,45 @@ const setupBgm = () => {
 
   bgmPlayer.loop = true;
   bgmPlayer.preload = "auto";
+  bgmPlayer.autoplay = true;
+  bgmPlayer.playsInline = true;
   tryPlayBgm();
 
   const activate = () => {
-    tryPlayBgm();
+    if (!bgmPlayer) {
+      return;
+    }
+
+    if (hasPrimedBgm) {
+      bgmPlayer.pause();
+      bgmPlayer.currentTime = bgmPlayer.currentTime || 0;
+      hasPrimedBgm = false;
+    }
+
+    playBgmWithSound();
 
     if (hasActivatedBgm) {
       document.removeEventListener("pointerdown", activate);
       document.removeEventListener("touchstart", activate);
+      document.removeEventListener("click", activate, true);
       document.removeEventListener("keydown", activate);
+      window.removeEventListener("pageshow", tryPlayBgm);
+      document.removeEventListener("visibilitychange", handleVisibilityPlay);
+    }
+  };
+
+  const handleVisibilityPlay = () => {
+    if (document.visibilityState === "visible") {
+      tryPlayBgm();
     }
   };
 
   document.addEventListener("pointerdown", activate, { passive: true });
   document.addEventListener("touchstart", activate, { passive: true });
+  document.addEventListener("click", activate, true);
   document.addEventListener("keydown", activate);
+  window.addEventListener("pageshow", tryPlayBgm);
+  document.addEventListener("visibilitychange", handleVisibilityPlay);
 };
 
 const setupModalCloseButtons = () => {
