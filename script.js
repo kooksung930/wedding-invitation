@@ -39,9 +39,6 @@ const BGM_TARGET_VOLUME = 0.24;
 const BGM_FADE_IN_DURATION_MS = 2200;
 const GALLERY_IMAGES = [
   "gallery/web/1.jpg",
-  "gallery/web/10.jpg",
-  "gallery/web/11.jpg",
-  "gallery/web/12.jpg",
   "gallery/web/2.jpg",
   "gallery/web/3.jpg",
   "gallery/web/4.jpg",
@@ -50,6 +47,9 @@ const GALLERY_IMAGES = [
   "gallery/web/7.jpg",
   "gallery/web/8.jpg",
   "gallery/web/9.jpg",
+  "gallery/web/10.jpg",
+  "gallery/web/11.jpg",
+  "gallery/web/12.jpg",
 ];
 
 const mainContent = document.getElementById("main-content");

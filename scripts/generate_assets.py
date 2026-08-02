@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import re
 
 import qrcode
 from PIL import Image, ImageOps
@@ -16,6 +17,21 @@ MANIFEST_PATH = WEB_GALLERY_DIR / "manifest.json"
 VENUE_URL = "https://naver.me/FDnCdx7B"
 MAX_SIZE = (1600, 1600)
 JPEG_QUALITY = 82
+
+
+def natural_sort_key(path: Path) -> tuple[object, ...]:
+    parts = re.split(r"(\d+)", path.stem)
+    key: list[object] = []
+
+    for part in parts:
+        if not part:
+            continue
+        if part.isdigit():
+            key.append(int(part))
+        else:
+            key.append(part.lower())
+
+    return tuple(key)
 
 
 def generate_qr() -> None:
@@ -35,7 +51,7 @@ def build_gallery() -> None:
     WEB_GALLERY_DIR.mkdir(parents=True, exist_ok=True)
     items: list[str] = []
 
-    for path in sorted(GALLERY_DIR.iterdir()):
+    for path in sorted(GALLERY_DIR.iterdir(), key=natural_sort_key):
         if not path.is_file():
             continue
         if path.parent == WEB_GALLERY_DIR:
