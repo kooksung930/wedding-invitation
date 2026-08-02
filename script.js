@@ -53,8 +53,10 @@ const GALLERY_IMAGES = [
 const mainContent = document.getElementById("main-content");
 const tapNoteBursts = document.getElementById("tap-note-bursts");
 const toast = document.getElementById("toast");
+const bgmPlayer = document.getElementById("bgm-player");
 const lightbox = document.getElementById("lightbox");
 const lightboxImage = lightbox?.querySelector(".lightbox__image");
+const lightboxThumbs = document.getElementById("lightbox-thumbs");
 const gallerySheet = document.getElementById("gallery-sheet");
 const guestbookSheet = document.getElementById("guestbook-sheet");
 const calendarGrid = document.getElementById("calendar-grid");
@@ -85,6 +87,8 @@ let guestbookServicePromise = null;
 let guestbookPreviewUnsubscribe = null;
 let guestbookSheetUnsubscribe = null;
 let gallerySheetRendered = false;
+let lightboxThumbsRendered = false;
+let hasActivatedBgm = false;
 
 const showToast = (message) => {
   if (!toast) {
@@ -485,13 +489,81 @@ const setModalState = (element, isOpen) => {
   document.body.classList.toggle("modal-open", isAnyModalOpen);
 };
 
-const openLightbox = (src, alt) => {
+const getGalleryAlt = (index) => `국성과 가영의 웨딩 사진 ${index + 1}`;
+
+const updateLightboxThumbSelection = () => {
+  if (!lightboxThumbs) {
+    return;
+  }
+
+  lightboxThumbs
+    .querySelectorAll("[data-lightbox-thumb-index]")
+    .forEach((button, index) => {
+      const isActive = index === currentGalleryIndex;
+      button.classList.toggle("is-active", isActive);
+      button.setAttribute("aria-pressed", String(isActive));
+
+      if (isActive) {
+        button.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          inline: "center",
+        });
+      }
+    });
+};
+
+const renderLightboxThumbs = () => {
+  if (!lightboxThumbs || lightboxThumbsRendered) {
+    return;
+  }
+
+  lightboxThumbs.innerHTML = GALLERY_IMAGES.map(
+    (src, index) => `
+      <button
+        class="lightbox__thumb"
+        type="button"
+        data-lightbox-thumb-index="${index}"
+        aria-label="사진 ${index + 1} 보기"
+        aria-pressed="false"
+      >
+        <img
+          src="${src}"
+          alt="${getGalleryAlt(index)}"
+          loading="lazy"
+          decoding="async"
+        />
+      </button>
+    `,
+  ).join("");
+
+  lightboxThumbsRendered = true;
+};
+
+const showLightboxImage = (index) => {
+  if (!lightboxImage || !GALLERY_IMAGES[index]) {
+    return;
+  }
+
+  currentGalleryIndex = index;
+  lightboxImage.src = GALLERY_IMAGES[index];
+  lightboxImage.alt = getGalleryAlt(index);
+  updateLightboxThumbSelection();
+};
+
+const moveLightbox = (direction) => {
+  const nextIndex =
+    (currentGalleryIndex + direction + GALLERY_IMAGES.length) % GALLERY_IMAGES.length;
+  showLightboxImage(nextIndex);
+};
+
+const openLightbox = (index) => {
   if (!lightboxImage) {
     return;
   }
 
-  lightboxImage.src = src;
-  lightboxImage.alt = alt;
+  renderLightboxThumbs();
+  showLightboxImage(index);
   setModalState(lightbox, true);
 };
 
@@ -521,6 +593,44 @@ const closeGuestbookSheet = () => {
   setModalState(guestbookSheet, false);
 };
 
+const tryPlayBgm = () => {
+  if (!bgmPlayer || hasActivatedBgm) {
+    return;
+  }
+
+  bgmPlayer.volume = 1;
+  bgmPlayer
+    .play()
+    .then(() => {
+      hasActivatedBgm = true;
+    })
+    .catch(() => {});
+};
+
+const setupBgm = () => {
+  if (!bgmPlayer) {
+    return;
+  }
+
+  bgmPlayer.loop = true;
+  bgmPlayer.preload = "auto";
+  tryPlayBgm();
+
+  const activate = () => {
+    tryPlayBgm();
+
+    if (hasActivatedBgm) {
+      document.removeEventListener("pointerdown", activate);
+      document.removeEventListener("touchstart", activate);
+      document.removeEventListener("keydown", activate);
+    }
+  };
+
+  document.addEventListener("pointerdown", activate, { passive: true });
+  document.addEventListener("touchstart", activate, { passive: true });
+  document.addEventListener("keydown", activate);
+};
+
 const setupModalCloseButtons = () => {
   document.querySelectorAll("[data-modal-close]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -542,6 +652,18 @@ const setupModalCloseButtons = () => {
 
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") {
+      if (lightbox && !lightbox.hidden) {
+        if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          moveLightbox(-1);
+        }
+
+        if (event.key === "ArrowRight") {
+          event.preventDefault();
+          moveLightbox(1);
+        }
+      }
+
       return;
     }
 
@@ -741,6 +863,7 @@ const setupIntro = () => {
 
   if (shouldSkipIntro) {
     document.body.classList.add("intro-complete");
+    tryPlayBgm();
     return;
   }
 
@@ -783,6 +906,7 @@ const setupIntro = () => {
     }
 
     isPlaying = true;
+    tryPlayBgm();
     clearPressState();
     stopIntroMotion();
     document.body.classList.add("intro-playing");
@@ -1379,8 +1503,7 @@ const setupGallery = () => {
     }
 
     const index = Number(item.getAttribute("data-gallery-preview-index"));
-    currentGalleryIndex = index;
-    openLightbox(GALLERY_IMAGES[index], `국성과 가영의 웨딩 사진 ${index + 1}`);
+    openLightbox(index);
   });
 
   galleryOpenButton.addEventListener("click", () => {
@@ -1396,9 +1519,30 @@ const setupGallery = () => {
     }
 
     const index = Number(item.getAttribute("data-gallery-sheet-index"));
-    currentGalleryIndex = index;
     closeGallerySheet();
-    openLightbox(GALLERY_IMAGES[index], `국성과 가영의 웨딩 사진 ${index + 1}`);
+    openLightbox(index);
+  });
+
+  lightboxThumbs?.addEventListener("click", (event) => {
+    const item = event.target.closest("[data-lightbox-thumb-index]");
+
+    if (!item) {
+      return;
+    }
+
+    const index = Number(item.getAttribute("data-lightbox-thumb-index"));
+    showLightboxImage(index);
+  });
+
+  lightbox?.addEventListener("click", (event) => {
+    const navButton = event.target.closest("[data-lightbox-nav]");
+
+    if (!navButton) {
+      return;
+    }
+
+    const direction = navButton.getAttribute("data-lightbox-nav") === "prev" ? -1 : 1;
+    moveLightbox(direction);
   });
 };
 
@@ -1625,6 +1769,7 @@ const setupKakaoShare = () => {
   });
 };
 
+setupBgm();
 setupIntro();
 setupScrollPerformanceTuning();
 setupModalCloseButtons();

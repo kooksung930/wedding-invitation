@@ -51,6 +51,7 @@
     </script>
   </head>
   <body>
+    <audio id="bgm-player" src="resource/bgm.mp3" loop preload="auto"></audio>
 
     <section class="intro-screen" aria-label="인트로">
       <div class="intro-screen__glow"></div>
@@ -516,7 +517,14 @@
         <button class="lightbox__close" type="button" data-modal-close="lightbox" aria-label="닫기">
           ×
         </button>
+        <button class="lightbox__nav lightbox__nav--prev" type="button" data-lightbox-nav="prev" aria-label="이전 사진">
+          &#8249;
+        </button>
         <img class="lightbox__image" alt="" />
+        <button class="lightbox__nav lightbox__nav--next" type="button" data-lightbox-nav="next" aria-label="다음 사진">
+          &#8250;
+        </button>
+        <figcaption class="lightbox__thumbs" id="lightbox-thumbs" aria-label="갤러리 썸네일"></figcaption>
       </figure>
     </div>
 
