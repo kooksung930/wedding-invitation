@@ -35,6 +35,8 @@ const INTRO_NOTE_QUADRANTS = [
   { minDeg: -175, maxDeg: -105 },
 ];
 const PREVIEW_IMAGE_COUNT = 9;
+const BGM_TARGET_VOLUME = 0.24;
+const BGM_FADE_IN_DURATION_MS = 2200;
 const GALLERY_IMAGES = [
   "gallery/web/KakaoTalk_20260714_225120649.jpg",
   "gallery/web/KakaoTalk_20260714_225120649_01.jpg",
@@ -89,6 +91,7 @@ let guestbookSheetUnsubscribe = null;
 let gallerySheetRendered = false;
 let lightboxThumbsRendered = false;
 let hasActivatedBgm = false;
+let bgmFadeFrameId = 0;
 
 const showToast = (message) => {
   if (!toast) {
@@ -593,16 +596,46 @@ const closeGuestbookSheet = () => {
   setModalState(guestbookSheet, false);
 };
 
+const fadeInBgm = () => {
+  if (!bgmPlayer) {
+    return;
+  }
+
+  if (bgmFadeFrameId) {
+    window.cancelAnimationFrame(bgmFadeFrameId);
+    bgmFadeFrameId = 0;
+  }
+
+  const startVolume = bgmPlayer.volume;
+  const startTime = performance.now();
+
+  const step = (now) => {
+    const progress = Math.min((now - startTime) / BGM_FADE_IN_DURATION_MS, 1);
+    bgmPlayer.volume = lerp(startVolume, BGM_TARGET_VOLUME, easeInOutSine(progress));
+
+    if (progress < 1) {
+      bgmFadeFrameId = window.requestAnimationFrame(step);
+      return;
+    }
+
+    bgmPlayer.volume = BGM_TARGET_VOLUME;
+    bgmFadeFrameId = 0;
+  };
+
+  bgmFadeFrameId = window.requestAnimationFrame(step);
+};
+
 const tryPlayBgm = () => {
   if (!bgmPlayer || hasActivatedBgm) {
     return;
   }
 
-  bgmPlayer.volume = 1;
+  bgmPlayer.volume = 0.01;
   bgmPlayer
     .play()
     .then(() => {
       hasActivatedBgm = true;
+      fadeInBgm();
     })
     .catch(() => {});
 };
