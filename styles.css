@@ -354,7 +354,7 @@ img {
 }
 
 body.intro-entering .record-launch {
-  animation: intro-record-roll-in 1.52s cubic-bezier(0.16, 0.84, 0.24, 1) forwards;
+  animation: intro-record-roll-in 1.52s cubic-bezier(0.16, 0.78, 0.24, 1) forwards;
 }
 
 body.intro-ready .record-launch,
@@ -2120,9 +2120,19 @@ html.no-js .site-main {
     opacity: 1;
   }
 
-  76% {
+  70% {
     opacity: 1;
-    transform: translate3d(1.2rem, 0, 0) rotate(38deg) scale(1.02);
+    transform: translate3d(2rem, 0, 0) rotate(52deg) scale(1.025);
+  }
+
+  88% {
+    opacity: 1;
+    transform: translate3d(0.22rem, 0, 0) rotate(5deg) scale(1.004);
+  }
+
+  96% {
+    opacity: 1;
+    transform: translate3d(-0.04rem, 0, 0) rotate(-1deg) scale(1.001);
   }
 
   100% {
