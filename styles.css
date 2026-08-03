@@ -1828,6 +1828,14 @@ html.js body.intro-complete .cover-card__welcome {
   letter-spacing: 0.12em;
 }
 
+.share-card__download {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.9rem;
+  min-width: 10.5rem;
+}
+
 .modal,
 .lightbox {
   position: fixed;
