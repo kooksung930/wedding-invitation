@@ -1582,13 +1582,12 @@ const setupHeartToggles = () => {
         return;
       }
 
-      const willOpen = target.hidden;
-
       document.querySelectorAll(".reveal-panel").forEach((panel) => {
-        panel.hidden = true;
+        panel.hidden = panel !== target;
       });
 
-      target.hidden = !willOpen;
+      // Repeated taps should keep the selected account panel open.
+      target.hidden = false;
     });
   });
 };
