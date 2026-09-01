@@ -20,8 +20,8 @@ const bgmTitleText = document.querySelector(".bgm-player__title-text");
 const bgmSeek = document.getElementById("bgm-seek");
 const maxFileSize = 50 * 1024 * 1024;
 const maxPhotoCount = 9;
-// 전송이 멈춘 경우 오래 기다리지 않도록, 진행이 없는 상태만 45초 후 실패 처리한다.
-const uploadIdleTimeout = 45 * 1000;
+// Firebase 업로드 세션 준비가 늦을 수 있어, 진행이 없는 상태를 2분까지 기다린다.
+const uploadIdleTimeout = 2 * 60 * 1000;
 const bgmPositionKey = "wedding-bgm-position";
 const bgmTrackKey = "wedding-bgm-track";
 const bgmPlayingKey = "wedding-bgm-playing";
@@ -161,6 +161,7 @@ form.addEventListener("submit", async (event) => {
       while (queue.length) {
         const { file, index } = queue.shift();
       submitButton.textContent = `Uploading ${index + 1}/${files.length}...`;
+      setStatus(`${index + 1}/${files.length} 업로드 준비 중…`);
       try {
         const fileId = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
         const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
@@ -196,7 +197,10 @@ form.addEventListener("submit", async (event) => {
         submitButton.textContent = `Uploading ${uploadedCount}/${files.length} complete...`;
       } catch (error) {
         console.error(`Failed file: ${file.name}`, error);
-        failedFiles.push(`${file.name} (${error.code || error.message || "error"})`);
+        const errorCode = error.code || error.message || "error";
+        const failure = `${file.name} (${errorCode})`;
+        failedFiles.push(failure);
+        setStatus(`${failure} 업로드 실패 · 다음 사진을 시도하는 중…`);
       }
       }
     };
