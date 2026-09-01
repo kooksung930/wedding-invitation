@@ -39,6 +39,7 @@ const BGM_TARGET_VOLUME = 0.24;
 const BGM_FADE_IN_DURATION_MS = 2200;
 const BGM_POSITION_KEY = "wedding-bgm-position";
 const BGM_TRACK_KEY = "wedding-bgm-track";
+const BGM_PLAYING_KEY = "wedding-bgm-playing";
 const BGM_PLAYLIST = [
   ["가정을만들자", "resource/bgm/가정을만들자.mp3"],
   ["길을 잃어도 괜찮아", "resource/bgm/길을 잃어도 괜찮아.mp3"],
@@ -699,6 +700,8 @@ const setupBgm = () => {
   const savePosition = () => {
     if (Number.isFinite(bgmPlayer.currentTime)) {
       window.localStorage.setItem(BGM_POSITION_KEY, String(bgmPlayer.currentTime));
+      window.localStorage.setItem(BGM_TRACK_KEY, String(trackIndex));
+      window.localStorage.setItem(BGM_PLAYING_KEY, String(!bgmPlayer.paused));
     }
   };
   bgmPlayer.addEventListener("timeupdate", savePosition);

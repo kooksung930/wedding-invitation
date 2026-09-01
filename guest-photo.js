@@ -21,6 +21,8 @@ const bgmSeek = document.getElementById("bgm-seek");
 const maxFileSize = 50 * 1024 * 1024;
 const uploadIdleTimeout = 10 * 60 * 1000;
 const bgmPositionKey = "wedding-bgm-position";
+const bgmTrackKey = "wedding-bgm-track";
+const bgmPlayingKey = "wedding-bgm-playing";
 const bgmPlaylist = [
   ["가정을만들자", "resource/bgm/가정을만들자.mp3"], ["길을 잃어도 괜찮아", "resource/bgm/길을 잃어도 괜찮아.mp3"],
   ["박사님과 골목대장", "resource/bgm/박사님과 골목대장.mp3"], ["새벽 두 시, 로봇은 안 잔다", "resource/bgm/새벽 두 시, 로봇은 안 잔다.mp3"],
@@ -43,7 +45,8 @@ const updateMusicButton = () => {
 const setupMusic = async () => {
   if (!bgmPlayer || !bgmToggle) return;
   bgmPlayer.volume = 0.24;
-  let trackIndex = 0;
+  let trackIndex = Number.parseInt(localStorage.getItem(bgmTrackKey), 10);
+  if (!Number.isInteger(trackIndex) || trackIndex < 0 || trackIndex >= bgmPlaylist.length) trackIndex = 0;
   const setTrack = (nextIndex, shouldPlay = false) => {
     trackIndex = (nextIndex + bgmPlaylist.length) % bgmPlaylist.length;
     const [title, source] = bgmPlaylist[trackIndex];
@@ -69,8 +72,10 @@ const setupMusic = async () => {
   bgmPrev?.addEventListener("click", () => setTrack(trackIndex - 1, true));
   bgmNext?.addEventListener("click", () => setTrack(trackIndex + 1, true));
   bgmPlayer.addEventListener("ended", () => setTrack(trackIndex + 1, true));
-  setTrack(0);
-  try { await bgmPlayer.play(); } catch (_) { /* Browser autoplay policy */ }
+  setTrack(trackIndex);
+  if (localStorage.getItem(bgmPlayingKey) === "true") {
+    try { await bgmPlayer.play(); } catch (_) { /* Browser autoplay policy */ }
+  }
   updateMusicButton();
 };
 
