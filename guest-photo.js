@@ -114,12 +114,22 @@ form.addEventListener("submit", async (event) => {
         const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
         const storagePath = `guest-photos/${user.uid}/${fileId}-${safeName}`;
         const contentType = getContentType(file);
-        let percent = 0;
-        await uploadFile(file, storagePath, contentType, user, (nextPercent) => {
-          percent = nextPercent;
-          submitButton.textContent = `Uploading ${index + 1}/${files.length} (${percent}%)...`;
+        const uploadTask = firebase.storage().ref(storagePath).put(file, { contentType });
+        const snapshot = await new Promise((resolve, reject) => {
+          const timeout = window.setTimeout(() => {
+            uploadTask.cancel();
+            reject(Object.assign(new Error("upload-timeout"), { code: "storage/timeout" }));
+          }, uploadIdleTimeout);
+          uploadTask.on("state_changed", (progress) => {
+            const percent = Math.round((progress.bytesTransferred / progress.totalBytes) * 100);
+            submitButton.textContent = `Uploading ${index + 1}/${files.length} (${percent}%)...`;
+          }, (error) => {
+            window.clearTimeout(timeout); reject(error);
+          }, () => {
+            window.clearTimeout(timeout); resolve(uploadTask.snapshot);
+          });
         });
-        const imageUrl = await firebase.storage().ref(storagePath).getDownloadURL();
+        const imageUrl = await snapshot.ref.getDownloadURL();
         await firebase.firestore().collection("guestPhotos").add({ uid: user.uid, name, message, imageUrl, storagePath, status: "pending", createdAt: firebase.firestore.FieldValue.serverTimestamp() });
         uploadedCount += 1;
         submitButton.textContent = `Uploading ${uploadedCount}/${files.length} complete...`;
@@ -129,7 +139,7 @@ form.addEventListener("submit", async (event) => {
       }
       }
     };
-    await Promise.all(Array.from({ length: Math.min(2, files.length) }, () => uploadWorker()));
+    await uploadWorker();
     form.reset(); preview.hidden = true; fileLabel.textContent = "Choose photos";
     if (failedFiles.length) setStatus(`${uploadedCount}장 업로드 완료. 실패: ${failedFiles.join(", ")}`);
     else setStatus(`${uploadedCount}장의 사진이 잘 도착했어요.`, true);
