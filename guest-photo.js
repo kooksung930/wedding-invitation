@@ -37,14 +37,11 @@ const setupMusic = async () => {
       if (savedPosition < bgmPlayer.duration) bgmPlayer.currentTime = savedPosition;
     }, { once: true });
   }
-  bgmPlayer.addEventListener("timeupdate", () => {
-    localStorage.setItem(bgmPositionKey, String(bgmPlayer.currentTime));
-  });
+  bgmPlayer.addEventListener("timeupdate", () => localStorage.setItem(bgmPositionKey, String(bgmPlayer.currentTime)));
   bgmPlayer.addEventListener("play", updateMusicButton);
   bgmPlayer.addEventListener("pause", updateMusicButton);
   musicButton.addEventListener("click", async () => {
-    if (bgmPlayer.paused) await bgmPlayer.play();
-    else bgmPlayer.pause();
+    if (bgmPlayer.paused) await bgmPlayer.play(); else bgmPlayer.pause();
     updateMusicButton();
   });
   try { await bgmPlayer.play(); } catch (_) { /* Browser autoplay policy */ }
@@ -60,11 +57,12 @@ const loadSdk = () => Promise.all(sdkUrls.map((src) => new Promise((resolve, rej
 })));
 
 fileInput.addEventListener("change", () => {
-  const file = fileInput.files[0];
-  if (!file) return;
-  fileLabel.textContent = file.name;
-  if (file.size <= maxFileSize && file.type.startsWith("image/")) {
-    previewImage.src = URL.createObjectURL(file);
+  const files = [...fileInput.files];
+  if (!files.length) return;
+  fileLabel.textContent = `${files.length} photos selected`;
+  const firstImage = files.find((file) => file.type.startsWith("image/") && file.size <= maxFileSize);
+  if (firstImage) {
+    previewImage.src = URL.createObjectURL(firstImage);
     preview.hidden = false;
   }
 });
@@ -73,43 +71,47 @@ setupMusic();
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const file = fileInput.files[0];
+  const files = [...fileInput.files];
   const name = document.getElementById("guest-name").value.trim();
   const message = document.getElementById("guest-message").value.trim();
   const consent = document.getElementById("guest-consent").checked;
 
-  if (!file || !file.type.startsWith("image/") || file.size > maxFileSize) {
-    setStatus("Please choose an image under 10MB."); return;
+  if (!files.length || files.some((file) => !file.type.startsWith("image/") || file.size > maxFileSize)) {
+    setStatus("10MB 이하의 이미지 사진만 선택해주세요."); return;
   }
-  if (!name) { setStatus("Please enter your name."); return; }
-  if (!consent) { setStatus("Please agree to send the photo."); return; }
+  if (!name) { setStatus("이름을 입력해주세요."); return; }
+  if (!consent) { setStatus("사진 전달 동의에 체크해주세요."); return; }
 
   submitButton.disabled = true;
-  submitButton.textContent = "Uploading...";
+  submitButton.textContent = `Uploading 0/${files.length}...`;
   setStatus("");
   try {
     if (!window.firebase) await loadSdk();
     if (!firebase.apps.length) firebase.initializeApp(config);
     const auth = firebase.auth();
     const user = auth.currentUser || (await auth.signInAnonymously()).user;
-    const fileId = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-    const storagePath = `guest-photos/${user.uid}/${fileId}-${safeName}`;
-    const snapshot = await firebase.storage().ref(storagePath).put(file, { contentType: file.type });
-    const imageUrl = await snapshot.ref.getDownloadURL();
-    await firebase.firestore().collection("guestPhotos").add({
-      uid: user.uid, name, message, imageUrl, storagePath, status: "pending",
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-    });
+    for (let index = 0; index < files.length; index += 1) {
+      const file = files[index];
+      const fileId = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const storagePath = `guest-photos/${user.uid}/${fileId}-${safeName}`;
+      const snapshot = await firebase.storage().ref(storagePath).put(file, { contentType: file.type });
+      const imageUrl = await snapshot.ref.getDownloadURL();
+      await firebase.firestore().collection("guestPhotos").add({
+        uid: user.uid, name, message, imageUrl, storagePath, status: "pending",
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+      submitButton.textContent = `Uploading ${index + 1}/${files.length}...`;
+    }
     form.reset();
     preview.hidden = true;
-    fileLabel.textContent = "Choose a photo";
-    setStatus("Your photo has arrived. Thank you!", true);
+    fileLabel.textContent = "Choose photos";
+    setStatus(`${files.length}장의 사진이 잘 도착했어요.`, true);
   } catch (error) {
     console.error(error);
     setStatus(`Upload failed: ${error.code || "please try again"}`);
   } finally {
     submitButton.disabled = false;
-    submitButton.textContent = "Leave a photo";
+    submitButton.textContent = "Leave photos";
   }
 });

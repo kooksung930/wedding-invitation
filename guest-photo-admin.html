@@ -7,7 +7,7 @@
     <title>사진 관리 | 국성 & 가영</title>
     <link rel="stylesheet" href="guest-photo.css?v=20260901-1" />
     <style>
-      .admin-card{margin-top:24px}.admin-card h1{font-size:28px}.admin-card p{color:#82766c;font-size:13px;line-height:1.9}.admin-link{display:block;margin-top:24px;padding:15px;border-radius:3px;background:#776454;color:#fff;text-align:center;text-decoration:none;font-size:13px}.admin-note{margin-top:20px!important;color:#9b5f54!important;font-size:11px!important}
+      .admin-card{margin-top:24px}.admin-card h1{font-size:28px}.admin-card p{color:#82766c;font-size:13px;line-height:1.9}.admin-input{width:100%;margin-top:10px;padding:14px;border:1px solid #d9cec2;border-radius:3px;font:inherit;font-size:13px}.admin-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}.admin-button{padding:13px 8px;border:0;border-radius:3px;background:#776454;color:#fff;font:inherit;font-size:12px;cursor:pointer}.admin-button.secondary{border:1px solid #d9cec2;background:#fffdf9;color:#77695e}.admin-status{min-height:20px;margin:14px 0;color:#9b5f54;font-size:12px!important}.admin-list{display:grid;gap:14px;margin-top:26px}.admin-photo{overflow:hidden;border:1px solid #e8ded3;background:#fff;border-radius:3px}.admin-photo img{display:block;width:100%;max-height:300px;object-fit:cover}.admin-photo__body{padding:12px}.admin-photo__meta{margin:0!important;color:#574d45!important;font-size:12px!important}.admin-photo__message{margin:5px 0 12px!important;color:#82766c!important;font-size:12px!important}.admin-photo__button{width:100%;padding:10px;border:1px solid #b8a494;border-radius:3px;background:#fff;color:#77695e;cursor:pointer}.admin-photo.is-approved{opacity:.72}.hidden{display:none!important}
     </style>
   </head>
   <body>
@@ -16,10 +16,23 @@
       <section class="photo-card admin-card">
         <p class="eyebrow">WEDDING PHOTO ADMIN</p>
         <h1>사진 관리</h1>
-        <p>업로드된 사진은 Firebase에서 확인하고, 공개할 사진의 상태를 <code>approved</code>로 변경하면 됩니다.</p>
-        <a class="admin-link" href="https://console.firebase.google.com/project/wedding-e262a/firestore/data/~2FguestPhotos" target="_blank" rel="noopener">Firebase 사진 목록 열기</a>
-        <p class="admin-note">Firebase 계정으로 로그인되어 있어야 합니다.</p>
+        <div id="login-panel">
+          <p>관리자 계정으로 로그인하면 올라온 사진을 확인하고 공개할 수 있어요.</p>
+          <input class="admin-input" id="admin-id" type="text" value="ks_gy" autocomplete="username" placeholder="아이디" />
+          <input class="admin-input" id="admin-password" type="password" autocomplete="current-password" placeholder="비밀번호" />
+          <div class="admin-actions">
+            <button class="admin-button" id="login-button" type="button">로그인</button>
+            <button class="admin-button secondary" id="signup-button" type="button">처음 한 번 계정 만들기</button>
+          </div>
+          <p class="admin-status" id="admin-status" role="status"></p>
+        </div>
+        <div id="photo-panel" class="hidden">
+          <p id="photo-count"></p>
+          <button class="admin-button secondary" id="logout-button" type="button">로그아웃</button>
+          <div class="admin-list" id="admin-list"></div>
+        </div>
       </section>
     </main>
+    <script defer src="guest-photo-admin.js?v=20260901-1"></script>
   </body>
 </html>
