@@ -83,7 +83,10 @@ form.addEventListener("submit", async (event) => {
     const auth = firebase.auth(); const user = auth.currentUser || (await auth.signInAnonymously()).user;
     const failedFiles = [];
     let uploadedCount = 0;
-    await Promise.all(files.map(async (file, index) => {
+    const queue = files.map((file, index) => ({ file, index }));
+    const uploadWorker = async () => {
+      while (queue.length) {
+        const { file, index } = queue.shift();
       submitButton.textContent = `Uploading ${index + 1}/${files.length}...`;
       try {
         const fileId = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
@@ -120,7 +123,9 @@ form.addEventListener("submit", async (event) => {
         console.error(`Failed file: ${file.name}`, error);
         failedFiles.push(`${file.name} (${error.code || error.message || "error"})`);
       }
-    }));
+      }
+    };
+    await Promise.all(Array.from({ length: Math.min(2, files.length) }, () => uploadWorker()));
     form.reset(); preview.hidden = true; fileLabel.textContent = "Choose photos";
     if (failedFiles.length) setStatus(`${uploadedCount}장 업로드 완료. 실패: ${failedFiles.join(", ")}`);
     else setStatus(`${uploadedCount}장의 사진이 잘 도착했어요.`, true);
