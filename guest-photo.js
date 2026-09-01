@@ -59,6 +59,7 @@ const loadSdk = () => Promise.all(sdkUrls.map((src) => new Promise((resolve, rej
 })));
 
 const isHeic = (file) => /\.(heic|heif)$/i.test(file.name) || /image\/(heic|heif)/i.test(file.type);
+const isImageFile = (file) => file.type.startsWith("image/") || /\.(jpe?g|png|webp|gif|heic|heif|avif)$/i.test(file.name);
 const loadHeicConverter = () => {
   if (window.heic2any) return Promise.resolve(window.heic2any);
   if (!heicConverterPromise) {
@@ -86,7 +87,7 @@ fileInput.addEventListener("change", () => {
   fileLabel.textContent = `${files.length} photos selected`;
   preview.textContent = "";
   files.forEach((file, index) => {
-    if ((!file.type.startsWith("image/") && !isHeic(file)) || file.size > maxInputFileSize) return;
+    if (!isImageFile(file) || file.size > maxInputFileSize) return;
     const image = document.createElement("img");
     image.src = URL.createObjectURL(file);
     image.alt = `Selected photo ${index + 1}`;
@@ -104,7 +105,7 @@ form.addEventListener("submit", async (event) => {
   const message = document.getElementById("guest-message").value.trim();
   const consent = document.getElementById("guest-consent").checked;
 
-  if (!files.length || files.some((file) => (!file.type.startsWith("image/") && !isHeic(file)) || file.size > maxInputFileSize)) {
+  if (!files.length || files.some((file) => !isImageFile(file) || file.size > maxInputFileSize)) {
     setStatus("이미지 사진만 선택해주세요. 원본은 50MB까지 가능해요."); return;
   }
   if (!name) { setStatus("이름을 입력해주세요."); return; }
@@ -155,12 +156,7 @@ form.addEventListener("submit", async (event) => {
 
 async function compressImage(file) {
   file = await convertIfHeic(file);
-  let image;
-  try {
-    image = await createImageBitmap(file);
-  } catch (_) {
-    throw new Error("unsupported-image-format");
-  }
+  const image = await decodeImage(file);
   const scale = Math.min(1, maxImageDimension / Math.max(image.width, image.height));
   const canvas = document.createElement("canvas");
   canvas.width = Math.max(1, Math.round(image.width * scale));
@@ -176,3 +172,16 @@ async function compressImage(file) {
   if (!blob || blob.size > maxUploadFileSize) throw new Error("compression-failed");
   return blob;
 }
+
+const decodeImage = async (blob) => {
+  if (window.createImageBitmap) {
+    try { return await window.createImageBitmap(blob); } catch (_) { /* Use HTML image fallback. */ }
+  }
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(blob);
+    const image = new Image();
+    image.onload = () => { URL.revokeObjectURL(url); resolve(image); };
+    image.onerror = () => { URL.revokeObjectURL(url); reject(new Error("unsupported-image-format")); };
+    image.src = url;
+  });
+};
