@@ -48,7 +48,7 @@ const openAdmin = async () => {
   const user = firebase.auth().currentUser;
   if (!user || user.email !== adminEmail) { setStatus("관리자 계정만 사용할 수 있어요."); return; }
   loginPanel.classList.add("hidden"); photoPanel.classList.remove("hidden");
-  firebase.firestore().collection("guestPhotos").orderBy("createdAt", "desc").onSnapshot(renderPhotos, (error) => setStatus(`목록을 불러오지 못했어요: ${error.code}`));
+  firebase.firestore().collection("guestPhotos").orderBy("createdAt", "desc").onSnapshot((snapshot) => renderPhotos(snapshot.docs), (error) => setStatus(`목록을 불러오지 못했어요: ${error.code}`));
 };
 
 const init = async () => {
