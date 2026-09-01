@@ -1369,7 +1369,12 @@ html.js body.intro-complete .cover-card__welcome {
 }
 
 .gallery-card .button {
+  display: block;
   margin-top: 0.95rem;
+}
+
+.gallery-card__upload {
+  margin-top: 0.55rem !important;
 }
 
 .info-item {
