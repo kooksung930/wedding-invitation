@@ -157,12 +157,16 @@ form.addEventListener("submit", async (event) => {
             uploadTask.cancel();
             reject(Object.assign(new Error("upload-timeout"), { code: "storage/timeout" }));
           }, uploadIdleTimeout);
+          let lastTransferred = 0;
           uploadTask.on("state_changed", (progress) => {
-            window.clearTimeout(timeout);
-            timeout = window.setTimeout(() => {
-              uploadTask.cancel();
-              reject(Object.assign(new Error("upload-timeout"), { code: "storage/timeout" }));
-            }, uploadIdleTimeout);
+            if (progress.bytesTransferred > lastTransferred) {
+              lastTransferred = progress.bytesTransferred;
+              window.clearTimeout(timeout);
+              timeout = window.setTimeout(() => {
+                uploadTask.cancel();
+                reject(Object.assign(new Error("upload-timeout"), { code: "storage/timeout" }));
+              }, uploadIdleTimeout);
+            }
             const percent = Math.round((progress.bytesTransferred / progress.totalBytes) * 100);
             submitButton.textContent = `Uploading ${index + 1}/${files.length} (${percent}%)...`;
           }, (error) => {
