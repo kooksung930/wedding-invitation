@@ -17,6 +17,7 @@ const bgmPrev = document.getElementById("bgm-prev");
 const bgmNext = document.getElementById("bgm-next");
 const bgmTitle = document.getElementById("bgm-title");
 const bgmTitleText = document.querySelector(".bgm-player__title-text");
+const bgmSeek = document.getElementById("bgm-seek");
 const maxFileSize = 50 * 1024 * 1024;
 const uploadIdleTimeout = 10 * 60 * 1000;
 const bgmPositionKey = "wedding-bgm-position";
@@ -60,6 +61,10 @@ const setupMusic = async () => {
   bgmPlayer.addEventListener("timeupdate", () => localStorage.setItem(bgmPositionKey, String(bgmPlayer.currentTime)));
   bgmPlayer.addEventListener("play", updateMusicButton);
   bgmPlayer.addEventListener("pause", updateMusicButton);
+  const updateSeek = () => { if (bgmSeek && Number.isFinite(bgmPlayer.duration) && bgmPlayer.duration > 0) bgmSeek.value = String((bgmPlayer.currentTime / bgmPlayer.duration) * 100); };
+  bgmPlayer.addEventListener("timeupdate", updateSeek);
+  bgmPlayer.addEventListener("loadedmetadata", updateSeek);
+  bgmSeek?.addEventListener("input", () => { if (bgmPlayer.duration) bgmPlayer.currentTime = (Number(bgmSeek.value) / 100) * bgmPlayer.duration; });
   bgmToggle.addEventListener("click", async () => { if (bgmPlayer.paused) await bgmPlayer.play(); else bgmPlayer.pause(); updateMusicButton(); });
   bgmPrev?.addEventListener("click", () => setTrack(trackIndex - 1, true));
   bgmNext?.addEventListener("click", () => setTrack(trackIndex + 1, true));

@@ -68,6 +68,7 @@ const bgmPrev = document.getElementById("bgm-prev");
 const bgmNext = document.getElementById("bgm-next");
 const bgmTitle = document.getElementById("bgm-title");
 const bgmTitleText = document.querySelector(".bgm-player__title-text");
+const bgmSeek = document.getElementById("bgm-seek");
 const lightbox = document.getElementById("lightbox");
 const lightboxImage = lightbox?.querySelector(".lightbox__image");
 const lightboxThumbs = document.getElementById("lightbox-thumbs");
@@ -687,6 +688,12 @@ const setupBgm = () => {
   bgmPlayer.addEventListener("ended", () => setTrack(trackIndex + 1, true));
   bgmPlayer.addEventListener("play", updateControls);
   bgmPlayer.addEventListener("pause", updateControls);
+  const updateSeek = () => {
+    if (bgmSeek && Number.isFinite(bgmPlayer.duration) && bgmPlayer.duration > 0) bgmSeek.value = String((bgmPlayer.currentTime / bgmPlayer.duration) * 100);
+  };
+  bgmPlayer.addEventListener("timeupdate", updateSeek);
+  bgmPlayer.addEventListener("loadedmetadata", updateSeek);
+  bgmSeek?.addEventListener("input", () => { if (bgmPlayer.duration) bgmPlayer.currentTime = (Number(bgmSeek.value) / 100) * bgmPlayer.duration; });
   updateControls();
 
   const savePosition = () => {
