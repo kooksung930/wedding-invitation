@@ -46,6 +46,11 @@ const loadSdk = () => Promise.all(sdkUrls.map((src) => new Promise((resolve, rej
 })));
 
 const isImageFile = (file) => file.type.startsWith("image/") || /\.(jpe?g|png|webp|gif|heic|heif|avif)$/i.test(file.name);
+const getContentType = (file) => {
+  if (file.type.startsWith("image/")) return file.type;
+  const extension = file.name.split(".").pop().toLowerCase();
+  return ({ jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp", gif: "image/gif", heic: "image/heic", heif: "image/heif", avif: "image/avif" })[extension] || "image/jpeg";
+};
 
 fileInput.addEventListener("change", () => {
   const files = [...fileInput.files];
@@ -80,7 +85,7 @@ form.addEventListener("submit", async (event) => {
       const fileId = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
       const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
       const storagePath = `guest-photos/${user.uid}/${fileId}-${safeName}`;
-      const contentType = file.type || "application/octet-stream";
+      const contentType = getContentType(file);
       const snapshot = await firebase.storage().ref(storagePath).put(file, { contentType });
       const imageUrl = await snapshot.ref.getDownloadURL();
       await firebase.firestore().collection("guestPhotos").add({ uid: user.uid, name, message, imageUrl, storagePath, status: "pending", createdAt: firebase.firestore.FieldValue.serverTimestamp() });
