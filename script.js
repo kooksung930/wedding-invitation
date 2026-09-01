@@ -659,8 +659,9 @@ const setupBgm = () => {
   bgmPlayer.loop = false;
   bgmPlayer.preload = "auto";
   bgmPlayer.playsInline = true;
-  let trackIndex = Number.parseInt(window.localStorage.getItem(BGM_TRACK_KEY), 10);
-  if (!Number.isInteger(trackIndex) || trackIndex < 0 || trackIndex >= BGM_PLAYLIST.length) trackIndex = 0;
+  let trackIndex = 0;
+  window.localStorage.removeItem(BGM_TRACK_KEY);
+  window.localStorage.removeItem(BGM_POSITION_KEY);
   const setTrack = (nextIndex, shouldPlay = false) => {
     trackIndex = (nextIndex + BGM_PLAYLIST.length) % BGM_PLAYLIST.length;
     const [title, source] = BGM_PLAYLIST[trackIndex];
