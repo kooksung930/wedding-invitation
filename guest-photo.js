@@ -80,17 +80,28 @@ form.addEventListener("submit", async (event) => {
     if (!window.firebase) await loadSdk();
     if (!firebase.apps.length) firebase.initializeApp(config);
     const auth = firebase.auth(); const user = auth.currentUser || (await auth.signInAnonymously()).user;
+    const failedFiles = [];
+    let uploadedCount = 0;
     for (let index = 0; index < files.length; index += 1) {
-      const file = files[index]; submitButton.textContent = `Uploading ${index + 1}/${files.length}...`;
-      const fileId = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-      const storagePath = `guest-photos/${user.uid}/${fileId}-${safeName}`;
-      const contentType = getContentType(file);
-      const snapshot = await firebase.storage().ref(storagePath).put(file, { contentType });
-      const imageUrl = await snapshot.ref.getDownloadURL();
-      await firebase.firestore().collection("guestPhotos").add({ uid: user.uid, name, message, imageUrl, storagePath, status: "pending", createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      const file = files[index];
+      submitButton.textContent = `Uploading ${index + 1}/${files.length}...`;
+      try {
+        const fileId = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const storagePath = `guest-photos/${user.uid}/${fileId}-${safeName}`;
+        const contentType = getContentType(file);
+        const snapshot = await firebase.storage().ref(storagePath).put(file, { contentType });
+        const imageUrl = await snapshot.ref.getDownloadURL();
+        await firebase.firestore().collection("guestPhotos").add({ uid: user.uid, name, message, imageUrl, storagePath, status: "pending", createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+        uploadedCount += 1;
+      } catch (error) {
+        console.error(`Failed file: ${file.name}`, error);
+        failedFiles.push(`${file.name} (${error.code || "error"})`);
+      }
     }
-    form.reset(); preview.hidden = true; fileLabel.textContent = "Choose photos"; setStatus(`${files.length}장의 사진이 잘 도착했어요.`, true);
+    form.reset(); preview.hidden = true; fileLabel.textContent = "Choose photos";
+    if (failedFiles.length) setStatus(`${uploadedCount}장 업로드 완료. 실패: ${failedFiles.join(", ")}`);
+    else setStatus(`${uploadedCount}장의 사진이 잘 도착했어요.`, true);
   } catch (error) { console.error(error); setStatus(`Upload failed: ${error.code || "please try again"}`); }
   finally { submitButton.disabled = false; submitButton.textContent = "Leave photos"; }
 });
