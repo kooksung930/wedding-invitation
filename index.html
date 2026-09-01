@@ -529,22 +529,29 @@
               </button>
             </div>
 
-            <label class="bgm-download-label" for="bgm-download-select">다운로드할 곡 선택</label>
-            <select class="bgm-download-select" id="bgm-download-select" aria-label="다운로드할 곡 선택"></select>
-            <a
+            <button
+              type="button"
               class="button button-style-2 share-card__download"
               id="bgm-download"
-              href="resource/bgm/%EA%B0%80%EC%A0%95%EC%9D%84%EB%A7%8C%EB%93%A4%EC%9E%90.mp3"
-              download="가정을만들자.mp3"
             >
               BGM 다운로드
-            </a>
+            </button>
 
             <p class="share-card__footer">THANK YOU FOR BEING PART OF OUR STORY</p>
           </section>
         </article>
       </div>
     </main>
+
+    <div class="modal" id="bgm-download-modal" hidden aria-hidden="true">
+      <button class="modal__backdrop" type="button" data-modal-close="bgm-download-modal" aria-label="닫기"></button>
+      <div class="modal__dialog bgm-download-modal__dialog">
+        <button class="modal__close" type="button" data-modal-close="bgm-download-modal" aria-label="닫기">×</button>
+        <div class="modal__title">BGM 다운로드</div>
+        <p class="bgm-download-modal__copy">다운로드할 곡을 선택해주세요.</p>
+        <div class="bgm-download-list" id="bgm-download-list"></div>
+      </div>
+    </div>
 
     <div class="modal" id="gallery-sheet" hidden aria-hidden="true">
       <button class="modal__backdrop" type="button" data-modal-close="gallery-sheet" aria-label="닫기"></button>
@@ -588,6 +595,6 @@
 
     <div class="toast" id="toast" hidden></div>
 
-    <script defer src="script.js?v=20260902-12"></script>
+    <script defer src="script.js?v=20260902-13"></script>
   </body>
 </html>

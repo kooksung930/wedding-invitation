@@ -71,7 +71,8 @@ const bgmTitle = document.getElementById("bgm-title");
 const bgmTitleText = document.querySelector(".bgm-player__title-text");
 const bgmSeek = document.getElementById("bgm-seek");
 const bgmDownload = document.getElementById("bgm-download");
-const bgmDownloadSelect = document.getElementById("bgm-download-select");
+const bgmDownloadModal = document.getElementById("bgm-download-modal");
+const bgmDownloadList = document.getElementById("bgm-download-list");
 const lightbox = document.getElementById("lightbox");
 const lightboxImage = lightbox?.querySelector(".lightbox__image");
 const lightboxThumbs = document.getElementById("lightbox-thumbs");
@@ -501,11 +502,24 @@ const setModalState = (element, isOpen) => {
   element.hidden = !isOpen;
   element.setAttribute("aria-hidden", String(!isOpen));
 
-  const isAnyModalOpen = [lightbox, gallerySheet, guestbookSheet].some(
+  const isAnyModalOpen = [lightbox, gallerySheet, guestbookSheet, bgmDownloadModal].some(
     (modal) => modal && !modal.hidden,
   );
 
   document.body.classList.toggle("modal-open", isAnyModalOpen);
+};
+
+const setupBgmDownload = () => {
+  if (!bgmDownload || !bgmDownloadModal || !bgmDownloadList) return;
+  BGM_PLAYLIST.forEach(([title, source]) => {
+    const link = document.createElement("a");
+    link.className = "bgm-download-list__item";
+    link.href = encodeURI(`${source}?v=20260902-1`);
+    link.download = `${title}.mp3`;
+    link.textContent = title;
+    bgmDownloadList.append(link);
+  });
+  bgmDownload.addEventListener("click", () => setModalState(bgmDownloadModal, true));
 };
 
 const getGalleryAlt = (index) => `국성과 가영의 웨딩 사진 ${index + 1}`;
@@ -681,22 +695,6 @@ const setupBgm = () => {
     bgmPlayer.load();
     if (shouldPlay) bgmPlayer.play().catch(() => {});
   };
-  if (bgmDownloadSelect) {
-    BGM_PLAYLIST.forEach(([title], index) => {
-      const option = document.createElement("option");
-      option.value = String(index);
-      option.textContent = title;
-      bgmDownloadSelect.append(option);
-    });
-    const updateDownload = () => {
-      const selectedIndex = Number(bgmDownloadSelect.value);
-      const [, source] = BGM_PLAYLIST[selectedIndex];
-      bgmDownload.href = encodeURI(`${source}?v=20260902-1`);
-      bgmDownload.download = `${BGM_PLAYLIST[selectedIndex][0]}.mp3`;
-    };
-    bgmDownloadSelect.addEventListener("change", updateDownload);
-    updateDownload();
-  }
   const updateControls = () => {
     bgmToggle.textContent = bgmPlayer.paused ? "▶" : "Ⅱ";
     bgmToggle.setAttribute("aria-label", bgmPlayer.paused ? "재생" : "일시정지");
@@ -743,6 +741,10 @@ const setupModalCloseButtons = () => {
       if (targetId === "guestbook-sheet") {
         closeGuestbookSheet();
       }
+
+      if (targetId === "bgm-download-modal") {
+        setModalState(bgmDownloadModal, false);
+      }
     });
   });
 
@@ -766,6 +768,7 @@ const setupModalCloseButtons = () => {
     closeLightbox();
     closeGallerySheet();
     closeGuestbookSheet();
+    setModalState(bgmDownloadModal, false);
   });
 };
 
@@ -1864,6 +1867,7 @@ const setupKakaoShare = () => {
 };
 
 setupBgm();
+setupBgmDownload();
 setupIntro();
 setupScrollPerformanceTuning();
 setupModalCloseButtons();
