@@ -53,6 +53,27 @@ const getContentType = (file) => {
   return ({ jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp", gif: "image/gif", heic: "image/heic", heif: "image/heif", avif: "image/avif" })[extension] || "image/jpeg";
 };
 
+const uploadFile = (file, storagePath, contentType, user, onProgress) => new Promise(async (resolve, reject) => {
+  try {
+    const token = await user.getIdToken();
+    const url = `https://firebasestorage.googleapis.com/v0/b/${encodeURIComponent(config.storageBucket)}/o?uploadType=media&name=${encodeURIComponent(storagePath)}`;
+    const request = new XMLHttpRequest();
+    request.open("POST", url);
+    request.setRequestHeader("Authorization", `Bearer ${token}`);
+    request.setRequestHeader("Content-Type", contentType);
+    request.timeout = uploadIdleTimeout;
+    request.upload.onprogress = (event) => {
+      if (event.lengthComputable) onProgress(Math.round((event.loaded / event.total) * 100));
+    };
+    request.onload = () => request.status >= 200 && request.status < 300
+      ? resolve()
+      : reject(Object.assign(new Error("storage-http-error"), { code: `storage/http-${request.status}` }));
+    request.onerror = () => reject(Object.assign(new Error("storage-network-error"), { code: "storage/network-error" }));
+    request.ontimeout = () => reject(Object.assign(new Error("upload-timeout"), { code: "storage/timeout" }));
+    request.send(file);
+  } catch (error) { reject(error); }
+});
+
 fileInput.addEventListener("change", () => {
   const files = [...fileInput.files];
   if (!files.length) return;
@@ -93,29 +114,12 @@ form.addEventListener("submit", async (event) => {
         const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
         const storagePath = `guest-photos/${user.uid}/${fileId}-${safeName}`;
         const contentType = getContentType(file);
-        const uploadTask = firebase.storage().ref(storagePath).put(file, { contentType });
-        const snapshot = await new Promise((resolve, reject) => {
-          let progressTimer = window.setTimeout(() => {
-            uploadTask.cancel();
-            reject(Object.assign(new Error("upload-timeout"), { code: "storage/timeout" }));
-          }, uploadIdleTimeout);
-          uploadTask.on("state_changed", (progress) => {
-            window.clearTimeout(progressTimer);
-            const percent = Math.round((progress.bytesTransferred / progress.totalBytes) * 100);
-            submitButton.textContent = `Uploading ${index + 1}/${files.length} (${percent}%)...`;
-            progressTimer = window.setTimeout(() => {
-              uploadTask.cancel();
-              reject(Object.assign(new Error("upload-timeout"), { code: "storage/timeout" }));
-            }, uploadIdleTimeout);
-          }, (error) => {
-            window.clearTimeout(progressTimer);
-            reject(error);
-          }, () => {
-            window.clearTimeout(progressTimer);
-            resolve(uploadTask.snapshot);
-          });
+        let percent = 0;
+        await uploadFile(file, storagePath, contentType, user, (nextPercent) => {
+          percent = nextPercent;
+          submitButton.textContent = `Uploading ${index + 1}/${files.length} (${percent}%)...`;
         });
-        const imageUrl = await snapshot.ref.getDownloadURL();
+        const imageUrl = await firebase.storage().ref(storagePath).getDownloadURL();
         await firebase.firestore().collection("guestPhotos").add({ uid: user.uid, name, message, imageUrl, storagePath, status: "pending", createdAt: firebase.firestore.FieldValue.serverTimestamp() });
         uploadedCount += 1;
         submitButton.textContent = `Uploading ${uploadedCount}/${files.length} complete...`;
