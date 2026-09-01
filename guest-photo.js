@@ -90,7 +90,23 @@ form.addEventListener("submit", async (event) => {
         const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
         const storagePath = `guest-photos/${user.uid}/${fileId}-${safeName}`;
         const contentType = getContentType(file);
-        const snapshot = await firebase.storage().ref(storagePath).put(file, { contentType });
+        const uploadTask = firebase.storage().ref(storagePath).put(file, { contentType });
+        const snapshot = await new Promise((resolve, reject) => {
+          const timeout = window.setTimeout(() => {
+            uploadTask.cancel();
+            reject(Object.assign(new Error("upload-timeout"), { code: "storage/timeout" }));
+          }, 5 * 60 * 1000);
+          uploadTask.on("state_changed", (progress) => {
+            const percent = Math.round((progress.bytesTransferred / progress.totalBytes) * 100);
+            submitButton.textContent = `Uploading ${index + 1}/${files.length} (${percent}%)...`;
+          }, (error) => {
+            window.clearTimeout(timeout);
+            reject(error);
+          }, () => {
+            window.clearTimeout(timeout);
+            resolve(uploadTask.snapshot);
+          });
+        });
         const imageUrl = await snapshot.ref.getDownloadURL();
         await firebase.firestore().collection("guestPhotos").add({ uid: user.uid, name, message, imageUrl, storagePath, status: "pending", createdAt: firebase.firestore.FieldValue.serverTimestamp() });
         uploadedCount += 1;
