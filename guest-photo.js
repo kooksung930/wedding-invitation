@@ -19,7 +19,8 @@ const bgmTitle = document.getElementById("bgm-title");
 const bgmTitleText = document.querySelector(".bgm-player__title-text");
 const bgmSeek = document.getElementById("bgm-seek");
 const maxFileSize = 50 * 1024 * 1024;
-const uploadIdleTimeout = 10 * 60 * 1000;
+// 전송이 멈춘 경우 오래 기다리지 않도록, 진행이 없는 상태만 45초 후 실패 처리한다.
+const uploadIdleTimeout = 45 * 1000;
 const bgmPositionKey = "wedding-bgm-position";
 const bgmTrackKey = "wedding-bgm-track";
 const bgmPlayingKey = "wedding-bgm-playing";
@@ -152,11 +153,16 @@ form.addEventListener("submit", async (event) => {
         const contentType = getContentType(file);
         const uploadTask = firebase.storage().ref(storagePath).put(file, { contentType });
         const snapshot = await new Promise((resolve, reject) => {
-          const timeout = window.setTimeout(() => {
+          let timeout = window.setTimeout(() => {
             uploadTask.cancel();
             reject(Object.assign(new Error("upload-timeout"), { code: "storage/timeout" }));
           }, uploadIdleTimeout);
           uploadTask.on("state_changed", (progress) => {
+            window.clearTimeout(timeout);
+            timeout = window.setTimeout(() => {
+              uploadTask.cancel();
+              reject(Object.assign(new Error("upload-timeout"), { code: "storage/timeout" }));
+            }, uploadIdleTimeout);
             const percent = Math.round((progress.bytesTransferred / progress.totalBytes) * 100);
             submitButton.textContent = `Uploading ${index + 1}/${files.length} (${percent}%)...`;
           }, (error) => {
