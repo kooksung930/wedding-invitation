@@ -131,10 +131,8 @@ form.addEventListener("submit", async (event) => {
   const files = [...fileInput.files];
   const name = document.getElementById("guest-name").value.trim();
   const message = document.getElementById("guest-message").value.trim();
-  const consent = document.getElementById("guest-consent").checked;
   if (!files.length || files.some((file) => !isImageFile(file) || file.size > maxFileSize)) { setStatus("이미지 사진만 가능하고, 사진 1장당 50MB까지예요."); return; }
   if (!name) { setStatus("이름을 입력해주세요."); return; }
-  if (!consent) { setStatus("사진 전달 동의에 체크해주세요."); return; }
   submitButton.disabled = true; submitButton.textContent = `Uploading 0/${files.length}...`; setStatus("");
   try {
     if (!window.firebase) await loadSdk();
