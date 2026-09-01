@@ -119,8 +119,11 @@ fileInput.addEventListener("change", () => {
   fileLabel.textContent = `${files.length} photos selected`;
   preview.textContent = "";
   files.forEach((file, index) => {
-    if (!isImageFile(file) || file.size > maxFileSize || file.type.match(/heic|heif/i)) return;
-    const image = document.createElement("img"); image.src = URL.createObjectURL(file); image.alt = `Selected photo ${index + 1}`; preview.append(image);
+    if (!isImageFile(file) || file.size > maxFileSize) return;
+    const item = document.createElement("div");
+    item.className = "photo-preview__file";
+    item.textContent = `${index + 1}. ${file.name} · ${(file.size / (1024 * 1024)).toFixed(1)}MB`;
+    preview.append(item);
   });
   preview.hidden = preview.childElementCount === 0;
 });
