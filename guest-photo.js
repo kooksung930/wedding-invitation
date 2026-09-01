@@ -20,8 +20,8 @@ const bgmTitleText = document.querySelector(".bgm-player__title-text");
 const bgmSeek = document.getElementById("bgm-seek");
 const maxFileSize = 50 * 1024 * 1024;
 const maxPhotoCount = 9;
-// Firebase 업로드 세션 준비가 늦을 수 있어, 진행이 없는 상태를 2분까지 기다린다.
-const uploadIdleTimeout = 2 * 60 * 1000;
+// 인증/업로드가 시작되지 않으면 오래 기다리지 않고 실패시킨다.
+const uploadIdleTimeout = 30 * 1000;
 const bgmPositionKey = "wedding-bgm-position";
 const bgmTrackKey = "wedding-bgm-track";
 const bgmPlayingKey = "wedding-bgm-playing";
@@ -153,7 +153,11 @@ form.addEventListener("submit", async (event) => {
   try {
     if (!window.firebase) await loadSdk();
     if (!firebase.apps.length) firebase.initializeApp(config);
-    const auth = firebase.auth(); const user = auth.currentUser || (await auth.signInAnonymously()).user;
+    const auth = firebase.auth();
+    // 테스트 데이터 삭제 후 브라우저에 남은 오래된 익명 세션을 재사용하지 않는다.
+    if (auth.currentUser) await auth.signOut();
+    const user = (await auth.signInAnonymously()).user;
+    await user.getIdToken(true);
     const failedFiles = [];
     let uploadedCount = 0;
     const queue = files.map((file, index) => ({ file, index }));
