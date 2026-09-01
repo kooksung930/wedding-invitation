@@ -38,6 +38,21 @@ const PREVIEW_IMAGE_COUNT = 9;
 const BGM_TARGET_VOLUME = 0.24;
 const BGM_FADE_IN_DURATION_MS = 2200;
 const BGM_POSITION_KEY = "wedding-bgm-position";
+const BGM_TRACK_KEY = "wedding-bgm-track";
+const BGM_PLAYLIST = [
+  ["가정을만들자", "resource/bgm/가정을만들자.mp3"],
+  ["길을 잃어도 괜찮아", "resource/bgm/길을 잃어도 괜찮아.mp3"],
+  ["박사님과 골목대장", "resource/bgm/박사님과 골목대장.mp3"],
+  ["새벽 두 시, 로봇은 안 잔다", "resource/bgm/새벽 두 시, 로봇은 안 잔다.mp3"],
+  ["설명서 필요 없어", "resource/bgm/설명서 필요 없어.mp3"],
+  ["에게해의 다음 장면", "resource/bgm/에게해의 다음 장면.mp3"],
+  ["오, 나의 골목대장이여", "resource/bgm/오, 나의 골목대장이여.mp3"],
+  ["우리의 조립 설명서", "resource/bgm/우리의 조립 설명서.mp3"],
+  ["집에 가는 길", "resource/bgm/집에 가는 길.mp3"],
+  ["한 바퀴만", "resource/bgm/한 바퀴만.mp3"],
+  ["한판 살아봅시다", "resource/bgm/한판 살아봅시다.mp3"],
+  ["Dr. Jun & Miss Choi", "resource/bgm/Dr. Jun & Miss Choi.mp3"],
+];
 const ASSET_VERSION = "20260802-3";
 const GALLERY_IMAGES = Array.from(
   { length: 12 },
@@ -48,6 +63,10 @@ const mainContent = document.getElementById("main-content");
 const tapNoteBursts = document.getElementById("tap-note-bursts");
 const toast = document.getElementById("toast");
 const bgmPlayer = document.getElementById("bgm-player");
+const bgmToggle = document.getElementById("bgm-toggle");
+const bgmPrev = document.getElementById("bgm-prev");
+const bgmNext = document.getElementById("bgm-next");
+const bgmTitle = document.getElementById("bgm-title");
 const lightbox = document.getElementById("lightbox");
 const lightboxImage = lightbox?.querySelector(".lightbox__image");
 const lightboxThumbs = document.getElementById("lightbox-thumbs");
@@ -637,9 +656,32 @@ const setupBgm = () => {
     return;
   }
 
-  bgmPlayer.loop = true;
+  bgmPlayer.loop = false;
   bgmPlayer.preload = "auto";
   bgmPlayer.playsInline = true;
+  let trackIndex = Number.parseInt(window.localStorage.getItem(BGM_TRACK_KEY), 10);
+  if (!Number.isInteger(trackIndex) || trackIndex < 0 || trackIndex >= BGM_PLAYLIST.length) trackIndex = 0;
+  const setTrack = (nextIndex, shouldPlay = false) => {
+    trackIndex = (nextIndex + BGM_PLAYLIST.length) % BGM_PLAYLIST.length;
+    const [title, source] = BGM_PLAYLIST[trackIndex];
+    bgmPlayer.src = encodeURI(`${source}?v=20260902-1`);
+    bgmTitle.textContent = title;
+    window.localStorage.setItem(BGM_TRACK_KEY, String(trackIndex));
+    bgmPlayer.load();
+    if (shouldPlay) bgmPlayer.play().catch(() => {});
+  };
+  const updateControls = () => {
+    bgmToggle.textContent = bgmPlayer.paused ? "▶" : "Ⅱ";
+    bgmToggle.setAttribute("aria-label", bgmPlayer.paused ? "재생" : "일시정지");
+  };
+  setTrack(trackIndex);
+  bgmToggle?.addEventListener("click", () => bgmPlayer.paused ? bgmPlayer.play().catch(() => {}) : bgmPlayer.pause());
+  bgmPrev?.addEventListener("click", () => setTrack(trackIndex - 1, true));
+  bgmNext?.addEventListener("click", () => setTrack(trackIndex + 1, true));
+  bgmPlayer.addEventListener("ended", () => setTrack(trackIndex + 1, true));
+  bgmPlayer.addEventListener("play", updateControls);
+  bgmPlayer.addEventListener("pause", updateControls);
+  updateControls();
 
   const savePosition = () => {
     if (Number.isFinite(bgmPlayer.currentTime)) {

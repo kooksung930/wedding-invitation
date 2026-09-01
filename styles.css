@@ -590,6 +590,35 @@ html.js body.intro-complete .site-main {
   transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
+.bgm-player {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  max-width: calc(100vw - 2rem);
+  padding: 0.4rem 0.55rem;
+  border: 1px solid rgba(127, 75, 55, 0.2);
+  border-radius: 999px;
+  background: rgba(255, 253, 249, 0.94);
+  box-shadow: 0 0.4rem 1.4rem rgba(73, 49, 38, 0.12);
+  backdrop-filter: blur(8px);
+}
+
+.bgm-player__button {
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 50%;
+  color: var(--accent-strong-color);
+  cursor: pointer;
+  font-size: 0.65rem;
+}
+
+.bgm-player__button--main { background: var(--dark-color); color: var(--white-color); }
+.bgm-player__title { max-width: 8rem; overflow: hidden; color: var(--ink-soft-color); font-size: 0.68rem; text-overflow: ellipsis; white-space: nowrap; }
+
 .button:disabled {
   cursor: default;
   opacity: 0.52;
