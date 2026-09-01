@@ -171,14 +171,25 @@ form.addEventListener("submit", async (event) => {
         const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
         const storagePath = `guest-photos/${user.uid}/${fileId}-${safeName}`;
         const contentType = getContentType(file);
-        const uploadTask = firebase.storage().ref(storagePath).put(file, { contentType });
         const snapshot = await new Promise((resolve, reject) => {
+          let uploadTask;
+          let settled = false;
           let timeout = window.setTimeout(() => {
-            uploadTask.cancel();
+            if (uploadTask) uploadTask.cancel();
+            settled = true;
             reject(Object.assign(new Error("upload-timeout"), { code: "storage/timeout" }));
           }, uploadIdleTimeout);
           let lastTransferred = 0;
+          try {
+            setStatus(`${index + 1}/${files.length} Storage 연결 중…`);
+            uploadTask = firebase.storage().ref(storagePath).put(file, { contentType });
+          } catch (error) {
+            window.clearTimeout(timeout);
+            reject(error);
+            return;
+          }
           uploadTask.on("state_changed", (progress) => {
+            if (settled) return;
             if (progress.bytesTransferred > lastTransferred) {
               lastTransferred = progress.bytesTransferred;
               window.clearTimeout(timeout);
@@ -190,9 +201,11 @@ form.addEventListener("submit", async (event) => {
             const percent = Math.round((progress.bytesTransferred / progress.totalBytes) * 100);
             submitButton.textContent = `Uploading ${index + 1}/${files.length} (${percent}%)...`;
           }, (error) => {
-            window.clearTimeout(timeout); reject(error);
+            if (settled) return;
+            settled = true; window.clearTimeout(timeout); reject(error);
           }, () => {
-            window.clearTimeout(timeout); resolve(uploadTask.snapshot);
+            if (settled) return;
+            settled = true; window.clearTimeout(timeout); resolve(uploadTask.snapshot);
           });
         });
         const imageUrl = await snapshot.ref.getDownloadURL();
