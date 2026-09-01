@@ -12,11 +12,41 @@ const preview = document.getElementById("photo-preview");
 const previewImage = document.getElementById("photo-preview-image");
 const status = document.getElementById("form-status");
 const submitButton = document.getElementById("submit-button");
+const bgmPlayer = document.getElementById("bgm-player");
+const musicButton = document.getElementById("music-button");
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const BGM_POSITION_KEY = "wedding-bgm-position";
 
 const setStatus = (message, success = false) => {
   status.textContent = message;
   status.classList.toggle("is-success", success);
+};
+
+const updateMusicButton = () => {
+  const isPlaying = bgmPlayer && !bgmPlayer.paused;
+  musicButton.classList.toggle("is-playing", isPlaying);
+  musicButton.textContent = isPlaying ? "♫ 음악 끄기" : "♫ 음악 켜기";
+};
+
+const setupMusic = async () => {
+  if (!bgmPlayer || !musicButton) return;
+  bgmPlayer.volume = 0.24;
+  const savedPosition = Number.parseFloat(localStorage.getItem(BGM_POSITION_KEY));
+  if (Number.isFinite(savedPosition)) {
+    bgmPlayer.addEventListener("loadedmetadata", () => {
+      if (savedPosition < bgmPlayer.duration) bgmPlayer.currentTime = savedPosition;
+    }, { once: true });
+  }
+  bgmPlayer.addEventListener("timeupdate", () => localStorage.setItem(BGM_POSITION_KEY, String(bgmPlayer.currentTime)));
+  bgmPlayer.addEventListener("play", updateMusicButton);
+  bgmPlayer.addEventListener("pause", updateMusicButton);
+  musicButton.addEventListener("click", async () => {
+    if (bgmPlayer.paused) await bgmPlayer.play();
+    else bgmPlayer.pause();
+    updateMusicButton();
+  });
+  try { await bgmPlayer.play(); } catch (_) { /* 모바일 자동재생 제한 */ }
+  updateMusicButton();
 };
 
 const loadSdk = () => Promise.all(sdkUrls.map((src) => new Promise((resolve, reject) => {
@@ -36,6 +66,8 @@ fileInput.addEventListener("change", () => {
     preview.hidden = false;
   }
 });
+
+setupMusic();
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();

@@ -37,6 +37,7 @@ const INTRO_NOTE_QUADRANTS = [
 const PREVIEW_IMAGE_COUNT = 9;
 const BGM_TARGET_VOLUME = 0.24;
 const BGM_FADE_IN_DURATION_MS = 2200;
+const BGM_POSITION_KEY = "wedding-bgm-position";
 const ASSET_VERSION = "20260802-3";
 const GALLERY_IMAGES = Array.from(
   { length: 12 },
@@ -639,6 +640,14 @@ const setupBgm = () => {
   bgmPlayer.loop = true;
   bgmPlayer.preload = "auto";
   bgmPlayer.playsInline = true;
+
+  const savePosition = () => {
+    if (Number.isFinite(bgmPlayer.currentTime)) {
+      window.localStorage.setItem(BGM_POSITION_KEY, String(bgmPlayer.currentTime));
+    }
+  };
+  bgmPlayer.addEventListener("timeupdate", savePosition);
+  window.addEventListener("pagehide", savePosition);
 };
 
 const setupModalCloseButtons = () => {
