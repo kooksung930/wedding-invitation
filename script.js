@@ -71,6 +71,7 @@ const bgmTitle = document.getElementById("bgm-title");
 const bgmTitleText = document.querySelector(".bgm-player__title-text");
 const bgmSeek = document.getElementById("bgm-seek");
 const bgmDownload = document.getElementById("bgm-download");
+const bgmDownloadSelect = document.getElementById("bgm-download-select");
 const lightbox = document.getElementById("lightbox");
 const lightboxImage = lightbox?.querySelector(".lightbox__image");
 const lightboxThumbs = document.getElementById("lightbox-thumbs");
@@ -672,10 +673,6 @@ const setupBgm = () => {
     const encodedSource = encodeURI(`${source}?v=20260902-1`);
     bgmPlayer.src = encodedSource;
     bgmTitleText.textContent = title;
-    if (bgmDownload) {
-      bgmDownload.href = encodedSource;
-      bgmDownload.download = `${title}.mp3`;
-    }
     bgmTitle.classList.remove("is-long");
     window.requestAnimationFrame(() => {
       if (bgmTitleText.scrollWidth > bgmTitle.clientWidth) bgmTitle.classList.add("is-long");
@@ -684,6 +681,22 @@ const setupBgm = () => {
     bgmPlayer.load();
     if (shouldPlay) bgmPlayer.play().catch(() => {});
   };
+  if (bgmDownloadSelect) {
+    BGM_PLAYLIST.forEach(([title], index) => {
+      const option = document.createElement("option");
+      option.value = String(index);
+      option.textContent = title;
+      bgmDownloadSelect.append(option);
+    });
+    const updateDownload = () => {
+      const selectedIndex = Number(bgmDownloadSelect.value);
+      const [, source] = BGM_PLAYLIST[selectedIndex];
+      bgmDownload.href = encodeURI(`${source}?v=20260902-1`);
+      bgmDownload.download = `${BGM_PLAYLIST[selectedIndex][0]}.mp3`;
+    };
+    bgmDownloadSelect.addEventListener("change", updateDownload);
+    updateDownload();
+  }
   const updateControls = () => {
     bgmToggle.textContent = bgmPlayer.paused ? "▶" : "Ⅱ";
     bgmToggle.setAttribute("aria-label", bgmPlayer.paused ? "재생" : "일시정지");

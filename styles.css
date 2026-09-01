@@ -1885,6 +1885,9 @@ html.js body.intro-complete .cover-card__welcome {
   min-width: 10.5rem;
 }
 
+.bgm-download-label { display: block; margin-top: 0.9rem; color: var(--ink-soft-color); font-size: 0.72rem; }
+.bgm-download-select { width: min(100%, 16rem); margin-top: 0.4rem; padding: 0.65rem 0.7rem; border: 1px solid rgba(127, 75, 55, 0.24); border-radius: 0.28rem; background: var(--white-color); color: var(--ink-color); font: inherit; font-size: 0.78rem; }
+
 .modal,
 .lightbox {
   position: fixed;
