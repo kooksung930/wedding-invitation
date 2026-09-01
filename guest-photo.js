@@ -12,10 +12,21 @@ const preview = document.getElementById("photo-preview");
 const status = document.getElementById("form-status");
 const submitButton = document.getElementById("submit-button");
 const bgmPlayer = document.getElementById("bgm-player");
-const musicButton = document.getElementById("music-button");
+const bgmToggle = document.getElementById("bgm-toggle");
+const bgmPrev = document.getElementById("bgm-prev");
+const bgmNext = document.getElementById("bgm-next");
+const bgmTitle = document.getElementById("bgm-title");
 const maxFileSize = 50 * 1024 * 1024;
 const uploadIdleTimeout = 10 * 60 * 1000;
 const bgmPositionKey = "wedding-bgm-position";
+const bgmPlaylist = [
+  ["가정을만들자", "resource/bgm/가정을만들자.mp3"], ["길을 잃어도 괜찮아", "resource/bgm/길을 잃어도 괜찮아.mp3"],
+  ["박사님과 골목대장", "resource/bgm/박사님과 골목대장.mp3"], ["새벽 두 시, 로봇은 안 잔다", "resource/bgm/새벽 두 시, 로봇은 안 잔다.mp3"],
+  ["설명서 필요 없어", "resource/bgm/설명서 필요 없어.mp3"], ["에게해의 다음 장면", "resource/bgm/에게해의 다음 장면.mp3"],
+  ["오, 나의 골목대장이여", "resource/bgm/오, 나의 골목대장이여.mp3"], ["우리의 조립 설명서", "resource/bgm/우리의 조립 설명서.mp3"],
+  ["집에 가는 길", "resource/bgm/집에 가는 길.mp3"], ["한 바퀴만", "resource/bgm/한 바퀴만.mp3"],
+  ["한판 살아봅시다", "resource/bgm/한판 살아봅시다.mp3"], ["Dr. Jun & Miss Choi", "resource/bgm/Dr. Jun & Miss Choi.mp3"],
+];
 
 const setStatus = (message, success = false) => {
   status.textContent = message;
@@ -24,19 +35,31 @@ const setStatus = (message, success = false) => {
 
 const updateMusicButton = () => {
   const isPlaying = bgmPlayer && !bgmPlayer.paused;
-  musicButton.classList.toggle("is-playing", isPlaying);
-  musicButton.textContent = isPlaying ? "Music off" : "Music on";
+  bgmToggle.textContent = isPlaying ? "Ⅱ" : "▶";
 };
 
 const setupMusic = async () => {
-  if (!bgmPlayer || !musicButton) return;
+  if (!bgmPlayer || !bgmToggle) return;
   bgmPlayer.volume = 0.24;
+  let trackIndex = 0;
+  const setTrack = (nextIndex, shouldPlay = false) => {
+    trackIndex = (nextIndex + bgmPlaylist.length) % bgmPlaylist.length;
+    const [title, source] = bgmPlaylist[trackIndex];
+    bgmPlayer.src = encodeURI(`${source}?v=20260902-1`);
+    bgmTitle.textContent = title;
+    bgmPlayer.load();
+    if (shouldPlay) bgmPlayer.play().catch(() => {});
+  };
   const savedPosition = Number.parseFloat(localStorage.getItem(bgmPositionKey));
   if (Number.isFinite(savedPosition)) bgmPlayer.addEventListener("loadedmetadata", () => { if (savedPosition < bgmPlayer.duration) bgmPlayer.currentTime = savedPosition; }, { once: true });
   bgmPlayer.addEventListener("timeupdate", () => localStorage.setItem(bgmPositionKey, String(bgmPlayer.currentTime)));
   bgmPlayer.addEventListener("play", updateMusicButton);
   bgmPlayer.addEventListener("pause", updateMusicButton);
-  musicButton.addEventListener("click", async () => { if (bgmPlayer.paused) await bgmPlayer.play(); else bgmPlayer.pause(); updateMusicButton(); });
+  bgmToggle.addEventListener("click", async () => { if (bgmPlayer.paused) await bgmPlayer.play(); else bgmPlayer.pause(); updateMusicButton(); });
+  bgmPrev?.addEventListener("click", () => setTrack(trackIndex - 1, true));
+  bgmNext?.addEventListener("click", () => setTrack(trackIndex + 1, true));
+  bgmPlayer.addEventListener("ended", () => setTrack(trackIndex + 1, true));
+  setTrack(0);
   try { await bgmPlayer.play(); } catch (_) { /* Browser autoplay policy */ }
   updateMusicButton();
 };
