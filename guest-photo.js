@@ -17,6 +17,7 @@ const maxInputFileSize = 50 * 1024 * 1024;
 const maxUploadFileSize = 4 * 1024 * 1024;
 const maxImageDimension = 2000;
 const bgmPositionKey = "wedding-bgm-position";
+let heicConverterPromise;
 
 const setStatus = (message, success = false) => {
   status.textContent = message;
@@ -57,13 +58,35 @@ const loadSdk = () => Promise.all(sdkUrls.map((src) => new Promise((resolve, rej
   document.head.append(script);
 })));
 
+const isHeic = (file) => /\.(heic|heif)$/i.test(file.name) || /image\/(heic|heif)/i.test(file.type);
+const loadHeicConverter = () => {
+  if (window.heic2any) return Promise.resolve(window.heic2any);
+  if (!heicConverterPromise) {
+    heicConverterPromise = new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = "https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js";
+      script.onload = () => window.heic2any ? resolve(window.heic2any) : reject(new Error("heic-converter-load-failed"));
+      script.onerror = () => reject(new Error("heic-converter-load-failed"));
+      document.head.append(script);
+    });
+  }
+  return heicConverterPromise;
+};
+
+const convertIfHeic = async (file) => {
+  if (!isHeic(file)) return file;
+  const converter = await loadHeicConverter();
+  const converted = await converter({ blob: file, toType: "image/jpeg", quality: 0.92 });
+  return Array.isArray(converted) ? converted[0] : converted;
+};
+
 fileInput.addEventListener("change", () => {
   const files = [...fileInput.files];
   if (!files.length) return;
   fileLabel.textContent = `${files.length} photos selected`;
   preview.textContent = "";
   files.forEach((file, index) => {
-    if (!file.type.startsWith("image/") || file.size > maxInputFileSize) return;
+    if ((!file.type.startsWith("image/") && !isHeic(file)) || file.size > maxInputFileSize) return;
     const image = document.createElement("img");
     image.src = URL.createObjectURL(file);
     image.alt = `Selected photo ${index + 1}`;
@@ -81,7 +104,7 @@ form.addEventListener("submit", async (event) => {
   const message = document.getElementById("guest-message").value.trim();
   const consent = document.getElementById("guest-consent").checked;
 
-  if (!files.length || files.some((file) => !file.type.startsWith("image/") || file.size > maxInputFileSize)) {
+  if (!files.length || files.some((file) => (!file.type.startsWith("image/") && !isHeic(file)) || file.size > maxInputFileSize)) {
     setStatus("이미지 사진만 선택해주세요. 원본은 50MB까지 가능해요."); return;
   }
   if (!name) { setStatus("이름을 입력해주세요."); return; }
@@ -116,8 +139,10 @@ form.addEventListener("submit", async (event) => {
     setStatus(`${files.length}장의 사진이 잘 도착했어요.`, true);
   } catch (error) {
     console.error(error);
-    const reason = error.message === "unsupported-image-format"
-      ? "HEIC 형식은 JPG로 변환한 뒤 다시 선택해주세요."
+    const reason = error.message === "heic-converter-load-failed"
+      ? "HEIC 변환 도구를 불러오지 못했어요. 잠시 후 다시 시도해주세요."
+      : error.message === "unsupported-image-format"
+        ? "이 사진 형식을 변환하지 못했어요."
       : error.message === "compression-failed"
         ? "사진 용량을 줄이지 못했어요. 다른 사진을 선택해주세요."
         : (error.code || "please try again");
@@ -129,6 +154,7 @@ form.addEventListener("submit", async (event) => {
 });
 
 async function compressImage(file) {
+  file = await convertIfHeic(file);
   let image;
   try {
     image = await createImageBitmap(file);
