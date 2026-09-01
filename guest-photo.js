@@ -19,6 +19,7 @@ const bgmTitle = document.getElementById("bgm-title");
 const bgmTitleText = document.querySelector(".bgm-player__title-text");
 const bgmSeek = document.getElementById("bgm-seek");
 const maxFileSize = 50 * 1024 * 1024;
+const maxPhotoCount = 9;
 // 전송이 멈춘 경우 오래 기다리지 않도록, 진행이 없는 상태만 45초 후 실패 처리한다.
 const uploadIdleTimeout = 45 * 1000;
 const bgmPositionKey = "wedding-bgm-position";
@@ -145,6 +146,7 @@ form.addEventListener("submit", async (event) => {
   const files = [...fileInput.files];
   const name = document.getElementById("guest-name").value.trim();
   const message = document.getElementById("guest-message").value.trim();
+  if (files.length > maxPhotoCount) { setStatus(`사진은 한 번에 최대 ${maxPhotoCount}장까지 올릴 수 있어요.`); return; }
   if (!files.length || files.some((file) => !isImageFile(file) || file.size > maxFileSize)) { setStatus("이미지 사진만 가능하고, 사진 1장당 50MB까지예요."); return; }
   if (!name) { setStatus("이름을 입력해주세요."); return; }
   submitButton.disabled = true; submitButton.textContent = `Uploading 0/${files.length}...`; setStatus("");
