@@ -16,6 +16,7 @@ const bgmToggle = document.getElementById("bgm-toggle");
 const bgmPrev = document.getElementById("bgm-prev");
 const bgmNext = document.getElementById("bgm-next");
 const bgmTitle = document.getElementById("bgm-title");
+const bgmTitleText = document.querySelector(".bgm-player__title-text");
 const maxFileSize = 50 * 1024 * 1024;
 const uploadIdleTimeout = 10 * 60 * 1000;
 const bgmPositionKey = "wedding-bgm-position";
@@ -46,7 +47,11 @@ const setupMusic = async () => {
     trackIndex = (nextIndex + bgmPlaylist.length) % bgmPlaylist.length;
     const [title, source] = bgmPlaylist[trackIndex];
     bgmPlayer.src = encodeURI(`${source}?v=20260902-1`);
-    bgmTitle.textContent = title;
+    bgmTitleText.textContent = title;
+    bgmTitle.classList.remove("is-long");
+    window.requestAnimationFrame(() => {
+      if (bgmTitleText.scrollWidth > bgmTitle.clientWidth) bgmTitle.classList.add("is-long");
+    });
     bgmPlayer.load();
     if (shouldPlay) bgmPlayer.play().catch(() => {});
   };

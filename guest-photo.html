@@ -12,7 +12,7 @@
     <style>
       .music-button{position:fixed;right:18px;bottom:18px;padding:10px 13px;border:1px solid #d9cec2;border-radius:999px;background:#fffdf9;color:#77695e;font:inherit;font-size:11px;box-shadow:0 5px 16px #6653461c;cursor:pointer}.music-button.is-playing{background:#776454;color:#fff}
       .photo-preview.photo-preview--multiple{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:6px}.photo-preview--multiple img{width:100%;height:110px;object-fit:cover;border-radius:2px}
-      .music-button{display:none}.bgm-player{position:fixed;right:18px;bottom:18px;z-index:10;display:flex;align-items:center;gap:4px;width:260px;padding:6px 8px;border:1px solid #d9cec2;border-radius:999px;background:#fffdf9;color:#77695e;box-shadow:0 5px 16px #6653461c}.bgm-player__button{flex:0 0 28px;width:28px;height:28px;border:0;border-radius:50%;background:transparent;color:#77695e;font:inherit;font-size:10px;cursor:pointer}.bgm-player__button--main{background:#776454;color:#fff}.bgm-player__title{min-width:0;flex:1;overflow:hidden;padding:0 5px;font-size:11px;text-align:center;text-overflow:ellipsis;white-space:nowrap}
+      .music-button{display:none}.bgm-player{position:fixed;right:18px;bottom:18px;z-index:10;display:flex;align-items:center;gap:4px;width:260px;padding:6px 8px;border:1px solid #d9cec2;border-radius:999px;background:#fffdf9;color:#77695e;box-shadow:0 5px 16px #6653461c}.bgm-player__button{flex:0 0 28px;width:28px;height:28px;border:0;border-radius:50%;background:transparent;color:#77695e;font:inherit;font-size:10px;cursor:pointer}.bgm-player__button--main{background:#776454;color:#fff}.bgm-player__title{min-width:0;flex:1;overflow:hidden;padding:0 5px;font-size:11px;text-align:center;white-space:nowrap}.bgm-player__title-text{display:inline-block;padding-right:10px}.bgm-player__title.is-long .bgm-player__title-text{animation:bgm-title-marquee 7s ease-in-out infinite alternate}@keyframes bgm-title-marquee{from{transform:translateX(0)}to{transform:translateX(-100px)}}
     </style>
     <script>
       window.WEDDING_CONFIG = {
@@ -64,12 +64,12 @@
       <p class="footer-note">소중한 사진은 두 사람의 결혼식 기록으로 간직할게요.</p>
     </main>
     <button class="music-button" id="music-button" type="button" aria-label="음악 재생">♫ 음악 켜기</button>
-    <script defer src="guest-photo.js?v=20260902-18"></script>
+    <script defer src="guest-photo.js?v=20260902-19"></script>
     <div class="bgm-player" aria-label="배경음악 플레이어">
       <button class="bgm-player__button" id="bgm-prev" type="button" aria-label="이전 곡">◀</button>
       <button class="bgm-player__button bgm-player__button--main" id="bgm-toggle" type="button" aria-label="재생 또는 일시정지">▶</button>
       <button class="bgm-player__button" id="bgm-next" type="button" aria-label="다음 곡">▶</button>
-      <span class="bgm-player__title" id="bgm-title">가정을만들자</span>
+      <span class="bgm-player__title" id="bgm-title"><span class="bgm-player__title-text">가정을만들자</span></span>
     </div>
   </body>
 </html>

@@ -67,6 +67,7 @@ const bgmToggle = document.getElementById("bgm-toggle");
 const bgmPrev = document.getElementById("bgm-prev");
 const bgmNext = document.getElementById("bgm-next");
 const bgmTitle = document.getElementById("bgm-title");
+const bgmTitleText = document.querySelector(".bgm-player__title-text");
 const lightbox = document.getElementById("lightbox");
 const lightboxImage = lightbox?.querySelector(".lightbox__image");
 const lightboxThumbs = document.getElementById("lightbox-thumbs");
@@ -666,7 +667,11 @@ const setupBgm = () => {
     trackIndex = (nextIndex + BGM_PLAYLIST.length) % BGM_PLAYLIST.length;
     const [title, source] = BGM_PLAYLIST[trackIndex];
     bgmPlayer.src = encodeURI(`${source}?v=20260902-1`);
-    bgmTitle.textContent = title;
+    bgmTitleText.textContent = title;
+    bgmTitle.classList.remove("is-long");
+    window.requestAnimationFrame(() => {
+      if (bgmTitleText.scrollWidth > bgmTitle.clientWidth) bgmTitle.classList.add("is-long");
+    });
     window.localStorage.setItem(BGM_TRACK_KEY, String(trackIndex));
     bgmPlayer.load();
     if (shouldPlay) bgmPlayer.play().catch(() => {});

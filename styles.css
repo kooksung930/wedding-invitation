@@ -620,7 +620,10 @@ html.js body.intro-complete .site-main {
 }
 
 .bgm-player__button--main { background: var(--dark-color); color: var(--white-color); }
-.bgm-player__title { min-width: 0; flex: 1 1 auto; max-width: 8rem; overflow: hidden; color: var(--ink-soft-color); font-size: 0.68rem; text-overflow: ellipsis; white-space: nowrap; }
+.bgm-player__title { min-width: 0; flex: 1 1 auto; max-width: 8rem; overflow: hidden; color: var(--ink-soft-color); font-size: 0.68rem; white-space: nowrap; }
+.bgm-player__title-text { display: inline-block; padding-right: 0.6rem; }
+.bgm-player__title.is-long .bgm-player__title-text { animation: bgm-title-marquee 7s ease-in-out infinite alternate; }
+@keyframes bgm-title-marquee { from { transform: translateX(0); } to { transform: translateX(calc(-100% + 8rem)); } }
 
 .button:disabled {
   cursor: default;
