@@ -120,10 +120,20 @@ fileInput.addEventListener("change", () => {
   preview.textContent = "";
   files.forEach((file, index) => {
     if (!isImageFile(file) || file.size > maxFileSize) return;
-    const item = document.createElement("div");
-    item.className = "photo-preview__file";
-    item.textContent = `${index + 1}. ${file.name} · ${(file.size / (1024 * 1024)).toFixed(1)}MB`;
-    preview.append(item);
+    if (file.type.match(/heic|heif/i) || /\.(heic|heif)$/i.test(file.name)) {
+      const item = document.createElement("div");
+      item.className = "photo-preview__file";
+      item.textContent = `${index + 1}. ${file.name} · ${(file.size / (1024 * 1024)).toFixed(1)}MB`;
+      preview.append(item);
+      return;
+    }
+    const image = document.createElement("img");
+    image.src = URL.createObjectURL(file);
+    image.alt = `Selected photo ${index + 1}`;
+    image.loading = "lazy";
+    image.decoding = "async";
+    image.addEventListener("load", () => URL.revokeObjectURL(image.src), { once: true });
+    preview.append(image);
   });
   preview.hidden = preview.childElementCount === 0;
 });
