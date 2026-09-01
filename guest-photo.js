@@ -82,8 +82,7 @@ form.addEventListener("submit", async (event) => {
     const auth = firebase.auth(); const user = auth.currentUser || (await auth.signInAnonymously()).user;
     const failedFiles = [];
     let uploadedCount = 0;
-    for (let index = 0; index < files.length; index += 1) {
-      const file = files[index];
+    await Promise.all(files.map(async (file, index) => {
       submitButton.textContent = `Uploading ${index + 1}/${files.length}...`;
       try {
         const fileId = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
@@ -115,11 +114,12 @@ form.addEventListener("submit", async (event) => {
         const imageUrl = await snapshot.ref.getDownloadURL();
         await firebase.firestore().collection("guestPhotos").add({ uid: user.uid, name, message, imageUrl, storagePath, status: "pending", createdAt: firebase.firestore.FieldValue.serverTimestamp() });
         uploadedCount += 1;
+        submitButton.textContent = `Uploading ${uploadedCount}/${files.length} complete...`;
       } catch (error) {
         console.error(`Failed file: ${file.name}`, error);
         failedFiles.push(`${file.name} (${error.code || error.message || "error"})`);
       }
-    }
+    }));
     form.reset(); preview.hidden = true; fileLabel.textContent = "Choose photos";
     if (failedFiles.length) setStatus(`${uploadedCount}장 업로드 완료. 실패: ${failedFiles.join(", ")}`);
     else setStatus(`${uploadedCount}장의 사진이 잘 도착했어요.`, true);
