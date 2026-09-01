@@ -9,7 +9,6 @@ const form = document.getElementById("guest-photo-form");
 const fileInput = document.getElementById("photo-file");
 const fileLabel = document.getElementById("file-picker-label");
 const preview = document.getElementById("photo-preview");
-const previewImage = document.getElementById("photo-preview-image");
 const status = document.getElementById("form-status");
 const submitButton = document.getElementById("submit-button");
 const bgmPlayer = document.getElementById("bgm-player");
@@ -60,11 +59,15 @@ fileInput.addEventListener("change", () => {
   const files = [...fileInput.files];
   if (!files.length) return;
   fileLabel.textContent = `${files.length} photos selected`;
-  const firstImage = files.find((file) => file.type.startsWith("image/") && file.size <= maxFileSize);
-  if (firstImage) {
-    previewImage.src = URL.createObjectURL(firstImage);
-    preview.hidden = false;
-  }
+  preview.textContent = "";
+  files.forEach((file, index) => {
+    if (!file.type.startsWith("image/") || file.size > maxFileSize) return;
+    const image = document.createElement("img");
+    image.src = URL.createObjectURL(file);
+    image.alt = `Selected photo ${index + 1}`;
+    preview.append(image);
+  });
+  preview.hidden = preview.childElementCount === 0;
 });
 
 setupMusic();

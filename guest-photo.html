@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="guest-photo.css?v=20260901-1" />
     <style>
       .music-button{position:fixed;right:18px;bottom:18px;padding:10px 13px;border:1px solid #d9cec2;border-radius:999px;background:#fffdf9;color:#77695e;font:inherit;font-size:11px;box-shadow:0 5px 16px #6653461c;cursor:pointer}.music-button.is-playing{background:#776454;color:#fff}
+      .photo-preview.photo-preview--multiple{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:6px}.photo-preview--multiple img{width:100%;height:110px;object-fit:cover;border-radius:2px}
     </style>
     <script>
       window.WEDDING_CONFIG = {
@@ -42,8 +43,7 @@
           </label>
           <input id="photo-file" type="file" accept="image/jpeg,image/png,image/webp,image/heic" multiple required />
           <p class="field-help">JPG, PNG, WEBP · 여러 장 가능 · 사진 1장당 최대 10MB</p>
-          <div class="photo-preview" id="photo-preview" hidden>
-            <img id="photo-preview-image" alt="선택한 사진 미리보기" />
+          <div class="photo-preview photo-preview--multiple" id="photo-preview" hidden>
           </div>
 
           <label class="field-label" for="guest-name">이름</label>
@@ -63,6 +63,6 @@
       <p class="footer-note">소중한 사진은 두 사람의 결혼식 기록으로 간직할게요.</p>
     </main>
     <button class="music-button" id="music-button" type="button" aria-label="음악 재생">♫ 음악 켜기</button>
-    <script defer src="guest-photo.js?v=20260901-3"></script>
+    <script defer src="guest-photo.js?v=20260901-4"></script>
   </body>
 </html>
