@@ -7,7 +7,7 @@
     <title>사진 관리 | 국성 & 가영</title>
     <link rel="stylesheet" href="guest-photo.css?v=20260901-1" />
     <style>
-      .admin-card{margin-top:24px}.admin-card h1{font-size:28px}.admin-card p{color:#82766c;font-size:13px;line-height:1.9}.admin-input{width:100%;margin-top:10px;padding:14px;border:1px solid #d9cec2;border-radius:3px;font:inherit;font-size:13px}.admin-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}.admin-button{padding:13px 8px;border:0;border-radius:3px;background:#776454;color:#fff;font:inherit;font-size:12px;cursor:pointer}.admin-button.secondary{border:1px solid #d9cec2;background:#fffdf9;color:#77695e}.admin-status{min-height:20px;margin:14px 0;color:#9b5f54;font-size:12px!important}.admin-list{display:grid;gap:14px;margin-top:26px}.admin-photo{overflow:hidden;border:1px solid #e8ded3;background:#fff;border-radius:3px}.admin-photo img{display:block;width:100%;max-height:300px;object-fit:cover}.admin-photo__body{padding:12px}.admin-photo__meta{margin:0!important;color:#574d45!important;font-size:12px!important}.admin-photo__message{margin:5px 0 12px!important;color:#82766c!important;font-size:12px!important}.admin-photo__button{width:100%;padding:10px;border:1px solid #b8a494;border-radius:3px;background:#fff;color:#77695e;cursor:pointer}.admin-photo.is-approved{opacity:.72}.hidden{display:none!important}
+      .admin-card{margin-top:24px}.admin-card h1{font-size:28px}.admin-card p{color:#82766c;font-size:13px;line-height:1.9}.admin-input{width:100%;margin-top:10px;padding:14px;border:1px solid #d9cec2;border-radius:3px;font:inherit;font-size:13px}.admin-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}.admin-button{padding:13px 8px;border:0;border-radius:3px;background:#776454;color:#fff;font:inherit;font-size:12px;cursor:pointer}.admin-button.secondary{border:1px solid #d9cec2;background:#fffdf9;color:#77695e}.admin-status{min-height:20px;margin:14px 0;color:#9b5f54;font-size:12px!important}.admin-list{display:grid;gap:14px;margin-top:18px}.admin-photo{overflow:hidden;border:1px solid #e8ded3;background:#fff;border-radius:3px}.admin-photo img{display:block;width:100%;max-height:300px;object-fit:cover}.admin-photo__body{padding:12px}.admin-photo__meta{margin:0!important;color:#574d45!important;font-size:12px!important}.admin-photo__message{margin:5px 0 12px!important;color:#82766c!important;font-size:12px!important}.admin-photo__actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}.admin-photo__button{width:100%;padding:10px;border:1px solid #b8a494;border-radius:3px;background:#fff;color:#77695e;cursor:pointer}.admin-photo__button.approve{background:#776454;color:#fff}.admin-photo.is-approved{opacity:.72}.admin-photo.is-declined{opacity:.5}.admin-nav{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:20px}.admin-nav button{padding:8px 12px;border:1px solid #d9cec2;border-radius:3px;background:#fffdf9;color:#77695e;cursor:pointer}.admin-nav button:disabled{opacity:.4;cursor:default}.hidden{display:none!important}
     </style>
   </head>
   <body>
@@ -30,9 +30,10 @@
           <p id="photo-count"></p>
           <button class="admin-button secondary" id="logout-button" type="button">로그아웃</button>
           <div class="admin-list" id="admin-list"></div>
+          <div class="admin-nav"><button id="prev-page" type="button">이전</button><span id="page-number">1 / 1</span><button id="next-page" type="button">다음</button></div>
         </div>
       </section>
     </main>
-    <script defer src="guest-photo-admin.js?v=20260901-2"></script>
+    <script defer src="guest-photo-admin.js?v=20260901-3"></script>
   </body>
 </html>

@@ -60,7 +60,8 @@ service cloud.firestore {
       allow update: if request.auth != null
         && request.auth.token.email == 'ks_gy@wedding-e262a.firebaseapp.com'
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
-        && request.resource.data.status == 'approved';
+        && (request.resource.data.status == 'approved'
+          || request.resource.data.status == 'declined');
       allow delete: if false;
     }
   }
