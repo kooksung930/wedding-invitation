@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f4efe8" />
+    <title>사진 관리 | 국성 & 가영</title>
+    <link rel="stylesheet" href="guest-photo.css?v=20260901-1" />
+    <style>
+      .admin-card{margin-top:24px}.admin-card h1{font-size:28px}.admin-card p{color:#82766c;font-size:13px;line-height:1.9}.admin-link{display:block;margin-top:24px;padding:15px;border-radius:3px;background:#776454;color:#fff;text-align:center;text-decoration:none;font-size:13px}.admin-note{margin-top:20px!important;color:#9b5f54!important;font-size:11px!important}
+    </style>
+  </head>
+  <body>
+    <main class="photo-page">
+      <a class="back-link" href="guest-photo.html">← 사진 업로드 페이지</a>
+      <section class="photo-card admin-card">
+        <p class="eyebrow">WEDDING PHOTO ADMIN</p>
+        <h1>사진 관리</h1>
+        <p>업로드된 사진은 Firebase에서 확인하고, 공개할 사진의 상태를 <code>approved</code>로 변경하면 됩니다.</p>
+        <a class="admin-link" href="https://console.firebase.google.com/project/wedding-e262a/firestore/data/~2FguestPhotos" target="_blank" rel="noopener">Firebase 사진 목록 열기</a>
+        <p class="admin-note">Firebase 계정으로 로그인되어 있어야 합니다.</p>
+      </section>
+    </main>
+  </body>
+</html>
