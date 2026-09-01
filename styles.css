@@ -627,9 +627,9 @@ html.js body.intro-complete .site-main {
 }
 
 .bgm-player__button--main { background: var(--dark-color); color: var(--white-color); }
-.bgm-player__title { min-width: 0; flex: 1 1 auto; max-width: 8rem; overflow: hidden; color: var(--ink-soft-color); font-size: 0.68rem; white-space: nowrap; }
+.bgm-player__title { display: block; width: 100%; min-width: 0; flex: 1 1 auto; max-width: none; overflow: hidden; color: var(--ink-soft-color); font-size: 0.68rem; white-space: nowrap; }
 .bgm-player__title-text { display: inline-block; padding-right: 0.6rem; }
-.bgm-player__info { min-width: 0; flex: 1 1 auto; }
+.bgm-player__info { display: block; width: 0; min-width: 0; flex: 1 1 0; overflow: hidden; }
 .bgm-player__seek { display: block; width: 100%; height: 0.7rem; accent-color: var(--accent-strong-color); }
 .bgm-player__title.is-long .bgm-player__title-text { animation: bgm-title-marquee 7s ease-in-out infinite alternate; }
 @keyframes bgm-title-marquee { from { transform: translateX(0); } to { transform: translateX(calc(-100% + 8rem)); } }
