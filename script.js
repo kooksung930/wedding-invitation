@@ -70,6 +70,7 @@ const bgmNext = document.getElementById("bgm-next");
 const bgmTitle = document.getElementById("bgm-title");
 const bgmTitleText = document.querySelector(".bgm-player__title-text");
 const bgmSeek = document.getElementById("bgm-seek");
+const bgmDownload = document.getElementById("bgm-download");
 const lightbox = document.getElementById("lightbox");
 const lightboxImage = lightbox?.querySelector(".lightbox__image");
 const lightboxThumbs = document.getElementById("lightbox-thumbs");
@@ -668,8 +669,13 @@ const setupBgm = () => {
   const setTrack = (nextIndex, shouldPlay = false) => {
     trackIndex = (nextIndex + BGM_PLAYLIST.length) % BGM_PLAYLIST.length;
     const [title, source] = BGM_PLAYLIST[trackIndex];
-    bgmPlayer.src = encodeURI(`${source}?v=20260902-1`);
+    const encodedSource = encodeURI(`${source}?v=20260902-1`);
+    bgmPlayer.src = encodedSource;
     bgmTitleText.textContent = title;
+    if (bgmDownload) {
+      bgmDownload.href = encodedSource;
+      bgmDownload.download = `${title}.mp3`;
+    }
     bgmTitle.classList.remove("is-long");
     window.requestAnimationFrame(() => {
       if (bgmTitleText.scrollWidth > bgmTitle.clientWidth) bgmTitle.classList.add("is-long");
