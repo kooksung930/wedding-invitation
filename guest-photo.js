@@ -14,6 +14,7 @@ const submitButton = document.getElementById("submit-button");
 const bgmPlayer = document.getElementById("bgm-player");
 const musicButton = document.getElementById("music-button");
 const maxFileSize = 50 * 1024 * 1024;
+const uploadIdleTimeout = 10 * 60 * 1000;
 const bgmPositionKey = "wedding-bgm-position";
 
 const setStatus = (message, success = false) => {
@@ -94,7 +95,7 @@ form.addEventListener("submit", async (event) => {
           let progressTimer = window.setTimeout(() => {
             uploadTask.cancel();
             reject(Object.assign(new Error("upload-timeout"), { code: "storage/timeout" }));
-          }, 30 * 1000);
+          }, uploadIdleTimeout);
           uploadTask.on("state_changed", (progress) => {
             window.clearTimeout(progressTimer);
             const percent = Math.round((progress.bytesTransferred / progress.totalBytes) * 100);
@@ -102,7 +103,7 @@ form.addEventListener("submit", async (event) => {
             progressTimer = window.setTimeout(() => {
               uploadTask.cancel();
               reject(Object.assign(new Error("upload-timeout"), { code: "storage/timeout" }));
-            }, 30 * 1000);
+            }, uploadIdleTimeout);
           }, (error) => {
             window.clearTimeout(progressTimer);
             reject(error);
