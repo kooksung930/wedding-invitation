@@ -13,7 +13,9 @@ const status = document.getElementById("form-status");
 const submitButton = document.getElementById("submit-button");
 const bgmPlayer = document.getElementById("bgm-player");
 const musicButton = document.getElementById("music-button");
-const maxFileSize = 10 * 1024 * 1024;
+const maxInputFileSize = 50 * 1024 * 1024;
+const maxUploadFileSize = 4 * 1024 * 1024;
+const maxImageDimension = 2000;
 const bgmPositionKey = "wedding-bgm-position";
 
 const setStatus = (message, success = false) => {
@@ -61,7 +63,7 @@ fileInput.addEventListener("change", () => {
   fileLabel.textContent = `${files.length} photos selected`;
   preview.textContent = "";
   files.forEach((file, index) => {
-    if (!file.type.startsWith("image/") || file.size > maxFileSize) return;
+    if (!file.type.startsWith("image/") || file.size > maxInputFileSize) return;
     const image = document.createElement("img");
     image.src = URL.createObjectURL(file);
     image.alt = `Selected photo ${index + 1}`;
@@ -79,8 +81,8 @@ form.addEventListener("submit", async (event) => {
   const message = document.getElementById("guest-message").value.trim();
   const consent = document.getElementById("guest-consent").checked;
 
-  if (!files.length || files.some((file) => !file.type.startsWith("image/") || file.size > maxFileSize)) {
-    setStatus("10MB 이하의 이미지 사진만 선택해주세요."); return;
+  if (!files.length || files.some((file) => !file.type.startsWith("image/") || file.size > maxInputFileSize)) {
+    setStatus("이미지 사진만 선택해주세요. 원본은 50MB까지 가능해요."); return;
   }
   if (!name) { setStatus("이름을 입력해주세요."); return; }
   if (!consent) { setStatus("사진 전달 동의에 체크해주세요."); return; }
@@ -95,10 +97,12 @@ form.addEventListener("submit", async (event) => {
     const user = auth.currentUser || (await auth.signInAnonymously()).user;
     for (let index = 0; index < files.length; index += 1) {
       const file = files[index];
+      submitButton.textContent = `Compressing ${index + 1}/${files.length}...`;
+      const compressedFile = await compressImage(file);
       const fileId = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_").replace(/\.[^.]+$/, "") + ".jpg";
       const storagePath = `guest-photos/${user.uid}/${fileId}-${safeName}`;
-      const snapshot = await firebase.storage().ref(storagePath).put(file, { contentType: file.type });
+      const snapshot = await firebase.storage().ref(storagePath).put(compressedFile, { contentType: "image/jpeg" });
       const imageUrl = await snapshot.ref.getDownloadURL();
       await firebase.firestore().collection("guestPhotos").add({
         uid: user.uid, name, message, imageUrl, storagePath, status: "pending",
@@ -112,9 +116,37 @@ form.addEventListener("submit", async (event) => {
     setStatus(`${files.length}장의 사진이 잘 도착했어요.`, true);
   } catch (error) {
     console.error(error);
-    setStatus(`Upload failed: ${error.code || "please try again"}`);
+    const reason = error.message === "unsupported-image-format"
+      ? "HEIC 형식은 JPG로 변환한 뒤 다시 선택해주세요."
+      : error.message === "compression-failed"
+        ? "사진 용량을 줄이지 못했어요. 다른 사진을 선택해주세요."
+        : (error.code || "please try again");
+    setStatus(`Upload failed: ${reason}`);
   } finally {
     submitButton.disabled = false;
     submitButton.textContent = "Leave photos";
   }
 });
+
+async function compressImage(file) {
+  let image;
+  try {
+    image = await createImageBitmap(file);
+  } catch (_) {
+    throw new Error("unsupported-image-format");
+  }
+  const scale = Math.min(1, maxImageDimension / Math.max(image.width, image.height));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(image.width * scale));
+  canvas.height = Math.max(1, Math.round(image.height * scale));
+  canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
+  image.close?.();
+  let quality = 0.82;
+  let blob;
+  do {
+    blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", quality));
+    quality -= 0.1;
+  } while (blob && blob.size > maxUploadFileSize && quality >= 0.42);
+  if (!blob || blob.size > maxUploadFileSize) throw new Error("compression-failed");
+  return blob;
+}
