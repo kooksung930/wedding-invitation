@@ -92,18 +92,23 @@ form.addEventListener("submit", async (event) => {
         const contentType = getContentType(file);
         const uploadTask = firebase.storage().ref(storagePath).put(file, { contentType });
         const snapshot = await new Promise((resolve, reject) => {
-          const timeout = window.setTimeout(() => {
+          let progressTimer = window.setTimeout(() => {
             uploadTask.cancel();
             reject(Object.assign(new Error("upload-timeout"), { code: "storage/timeout" }));
-          }, 5 * 60 * 1000);
+          }, 30 * 1000);
           uploadTask.on("state_changed", (progress) => {
+            window.clearTimeout(progressTimer);
             const percent = Math.round((progress.bytesTransferred / progress.totalBytes) * 100);
             submitButton.textContent = `Uploading ${index + 1}/${files.length} (${percent}%)...`;
+            progressTimer = window.setTimeout(() => {
+              uploadTask.cancel();
+              reject(Object.assign(new Error("upload-timeout"), { code: "storage/timeout" }));
+            }, 30 * 1000);
           }, (error) => {
-            window.clearTimeout(timeout);
+            window.clearTimeout(progressTimer);
             reject(error);
           }, () => {
-            window.clearTimeout(timeout);
+            window.clearTimeout(progressTimer);
             resolve(uploadTask.snapshot);
           });
         });
@@ -112,7 +117,7 @@ form.addEventListener("submit", async (event) => {
         uploadedCount += 1;
       } catch (error) {
         console.error(`Failed file: ${file.name}`, error);
-        failedFiles.push(`${file.name} (${error.code || "error"})`);
+        failedFiles.push(`${file.name} (${error.code || error.message || "error"})`);
       }
     }
     form.reset(); preview.hidden = true; fileLabel.textContent = "Choose photos";
