@@ -23,7 +23,6 @@ const maxPhotoCount = 9;
 const uploadBatchSize = 3;
 const uploadBatchPause = 1500;
 // 인증/업로드가 시작되지 않으면 오래 기다리지 않고 실패시킨다.
-const uploadIdleTimeout = 30 * 1000;
 const bgmPositionKey = "wedding-bgm-position";
 const bgmTrackKey = "wedding-bgm-track";
 const bgmPlayingKey = "wedding-bgm-playing";
@@ -118,27 +117,6 @@ const appendThumbnail = async (file, index) => {
   }
 };
 
-const uploadFile = (file, storagePath, contentType, user, onProgress) => new Promise(async (resolve, reject) => {
-  try {
-    const token = await user.getIdToken();
-    const url = `https://firebasestorage.googleapis.com/v0/b/${encodeURIComponent(config.storageBucket)}/o?uploadType=media&name=${encodeURIComponent(storagePath)}`;
-    const request = new XMLHttpRequest();
-    request.open("POST", url);
-    request.setRequestHeader("Authorization", `Bearer ${token}`);
-    request.setRequestHeader("Content-Type", contentType);
-    request.timeout = uploadIdleTimeout;
-    request.upload.onprogress = (event) => {
-      if (event.lengthComputable) onProgress(Math.round((event.loaded / event.total) * 100));
-    };
-    request.onload = () => request.status >= 200 && request.status < 300
-      ? resolve()
-      : reject(Object.assign(new Error("storage-http-error"), { code: `storage/http-${request.status}` }));
-    request.onerror = () => reject(Object.assign(new Error("storage-network-error"), { code: "storage/network-error" }));
-    request.ontimeout = () => reject(Object.assign(new Error("upload-timeout"), { code: "storage/timeout" }));
-    request.send(file);
-  } catch (error) { reject(error); }
-});
-
 fileInput.addEventListener("change", () => {
   const files = [...fileInput.files];
   if (!files.length) return;
@@ -177,6 +155,9 @@ form.addEventListener("submit", async (event) => {
     if (auth.currentUser) await auth.signOut();
     const user = (await auth.signInAnonymously()).user;
     await user.getIdToken(true);
+    const storage = firebase.storage();
+    storage.setMaxUploadRetryTime(30 * 1000);
+    storage.setMaxUploadRetryDelay(5 * 1000);
     const failedFiles = [];
     let uploadedCount = 0;
     let processedCount = 0;
@@ -194,38 +175,23 @@ form.addEventListener("submit", async (event) => {
         const snapshot = await new Promise((resolve, reject) => {
           let uploadTask;
           let settled = false;
-          let timeout = window.setTimeout(() => {
-            if (uploadTask) uploadTask.cancel();
-            settled = true;
-            reject(Object.assign(new Error("upload-timeout"), { code: "storage/timeout" }));
-          }, uploadIdleTimeout);
-          let lastTransferred = 0;
           try {
             setStatus(`${index + 1}/${files.length} Storage 연결 중…`);
-            uploadTask = firebase.storage().ref(storagePath).put(file, { contentType });
+            uploadTask = storage.ref(storagePath).put(file, { contentType });
           } catch (error) {
-            window.clearTimeout(timeout);
             reject(error);
             return;
           }
           uploadTask.on("state_changed", (progress) => {
             if (settled) return;
-            if (progress.bytesTransferred > lastTransferred) {
-              lastTransferred = progress.bytesTransferred;
-              window.clearTimeout(timeout);
-              timeout = window.setTimeout(() => {
-                uploadTask.cancel();
-                reject(Object.assign(new Error("upload-timeout"), { code: "storage/timeout" }));
-              }, uploadIdleTimeout);
-            }
             const percent = Math.round((progress.bytesTransferred / progress.totalBytes) * 100);
             submitButton.textContent = `Uploading ${index + 1}/${files.length} (${percent}%)...`;
           }, (error) => {
             if (settled) return;
-            settled = true; window.clearTimeout(timeout); reject(error);
+            settled = true; reject(error);
           }, () => {
             if (settled) return;
-            settled = true; window.clearTimeout(timeout); resolve(uploadTask.snapshot);
+            settled = true; resolve(uploadTask.snapshot);
           });
         });
         const imageUrl = await snapshot.ref.getDownloadURL();
