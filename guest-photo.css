@@ -2,6 +2,7 @@
 @font-face{font-family:MaruBuri;src:url("font/MaruBuri-SemiBold.woff2") format("woff2");font-weight:600;font-display:swap}
 .photo-page{padding-bottom:120px!important}
 .footer-note--drive{position:relative;z-index:30;margin:18px 0 0;padding:12px 10px;border:1px solid #d9cec2;border-radius:3px;background:#f8f2eb}.footer-note--drive a{color:#776454;font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.photo-reward{margin:-18px 0 28px;color:#9b6d58;font-size:12px;line-height:1.7;text-align:center}
 .photo-preview.photo-preview--multiple{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:6px}.photo-preview__file{grid-column:1/-1;padding:9px 11px;border-bottom:1px solid #e3d9cf;color:#77695e;font-size:11px;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.photo-preview__file:last-child{border-bottom:0}
 .bgm-player__info{display:block!important;width:0!important;min-width:0!important;flex:1 1 0!important;overflow:hidden!important}.bgm-player__title{display:block!important;width:100%!important;max-width:none!important;min-width:0!important;overflow:hidden!important}.bgm-player__button{position:relative;z-index:1;flex:0 0 28px!important;min-width:28px!important}
 :root{color:#403a35;background:#f4efe8;font-family:MaruBuri,"Noto Serif KR",serif}
