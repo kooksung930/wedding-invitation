@@ -156,8 +156,8 @@ form.addEventListener("submit", async (event) => {
     const user = (await auth.signInAnonymously()).user;
     await user.getIdToken(true);
     const storage = firebase.storage();
-    storage.setMaxUploadRetryTime(30 * 1000);
-    storage.setMaxUploadRetryDelay(5 * 1000);
+    if (typeof storage.setMaxUploadRetryTime === "function") storage.setMaxUploadRetryTime(30 * 1000);
+    if (typeof storage.setMaxUploadRetryDelay === "function") storage.setMaxUploadRetryDelay(5 * 1000);
     const failedFiles = [];
     let uploadedCount = 0;
     let processedCount = 0;
@@ -216,6 +216,6 @@ form.addEventListener("submit", async (event) => {
     form.reset(); preview.hidden = true; fileLabel.textContent = "Choose photos";
     if (failedFiles.length) setStatus(`${uploadedCount}장 업로드 완료. 실패: ${failedFiles.join(", ")}`);
     else setStatus(`${uploadedCount}장의 사진이 잘 도착했어요.`, true);
-  } catch (error) { console.error(error); setStatus(`Upload failed: ${error.code || "please try again"}`); }
+  } catch (error) { console.error(error); setStatus(`Upload failed: ${error.code || error.message || "unknown error"}`); }
   finally { submitButton.disabled = false; submitButton.textContent = "Leave photos"; }
 });
