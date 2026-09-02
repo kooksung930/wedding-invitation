@@ -93,6 +93,29 @@ const getContentType = (file) => {
   return ({ jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp", gif: "image/gif", heic: "image/heic", heif: "image/heif", avif: "image/avif" })[extension] || "image/jpeg";
 };
 
+const appendThumbnail = async (file, index) => {
+  try {
+    const bitmap = await createImageBitmap(file, { resizeWidth: 320, resizeHeight: 220, resizeQuality: "low" });
+    const scale = Math.min(320 / bitmap.width, 220 / bitmap.height, 1);
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+    canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    bitmap.close();
+    const image = document.createElement("img");
+    image.src = canvas.toDataURL("image/jpeg", 0.78);
+    image.alt = `Selected photo ${index + 1}`;
+    preview.append(image);
+    preview.hidden = false;
+  } catch (_) {
+    const item = document.createElement("div");
+    item.className = "photo-preview__file";
+    item.textContent = `${index + 1}. ${file.name}`;
+    preview.append(item);
+    preview.hidden = false;
+  }
+};
+
 const uploadFile = (file, storagePath, contentType, user, onProgress) => new Promise(async (resolve, reject) => {
   try {
     const token = await user.getIdToken();
@@ -128,13 +151,7 @@ fileInput.addEventListener("change", () => {
       preview.append(item);
       return;
     }
-    const image = document.createElement("img");
-    image.src = URL.createObjectURL(file);
-    image.alt = `Selected photo ${index + 1}`;
-    image.loading = "lazy";
-    image.decoding = "async";
-    image.addEventListener("load", () => URL.revokeObjectURL(image.src), { once: true });
-    preview.append(image);
+    appendThumbnail(file, index);
   });
   preview.hidden = preview.childElementCount === 0;
 });
