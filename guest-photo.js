@@ -20,6 +20,8 @@ const bgmTitleText = document.querySelector(".bgm-player__title-text");
 const bgmSeek = document.getElementById("bgm-seek");
 const maxFileSize = 50 * 1024 * 1024;
 const maxPhotoCount = 9;
+const uploadBatchSize = 3;
+const uploadBatchPause = 1500;
 // 인증/업로드가 시작되지 않으면 오래 기다리지 않고 실패시킨다.
 const uploadIdleTimeout = 30 * 1000;
 const bgmPositionKey = "wedding-bgm-position";
@@ -177,6 +179,7 @@ form.addEventListener("submit", async (event) => {
     await user.getIdToken(true);
     const failedFiles = [];
     let uploadedCount = 0;
+    let processedCount = 0;
     const queue = files.map((file, index) => ({ file, index }));
     const uploadWorker = async () => {
       while (queue.length) {
@@ -235,6 +238,11 @@ form.addEventListener("submit", async (event) => {
         const failure = `${file.name} (${errorCode})`;
         failedFiles.push(failure);
         setStatus(`${failure} 업로드 실패 · 다음 사진을 시도하는 중…`);
+      }
+      processedCount += 1;
+      if (processedCount % uploadBatchSize === 0 && queue.length) {
+        setStatus(`${processedCount}/${files.length}장 처리 완료 · 다음 사진 준비 중…`);
+        await new Promise((resolve) => window.setTimeout(resolve, uploadBatchPause));
       }
       }
     };
