@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>결혼식 사진 남기기</title>
+    <style>
+      *{box-sizing:border-box}body{margin:0;background:#f4efe8;color:#403a35;font-family:Georgia,"Noto Serif KR",serif}.card{width:min(calc(100% - 32px),560px);margin:32px auto;padding:clamp(28px,8vw,52px) clamp(22px,7vw,48px);background:#fffdf9;border:1px solid #e8ded3;border-radius:4px;box-shadow:0 16px 40px #66534612}.eyebrow{margin:0 0 18px;color:#9b8878;letter-spacing:.14em;font-size:11px}.card h1{margin:0;color:#302b27;font-size:clamp(30px,8vw,42px);font-weight:600;line-height:1.35}.intro{margin:18px 0 30px;color:#82766c;font-size:14px;line-height:1.9}.label{display:block;margin:20px 0 8px;color:#574d45;font-size:13px;font-weight:600}.input{width:100%;padding:14px 15px;border:1px solid #d9cec2;border-radius:3px;background:#fff;color:#403a35;font:inherit;font-size:13px}.help{margin:8px 0;color:#aaa097;font-size:11px}.submit{width:100%;margin-top:18px;padding:15px;border:0;border-radius:3px;background:#776454;color:#fff;font:inherit;cursor:pointer}.submit:disabled{opacity:.55}.status{min-height:20px;margin:14px 0 0;color:#9b5f54;font-size:12px;line-height:1.5}.status.ok{color:#6e8066}.thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:14px}.thumbs img{width:100%;height:100px;object-fit:cover;border-radius:2px}
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <p class="eyebrow">WEDDING PHOTO</p>
+      <h1>결혼식 사진 남기기</h1>
+      <p class="intro">오늘 찍은 사진을 신랑 신부에게 남겨주세요.</p>
+      <form id="form">
+        <label class="label" for="photos">사진</label>
+        <input class="input" id="photos" name="photos" type="file" accept="image/*" multiple required />
+        <p class="help">최대 9장 · 사진 1장당 최대 50MB</p>
+        <div class="thumbs" id="thumbs"></div>
+        <label class="label" for="name">이름</label>
+        <input class="input" id="name" name="name" maxlength="20" placeholder="이름을 입력해주세요" required />
+        <label class="label" for="message">한마디 <span>(선택)</span></label>
+        <textarea class="input" id="message" name="message" maxlength="160" rows="4" placeholder="신랑 신부에게 한마디"></textarea>
+        <p class="status" id="status"></p>
+        <button class="submit" id="submit" type="submit">사진 남기기</button>
+      </form>
+    </main>
+    <script>
+      const form=document.getElementById('form'), photos=document.getElementById('photos'), thumbs=document.getElementById('thumbs'), status=document.getElementById('status'), submit=document.getElementById('submit');
+      photos.addEventListener('change',()=>{thumbs.textContent='';[...photos.files].slice(0,9).forEach(file=>{if(!file.type.startsWith('image/'))return;const img=document.createElement('img');img.src=URL.createObjectURL(file);img.onload=()=>URL.revokeObjectURL(img.src);thumbs.append(img)});});
+      form.addEventListener('submit',(event)=>{event.preventDefault();if(photos.files.length>9){status.textContent='사진은 최대 9장까지 올릴 수 있어요.';return}submit.disabled=true;status.className='status';status.textContent='업로드 중…';google.script.run.withSuccessHandler(result=>{status.className='status ok';status.textContent=`${result.count}장의 사진이 Drive에 저장됐어요.`;form.reset();thumbs.textContent='';submit.disabled=false}).withFailureHandler(error=>{status.className='status';status.textContent=error.message||'업로드에 실패했어요.';submit.disabled=false}).savePhotos(form);});
+    </script>
+  </body>
+</html>
