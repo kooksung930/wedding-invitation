@@ -43,7 +43,7 @@ const BGM_PLAYING_KEY = "wedding-bgm-playing";
 const BGM_PLAYLIST = [
   ["가정을만들자", "resource/bgm/가정을만들자.mp3"],
   ["길을 잃어도 괜찮아", "resource/bgm/길을 잃어도 괜찮아.mp3"],
-  ["박사님과 골목대장", "resource/bgm/박사님과 골목대장.mp3"],
+  ["결혼을 앞둔 국성과 가영", "resource/bgm/결혼을 앞둔 국성과 가영.mp3"],
   ["새벽 두 시, 로봇은 안 잔다", "resource/bgm/새벽 두 시, 로봇은 안 잔다.mp3"],
   ["설명서 필요 없어", "resource/bgm/설명서 필요 없어.mp3"],
   ["에게해의 다음 장면", "resource/bgm/에게해의 다음 장면.mp3"],
@@ -52,7 +52,6 @@ const BGM_PLAYLIST = [
   ["집에 가는 길", "resource/bgm/집에 가는 길.mp3"],
   ["한 바퀴만", "resource/bgm/한 바퀴만.mp3"],
   ["한판 살아봅시다", "resource/bgm/한판 살아봅시다.mp3"],
-  ["Dr. Jun & Miss Choi", "resource/bgm/Dr. Jun & Miss Choi.mp3"],
 ];
 const ASSET_VERSION = "20260802-3";
 const GALLERY_IMAGES = Array.from(
