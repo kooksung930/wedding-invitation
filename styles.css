@@ -1228,6 +1228,11 @@ html.js body.intro-complete .cover-card__welcome {
   word-break: keep-all;
 }
 
+.parking-notice {
+  color: #d58b68;
+  font-weight: 600;
+}
+
 .calendar-card {
   text-align: center;
 }
